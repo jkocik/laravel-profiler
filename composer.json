@@ -1,0 +1,6 @@
+{
+    "require-dev": {
+        "laravel/homestead": "^7.3",
+        "phpunit/phpunit": "^6.5"
+    }
+}
