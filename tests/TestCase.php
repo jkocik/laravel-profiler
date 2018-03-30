@@ -2,6 +2,7 @@
 
 namespace JKocik\Laravel\Profiler\Tests;
 
+use Closure;
 use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\ServiceProvider;
@@ -54,6 +55,21 @@ class TestCase extends BaseTestCase
     protected function app(): Application
     {
         $app = $this->appWithoutProfiler();
+
+        $app->register(ServiceProvider::class);
+
+        return $app;
+    }
+
+    /**
+     * @param Closure $beforeServiceProvider
+     * @return Application
+     */
+    protected function appWith(Closure $beforeServiceProvider): Application
+    {
+        $app = $this->appWithoutProfiler();
+
+        $beforeServiceProvider($app);
 
         $app->register(ServiceProvider::class);
 

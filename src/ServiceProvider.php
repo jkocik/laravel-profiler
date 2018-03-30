@@ -2,6 +2,7 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use JKocik\Laravel\Profiler\Contracts\Profiler;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -12,6 +13,10 @@ class ServiceProvider extends BaseServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(static::profilerConfigPath(), 'profiler');
+
+        $this->app->singleton(Profiler::class, function () {
+            return ProfilerResolver::resolve($this->app);
+        });
     }
 
     /**
