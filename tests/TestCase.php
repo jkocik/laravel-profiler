@@ -6,13 +6,39 @@ use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\ServiceProvider;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use JKocik\Laravel\Profiler\Tests\Support\Framework;
 
 class TestCase extends BaseTestCase
 {
     /**
+     * @var Framework
+     */
+    protected static $framework;
+
+    /**
      * @var Application
      */
     protected $app;
+
+    /**
+     * @return void
+     */
+    public static function setUpBeforeClass()
+    {
+        static::$framework = new Framework();
+    }
+
+    /**
+     * @return Application
+     */
+    public function appWithoutProfiler(): Application
+    {
+        $app = require __DIR__ . '/../frameworks/' . static::$framework->dir() . '/bootstrap/app.php';
+
+        $app->make(Kernel::class)->bootstrap();
+
+        return $app;
+    }
 
     /**
      * @return void
@@ -30,18 +56,6 @@ class TestCase extends BaseTestCase
         $app = $this->appWithoutProfiler();
 
         $app->register(ServiceProvider::class);
-
-        return $app;
-    }
-
-    /**
-     * @return Application
-     */
-    protected function appWithoutProfiler(): Application
-    {
-        $app = require __DIR__ . '/../frameworks/laravel-55/bootstrap/app.php';
-
-        $app->make(Kernel::class)->bootstrap();
 
         return $app;
     }

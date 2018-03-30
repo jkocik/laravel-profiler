@@ -7,6 +7,15 @@ alias art=artisan
 
 alias phpspec='vendor/bin/phpspec'
 alias phpunit='vendor/bin/phpunit'
+
+alias la51='vendor/bin/phpunit -c phpunit-laravel-51.xml'
+alias la52='vendor/bin/phpunit -c phpunit-laravel-52.xml'
+alias la53='vendor/bin/phpunit -c phpunit-laravel-53.xml'
+alias la54='vendor/bin/phpunit -c phpunit-laravel-54.xml'
+alias la55='vendor/bin/phpunit -c phpunit-laravel-55.xml'
+
+alias phpunit-all='la55 && la54 && la53 && la52 && la51'
+
 alias serve=serve-laravel
 
 alias xoff='sudo phpdismod -s cli xdebug'
