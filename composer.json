@@ -1,6 +1,19 @@
 {
+    "require": {
+        "php": ">=7.0.0"
+    },
     "require-dev": {
         "laravel/homestead": "^7.3",
         "phpunit/phpunit": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "JKocik\\Laravel\\Profiler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JKocik\\Laravel\\Profiler\\Tests\\": "tests/"
+        }
     }
 }
