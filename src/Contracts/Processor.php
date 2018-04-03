@@ -2,7 +2,7 @@
 
 namespace JKocik\Laravel\Profiler\Contracts;
 
-interface DataProcessor
+interface Processor
 {
     /**
      * @param DataTracker $dataTracker

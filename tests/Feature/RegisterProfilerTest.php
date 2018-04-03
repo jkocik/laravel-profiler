@@ -119,10 +119,12 @@ class RegisterProfilerTest extends TestCase
         $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
 
         $this->app->register($serviceProvider);
+        $this->app->terminate();
 
         $this->assertInstanceOf(LaravelProfiler::class, $this->app->make(Profiler::class));
         $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
         $dataTracker->shouldHaveReceived('track');
+        $dataTracker->shouldHaveReceived('terminate');
         $this->assertSame($dataProcessor, $this->app->make(DataProcessor::class));
         $dataProcessor->shouldHaveReceived('process');
     }
@@ -137,10 +139,12 @@ class RegisterProfilerTest extends TestCase
         $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
 
         $this->app->register($serviceProvider);
+        $this->app->terminate();
 
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
         $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
         $dataTracker->shouldNotHaveReceived('track');
+        $dataTracker->shouldNotHaveReceived('terminate');
         $this->assertSame($dataProcessor, $this->app->make(DataProcessor::class));
         $dataProcessor->shouldNotHaveReceived('process');
     }

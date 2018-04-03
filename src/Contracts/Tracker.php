@@ -4,18 +4,8 @@ namespace JKocik\Laravel\Profiler\Contracts;
 
 use Illuminate\Support\Collection;
 
-interface DataTracker
+interface Tracker
 {
-    /**
-     * @return void
-     */
-    public function track(): void;
-
-    /**
-     * @return void
-     */
-    public function terminate(): void;
-
     /**
      * @return Collection
      */
@@ -25,4 +15,9 @@ interface DataTracker
      * @return Collection
      */
     public function data(): Collection;
+
+    /**
+     * @return void
+     */
+    public function terminate(): void;
 }

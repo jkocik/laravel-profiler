@@ -2,10 +2,9 @@
 
 namespace JKocik\Laravel\Profiler;
 
-use Illuminate\Foundation\Application;
-use JKocik\Laravel\Profiler\Contracts\DataProcessor;
-use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Contracts\DataTracker;
+use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 
 class LaravelProfiler implements Profiler
 {
@@ -18,6 +17,9 @@ class LaravelProfiler implements Profiler
     {
         $dataTracker->track();
 
-        $dataProcessor->process();
+        app()->terminating(function () use ($dataTracker, $dataProcessor) {
+            $dataTracker->terminate();
+            $dataProcessor->process($dataTracker);
+        });
     }
 }
