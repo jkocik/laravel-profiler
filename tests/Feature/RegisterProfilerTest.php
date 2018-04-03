@@ -2,15 +2,47 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
+use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\ServiceProvider;
 use JKocik\Laravel\Profiler\LaravelProfiler;
 use JKocik\Laravel\Profiler\DisabledProfiler;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Contracts\DataTracker;
+use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 
 class RegisterProfilerTest extends TestCase
 {
+    /**
+     * @param Application $app
+     * @param DataTracker $dataTracker
+     * @param DataProcessor $dataProcessor
+     * @return ServiceProvider
+     */
+    protected function serviceProvider(
+        Application $app,
+        DataTracker $dataTracker,
+        DataProcessor $dataProcessor
+    ): ServiceProvider {
+        return new class($app, $dataTracker, $dataProcessor) extends ServiceProvider {
+            public function __construct(Application $app, DataTracker $dataTracker, DataProcessor $dataProcessor) {
+                parent::__construct($app);
+                $this->dataTracker = $dataTracker;
+                $this->dataProcessor = $dataProcessor;
+            }
+            public function register(): void {
+                parent::register();
+                $this->app->singleton(DataTracker::class, function () {
+                    return $this->dataTracker;
+                });
+                $this->app->singleton(DataProcessor::class, function () {
+                    return $this->dataProcessor;
+                });
+            }
+        };
+    }
+
     /** @test */
     function loads_profiler_config_file()
     {
@@ -76,6 +108,41 @@ class RegisterProfilerTest extends TestCase
 
         $this->assertContains('production', $config->get('profiler.force_disable_on'));
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
+    }
+
+    /** @test */
+    function enabled_profiler_tracks_laravel()
+    {
+        $dataTracker = Mockery::spy(DataTracker::class);
+        $dataProcessor = Mockery::spy(DataProcessor::class);
+        $this->app = $this->appWithoutProfiler();
+        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
+
+        $this->app->register($serviceProvider);
+
+        $this->assertInstanceOf(LaravelProfiler::class, $this->app->make(Profiler::class));
+        $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
+        $dataTracker->shouldHaveReceived('track');
+        $this->assertSame($dataProcessor, $this->app->make(DataProcessor::class));
+        $dataProcessor->shouldHaveReceived('process');
+    }
+
+    /** @test */
+    function disabled_profiler_does_not_track_laravel()
+    {
+        putenv('PROFILER_ENABLED=false');
+        $dataTracker = Mockery::spy(DataTracker::class);
+        $dataProcessor = Mockery::spy(DataProcessor::class);
+        $this->app = $this->appWithoutProfiler();
+        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
+
+        $this->app->register($serviceProvider);
+
+        $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
+        $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
+        $dataTracker->shouldNotHaveReceived('track');
+        $this->assertSame($dataProcessor, $this->app->make(DataProcessor::class));
+        $dataProcessor->shouldNotHaveReceived('process');
     }
 
     /**

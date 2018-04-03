@@ -3,6 +3,8 @@
 namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Contracts\DataTracker;
+use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -13,6 +15,14 @@ class ServiceProvider extends BaseServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(static::profilerConfigPath(), 'profiler');
+
+        $this->app->singleton(DataTracker::class, function () {
+            return new LaravelDataTracker();
+        });
+
+        $this->app->singleton(DataProcessor::class, function () {
+            return new LaravelDataProcessor();
+        });
 
         $this->app->singleton(Profiler::class, function () {
             return ProfilerResolver::resolve($this->app);
@@ -25,6 +35,11 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(): void
     {
         $this->allowConfigFileToBePublished();
+
+        $this->app->make(Profiler::class)->boot(
+            $this->app->make(DataTracker::class),
+            $this->app->make(DataProcessor::class)
+        );
     }
 
     /**

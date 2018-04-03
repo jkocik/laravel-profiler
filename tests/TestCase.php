@@ -8,9 +8,12 @@ use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\ServiceProvider;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use JKocik\Laravel\Profiler\Tests\Support\Framework;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 class TestCase extends BaseTestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * @var Framework
      */
