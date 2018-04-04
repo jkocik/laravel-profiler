@@ -29,14 +29,6 @@ class ProfilerConfigTest extends TestCase
     }
 
     /** @test */
-    function returns_empty_array_when_trackers_configuration_is_empty()
-    {
-        $trackers = ProfilerConfig::trackers('profiler.trackers-666');
-
-        $this->assertCount(0, $trackers);
-    }
-
-    /** @test */
     function returns_processors()
     {
         $this->app = $this->appWith(function (Application $app) {
@@ -50,14 +42,6 @@ class ProfilerConfigTest extends TestCase
 
         $this->assertContains(ProcessorA::class, $processors);
         $this->assertContains(ProcessorB::class, $processors);
-    }
-
-    /** @test */
-    function returns_empty_array_when_processors_configuration_is_empty()
-    {
-        $processors = ProfilerConfig::processors('profiler.processors-666');
-
-        $this->assertCount(0, $processors);
     }
 
     /** @test */

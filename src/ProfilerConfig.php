@@ -5,6 +5,22 @@ namespace JKocik\Laravel\Profiler;
 class ProfilerConfig
 {
     /**
+     * @return array
+     */
+    public static function trackers(): array
+    {
+        return config('profiler.trackers');
+    }
+
+    /**
+     * @return array
+     */
+    public static function processors(): array
+    {
+        return config('profiler.processors');
+    }
+
+    /**
      * @return string
      */
     public static function broadcastingEvent(): string
@@ -18,32 +34,5 @@ class ProfilerConfig
     public static function broadcastingUrl(): string
     {
         return config('profiler.broadcasting_address') . ':' . config('profiler.broadcasting_port');
-    }
-
-    /**
-     * @param string $key
-     * @return array
-     */
-    public static function trackers(string $key = 'profiler.trackers'): array
-    {
-        return static::config($key);
-    }
-
-    /**
-     * @param string $key
-     * @return array
-     */
-    public static function processors(string $key = 'profiler.processors'): array
-    {
-        return static::config($key);
-    }
-
-    /**
-     * @param string $key
-     * @return array
-     */
-    protected static function config(string $key): array
-    {
-        return config($key, []);
     }
 }

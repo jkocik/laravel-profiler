@@ -7,6 +7,7 @@ return [
 //        'testing',
 //        'local',
     ],
+    'trackers' => [],
     'processors' => [
         \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,
     ],
