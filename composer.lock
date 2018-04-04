@@ -4,9 +4,123 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "16f2bc0612981db8448759f1ab333551",
-    "content-hash": "c07a12e32c95dbd36499b08ac5a6d414",
-    "packages": [],
+    "hash": "1336af8e38355bcd6b7caaa817841db6",
+    "content-hash": "4fbfa45adbe94d5fb543e4ffb360b2d1",
+    "packages": [
+        {
+            "name": "psr/log",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2016-10-10 12:19:37"
+        },
+        {
+            "name": "wisembly/elephant.io",
+            "version": "v3.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Wisembly/elephant.io.git",
+                "reference": "9d56f409fe231a906af87005f83a135565632d3f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Wisembly/elephant.io/zipball/9d56f409fe231a906af87005f83a135565632d3f",
+                "reference": "9d56f409fe231a906af87005f83a135565632d3f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ElephantIO\\": [
+                        "src/",
+                        "test/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Baptiste Clavié",
+                    "email": "baptiste@wisembly.com",
+                    "homepage": "http://baptiste.xn--clavi-fsa.net/",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Guillaume Potier",
+                    "email": "guillaume@wisembly.com",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Ludovic Barreca",
+                    "email": "ludogp2@gmail.com",
+                    "role": "Project Founder"
+                },
+                {
+                    "name": "Elephant.IO Community",
+                    "role": "Contributors :)"
+                }
+            ],
+            "description": "Send events to a websocket real time engine though PHP",
+            "homepage": "http://elephant.io",
+            "keywords": [
+                "dialog",
+                "nodejs",
+                "real time",
+                "websocket"
+            ],
+            "time": "2017-09-10 20:38:38"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
@@ -980,53 +1094,6 @@
             "time": "2018-01-06 05:45:45"
         },
         {
-            "name": "psr/log",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/log.git",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Log\\": "Psr/Log/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for logging libraries",
-            "homepage": "https://github.com/php-fig/log",
-            "keywords": [
-                "log",
-                "psr",
-                "psr-3"
-            ],
-            "time": "2016-10-10 12:19:37"
-        },
-        {
             "name": "sebastian/code-unit-reverse-lookup",
             "version": "1.0.1",
             "source": {
@@ -1973,7 +2040,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.0.0"
+        "php": ">=7.1.0"
     },
     "platform-dev": []
 }

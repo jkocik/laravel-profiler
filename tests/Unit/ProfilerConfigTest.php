@@ -31,7 +31,7 @@ class ProfilerConfigTest extends TestCase
     /** @test */
     function returns_empty_array_when_trackers_configuration_is_empty()
     {
-        $trackers = ProfilerConfig::trackers();
+        $trackers = ProfilerConfig::trackers('profiler.trackers-666');
 
         $this->assertCount(0, $trackers);
     }
@@ -55,8 +55,16 @@ class ProfilerConfigTest extends TestCase
     /** @test */
     function returns_empty_array_when_processors_configuration_is_empty()
     {
-        $processors = ProfilerConfig::processors();
+        $processors = ProfilerConfig::processors('profiler.processors-666');
 
         $this->assertCount(0, $processors);
+    }
+
+    /** @test */
+    function returns_laravel_profiler_broadcasting_event_name()
+    {
+        $event = ProfilerConfig::broadcastingEvent();
+
+        $this->assertEquals('laravel-profiler-broadcasting', $event);
     }
 }

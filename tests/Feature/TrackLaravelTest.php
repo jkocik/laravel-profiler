@@ -2,6 +2,8 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
+use Mockery;
+use ElephantIO\EngineInterface;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
@@ -45,5 +47,26 @@ class TrackLaravelTest extends TestCase
         $this->assertEquals('meta-value', $processorB->meta->get('meta-key'));
         $this->assertEquals('data-value', $processorA->data->get('data-key'));
         $this->assertEquals('data-value', $processorB->data->get('data-key'));
+    }
+
+    /** @test */
+    function collected_data_are_broadcast_by_default()
+    {
+        $socketEngine = Mockery::mock(EngineInterface::class);
+        $socketEngine->shouldReceive('connect')->once();
+        $socketEngine->shouldReceive('close')->once();
+        $socketEngine->shouldNotReceive('keepAlive');
+        $socketEngine->shouldReceive('emit')->withArgs(['laravel-profiler-broadcasting', [
+            'meta' => collect(),
+            'data' => collect()
+        ]])->once();
+
+        $this->app->singleton(EngineInterface::class, function () use ($socketEngine) {
+            return $socketEngine;
+        });
+
+        $this->app->terminate();
+
+        $this->assertSame($socketEngine, $this->app->make(EngineInterface::class));
     }
 }

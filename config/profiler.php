@@ -7,4 +7,8 @@ return [
 //        'testing',
 //        'local',
     ],
+    'processors' => [
+        \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,
+    ],
+    'broadcasting_event' => 'laravel-profiler-broadcasting',
 ];

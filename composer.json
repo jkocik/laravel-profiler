@@ -1,6 +1,7 @@
 {
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.1.0",
+        "wisembly/elephant.io": "^3.3"
     },
     "require-dev": {
         "laravel/homestead": "^7.3",
