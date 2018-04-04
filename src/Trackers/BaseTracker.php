@@ -29,7 +29,7 @@ abstract class BaseTracker implements Tracker
     /**
      * @return Collection
      */
-    final public function meta(): Collection
+    public function meta(): Collection
     {
         return $this->meta;
     }
@@ -37,7 +37,7 @@ abstract class BaseTracker implements Tracker
     /**
      * @return Collection
      */
-    final public function data(): Collection
+    public function data(): Collection
     {
         return $this->data;
     }

@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler;
 use Illuminate\Support\Collection;
 use JKocik\Laravel\Profiler\Contracts\Tracker;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
+use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
 class LaravelDataTracker implements DataTracker
 {
@@ -28,7 +29,10 @@ class LaravelDataTracker implements DataTracker
      */
     public function __construct()
     {
-        $this->trackers = new Collection();
+        $this->trackers = new Collection([
+            app()->make(ApplicationTracker::class),
+        ]);
+
         $this->meta = new Collection();
         $this->data = new Collection();
     }

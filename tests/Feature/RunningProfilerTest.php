@@ -13,7 +13,7 @@ use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorB;
 
-class TrackLaravelTest extends TestCase
+class RunningProfilerTest extends TestCase
 {
     /** @test */
     function collected_data_are_processed_when_laravel_is_terminated()
