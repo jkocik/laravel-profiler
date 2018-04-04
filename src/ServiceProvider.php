@@ -2,6 +2,8 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use ElephantIO\EngineInterface;
+use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
@@ -22,6 +24,10 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->singleton(DataProcessor::class, function () {
             return new LaravelDataProcessor();
+        });
+
+        $this->app->singleton(EngineInterface::class, function () {
+            return new Version2X(ProfilerConfig::broadcastingUrl());
         });
 
         $this->app->singleton(Profiler::class, function () {

@@ -67,4 +67,12 @@ class ProfilerConfigTest extends TestCase
 
         $this->assertEquals('laravel-profiler-broadcasting', $event);
     }
+
+    /** @test */
+    function returns_laravel_profiler_broadcasting_url()
+    {
+        $url = ProfilerConfig::broadcastingUrl();
+
+        $this->assertEquals('http://10.0.2.2:61976', $url);
+    }
 }

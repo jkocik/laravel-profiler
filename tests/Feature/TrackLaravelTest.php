@@ -3,8 +3,10 @@
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Mockery;
+use ElephantIO\Client;
 use ElephantIO\EngineInterface;
 use Illuminate\Foundation\Application;
+use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
@@ -68,5 +70,13 @@ class TrackLaravelTest extends TestCase
         $this->app->terminate();
 
         $this->assertSame($socketEngine, $this->app->make(EngineInterface::class));
+    }
+
+    /** @test */
+    function broadcasting_client_uses_version_2_of_socket_engine()
+    {
+        $client = $this->app->make(Client::class);
+
+        $this->assertInstanceOf(Version2X::class, $client->getEngine());
     }
 }

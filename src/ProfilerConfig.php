@@ -13,6 +13,14 @@ class ProfilerConfig
     }
 
     /**
+     * @return string
+     */
+    public static function broadcastingUrl(): string
+    {
+        return config('profiler.broadcasting_address') . ':' . config('profiler.broadcasting_port');
+    }
+
+    /**
      * @param string $key
      * @return array
      */
