@@ -2,14 +2,50 @@
 
 namespace JKocik\Laravel\Profiler\Services;
 
+use Illuminate\Config\Repository;
+use Illuminate\Foundation\Application;
+
 class ConfigService
 {
+    /**
+     * @var Application
+     */
+    protected $app;
+
+    /**
+     * @var Repository
+     */
+    protected $config;
+
+    /**
+     * ConfigService constructor.
+     * @param Application $app
+     * @param Repository $config
+     */
+    public function __construct(Application $app, Repository $config)
+    {
+        $this->app = $app;
+        $this->config = $config;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProfilerEnabled(): bool
+    {
+        if ($this->app->environment($this->config->get('profiler.force_disable_on'))) {
+            return false;
+        }
+
+        return $this->config->get('profiler.enabled') === true;
+    }
+
     /**
      * @return array
      */
     public function trackers(): array
     {
-        return config('profiler.trackers');
+        return $this->config->get('profiler.trackers');
     }
 
     /**
@@ -17,7 +53,7 @@ class ConfigService
      */
     public function processors(): array
     {
-        return config('profiler.processors');
+        return $this->config->get('profiler.processors');
     }
 
     /**
@@ -25,7 +61,7 @@ class ConfigService
      */
     public function broadcastingEvent(): string
     {
-        return config('profiler.broadcasting_event');
+        return $this->config->get('profiler.broadcasting_event');
     }
 
     /**
@@ -33,6 +69,9 @@ class ConfigService
      */
     public function broadcastingUrl(): string
     {
-        return config('profiler.broadcasting_address') . ':' . config('profiler.broadcasting_port');
+        $address = $this->config->get('profiler.broadcasting_address');
+        $port = $this->config->get('profiler.broadcasting_port');
+
+        return  $address . ':' . $port;
     }
 }

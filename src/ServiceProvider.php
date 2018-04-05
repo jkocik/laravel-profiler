@@ -25,7 +25,7 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind(EngineInterface::class, BroadcastingEngineService::class);
 
         $this->app->singleton(Profiler::class, function () {
-            return ProfilerResolver::resolve($this->app);
+            return $this->app->make(ProfilerResolver::class)->resolve();
         });
     }
 
