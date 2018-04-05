@@ -2,6 +2,7 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Contracts\Processor;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Services\ConfigService;
@@ -10,16 +11,23 @@ use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 class LaravelDataProcessor implements DataProcessor
 {
     /**
+     * @var Application
+     */
+    protected $app;
+
+    /**
      * @var ConfigService
      */
     protected $configService;
 
     /**
      * LaravelDataProcessor constructor.
+     * @param Application $app
      * @param ConfigService $configService
      */
-    public function __construct(ConfigService $configService)
+    public function __construct(Application $app, ConfigService $configService)
     {
+        $this->app = $app;
         $this->configService = $configService;
     }
 
@@ -40,6 +48,6 @@ class LaravelDataProcessor implements DataProcessor
      */
     protected function makeProcessor(string $processor): Processor
     {
-        return app()->make($processor);
+        return $this->app->make($processor);
     }
 }
