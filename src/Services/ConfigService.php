@@ -1,13 +1,13 @@
 <?php
 
-namespace JKocik\Laravel\Profiler;
+namespace JKocik\Laravel\Profiler\Services;
 
-class ProfilerConfig
+class ConfigService
 {
     /**
      * @return array
      */
-    public static function trackers(): array
+    public function trackers(): array
     {
         return config('profiler.trackers');
     }
@@ -15,7 +15,7 @@ class ProfilerConfig
     /**
      * @return array
      */
-    public static function processors(): array
+    public function processors(): array
     {
         return config('profiler.processors');
     }
@@ -23,7 +23,7 @@ class ProfilerConfig
     /**
      * @return string
      */
-    public static function broadcastingEvent(): string
+    public function broadcastingEvent(): string
     {
         return config('profiler.broadcasting_event');
     }
@@ -31,7 +31,7 @@ class ProfilerConfig
     /**
      * @return string
      */
-    public static function broadcastingUrl(): string
+    public function broadcastingUrl(): string
     {
         return config('profiler.broadcasting_address') . ':' . config('profiler.broadcasting_port');
     }

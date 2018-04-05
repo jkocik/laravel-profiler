@@ -3,11 +3,11 @@
 namespace JKocik\Laravel\Profiler;
 
 use ElephantIO\EngineInterface;
-use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use JKocik\Laravel\Profiler\Services\BroadcastingEngineService;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -18,17 +18,11 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->mergeConfigFrom(static::profilerConfigPath(), 'profiler');
 
-        $this->app->singleton(DataTracker::class, function () {
-            return new LaravelDataTracker();
-        });
+        $this->app->bind(DataTracker::class, LaravelDataTracker::class);
 
-        $this->app->singleton(DataProcessor::class, function () {
-            return new LaravelDataProcessor();
-        });
+        $this->app->bind(DataProcessor::class, LaravelDataProcessor::class);
 
-        $this->app->singleton(EngineInterface::class, function () {
-            return new Version2X(ProfilerConfig::broadcastingUrl());
-        });
+        $this->app->bind(EngineInterface::class, BroadcastingEngineService::class);
 
         $this->app->singleton(Profiler::class, function () {
             return ProfilerResolver::resolve($this->app);

@@ -1,16 +1,16 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\Tests\Unit;
+namespace JKocik\Laravel\Profiler\Tests\Unit\Services;
 
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use JKocik\Laravel\Profiler\ProfilerConfig;
-use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
-use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorB;
+use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
+use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
+use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorB;
 
-class ProfilerConfigTest extends TestCase
+class ConfigServiceTest extends TestCase
 {
     /** @test */
     function returns_trackers()
@@ -22,7 +22,7 @@ class ProfilerConfigTest extends TestCase
             ]);
         });
 
-        $trackers = ProfilerConfig::trackers();
+        $trackers = app()->make(ConfigService::class)->trackers();
 
         $this->assertContains(TrackerA::class, $trackers);
         $this->assertContains(TrackerB::class, $trackers);
@@ -38,7 +38,7 @@ class ProfilerConfigTest extends TestCase
             ]);
         });
 
-        $processors = ProfilerConfig::processors();
+        $processors = app()->make(ConfigService::class)->processors();
 
         $this->assertContains(ProcessorA::class, $processors);
         $this->assertContains(ProcessorB::class, $processors);
@@ -47,7 +47,7 @@ class ProfilerConfigTest extends TestCase
     /** @test */
     function returns_laravel_profiler_broadcasting_event_name()
     {
-        $event = ProfilerConfig::broadcastingEvent();
+        $event = app()->make(ConfigService::class)->broadcastingEvent();
 
         $this->assertEquals('laravel-profiler-broadcasting', $event);
     }
@@ -55,7 +55,7 @@ class ProfilerConfigTest extends TestCase
     /** @test */
     function returns_laravel_profiler_broadcasting_url()
     {
-        $url = ProfilerConfig::broadcastingUrl();
+        $url = app()->make(ConfigService::class)->broadcastingUrl();
 
         $this->assertEquals('http://10.0.2.2:61976', $url);
     }

@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler;
 use Illuminate\Support\Collection;
 use JKocik\Laravel\Profiler\Contracts\Tracker;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
+use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
 class LaravelDataTracker implements DataTracker
@@ -25,10 +26,18 @@ class LaravelDataTracker implements DataTracker
     protected $data;
 
     /**
-     * LaravelDataTracker constructor.
+     * @var ConfigService
      */
-    public function __construct()
+    protected $configService;
+
+    /**
+     * LaravelDataTracker constructor.
+     * @param ConfigService $configService
+     */
+    public function __construct(ConfigService $configService)
     {
+        $this->configService = $configService;
+
         $this->trackers = new Collection([
             app()->make(ApplicationTracker::class),
         ]);
@@ -46,7 +55,7 @@ class LaravelDataTracker implements DataTracker
             $this->trackers->push(
                 app()->make($tracker)
             );
-        }, ProfilerConfig::trackers());
+        }, $this->configService->trackers());
     }
 
     /**
