@@ -3,10 +3,16 @@
 namespace JKocik\Laravel\Profiler\Trackers;
 
 use Illuminate\Support\Collection;
+use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Contracts\Tracker;
 
 abstract class BaseTracker implements Tracker
 {
+    /**
+     * @var Application
+     */
+    protected $app;
+
     /**
      * @var Collection
      */
@@ -18,10 +24,12 @@ abstract class BaseTracker implements Tracker
     protected $data;
 
     /**
-     * Tracker constructor.
+     * BaseTracker constructor.
+     * @param Application $app
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
+        $this->app = $app;
         $this->meta = new Collection();
         $this->data = new Collection();
     }

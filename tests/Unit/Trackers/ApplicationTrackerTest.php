@@ -31,4 +31,26 @@ class ApplicationTrackerTest extends TestCase
 
         $this->assertNotEquals($firstId, $secondId);
     }
+
+    /** @test */
+    function has_version()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('version'));
+        $this->assertEquals($this->app->version(), $tracker->meta()->get('version'));
+    }
+
+    /** @test */
+    function has_env()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('env'));
+        $this->assertEquals('local', $tracker->meta()->get('env'));
+    }
 }

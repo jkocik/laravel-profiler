@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Mockery;
 use ElephantIO\Client;
 use ElephantIO\EngineInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Foundation\Application;
 use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -58,10 +59,11 @@ class RunningProfilerTest extends TestCase
         $socketEngine->shouldReceive('connect')->once();
         $socketEngine->shouldReceive('close')->once();
         $socketEngine->shouldNotReceive('keepAlive');
-        $socketEngine->shouldReceive('emit')->withArgs(['laravel-profiler-broadcasting', [
-            'meta' => collect(),
-            'data' => collect()
-        ]])->once();
+        $socketEngine->shouldReceive('emit')->withArgs(function ($arg1, $arg2) {
+            return $arg1 === 'laravel-profiler-broadcasting'
+                && $arg2['meta'] instanceof Collection
+                && $arg2['data'] instanceof Collection;
+        })->once();
 
         $this->app->singleton(EngineInterface::class, function () use ($socketEngine) {
             return $socketEngine;

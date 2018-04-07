@@ -2,6 +2,7 @@
 
 namespace JKocik\Laravel\Profiler\Trackers;
 
+use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Services\GeneratorService;
 
 class ApplicationTracker extends BaseTracker
@@ -13,11 +14,12 @@ class ApplicationTracker extends BaseTracker
 
     /**
      * ApplicationTracker constructor.
+     * @param Application $app
      * @param GeneratorService $generatorService
      */
-    public function __construct(GeneratorService $generatorService)
+    public function __construct(Application $app, GeneratorService $generatorService)
     {
-        parent::__construct();
+        parent::__construct($app);
 
         $this->generatorService = $generatorService;
     }
@@ -28,5 +30,7 @@ class ApplicationTracker extends BaseTracker
     public function terminate(): void
     {
         $this->meta->put('id', $this->generatorService->unique32CharsId());
+        $this->meta->put('version', $this->app->version());
+        $this->meta->put('env', $this->app->environment());
     }
 }
