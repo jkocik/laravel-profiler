@@ -1,3 +1,4 @@
 /.vagrant
+/client
 /vendor
 Homestead.yaml
