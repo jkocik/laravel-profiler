@@ -22,7 +22,7 @@ class ConfigServiceTest extends TestCase
             ]);
         });
 
-        $trackers = app()->make(ConfigService::class)->trackers();
+        $trackers = $this->app->make(ConfigService::class)->trackers();
 
         $this->assertContains(TrackerA::class, $trackers);
         $this->assertContains(TrackerB::class, $trackers);
@@ -38,7 +38,7 @@ class ConfigServiceTest extends TestCase
             ]);
         });
 
-        $processors = app()->make(ConfigService::class)->processors();
+        $processors = $this->app->make(ConfigService::class)->processors();
 
         $this->assertContains(ProcessorA::class, $processors);
         $this->assertContains(ProcessorB::class, $processors);
@@ -47,7 +47,7 @@ class ConfigServiceTest extends TestCase
     /** @test */
     function returns_laravel_profiler_broadcasting_event_name()
     {
-        $event = app()->make(ConfigService::class)->broadcastingEvent();
+        $event = $this->app->make(ConfigService::class)->broadcastingEvent();
 
         $this->assertEquals('laravel-profiler-broadcasting', $event);
     }
@@ -55,7 +55,7 @@ class ConfigServiceTest extends TestCase
     /** @test */
     function returns_laravel_profiler_broadcasting_url()
     {
-        $url = app()->make(ConfigService::class)->broadcastingUrl();
+        $url = $this->app->make(ConfigService::class)->broadcastingUrl();
 
         $this->assertEquals('http://10.0.2.2:61976', $url);
     }
