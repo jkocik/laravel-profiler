@@ -57,6 +57,6 @@ class ConfigServiceTest extends TestCase
     {
         $url = $this->app->make(ConfigService::class)->broadcastingUrl();
 
-        $this->assertEquals('http://10.0.2.2:61976', $url);
+        $this->assertEquals('http://10.0.2.2:1902', $url);
     }
 }
