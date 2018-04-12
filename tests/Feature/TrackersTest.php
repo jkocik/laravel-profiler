@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Trackers\BindingsTracker;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
 class TrackersTest extends TestCase
@@ -12,7 +13,7 @@ class TrackersTest extends TestCase
     /** @test */
     function application_tracker_is_required()
     {
-        $defaultTrackers = config('profiler.trackers');
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $applicationTracker = Mockery::mock(ApplicationTracker::class);
         $applicationTracker->shouldReceive('terminate')->once();
@@ -31,5 +32,13 @@ class TrackersTest extends TestCase
 
         $this->assertNotContains(ApplicationTracker::class, $defaultTrackers);
         $this->assertSame($applicationTracker, $this->app->make(ApplicationTracker::class));
+    }
+
+    /** @test */
+    function bindings_tracker_is_enabled_by_default()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $this->assertContains(BindingsTracker::class, $defaultTrackers);
     }
 }

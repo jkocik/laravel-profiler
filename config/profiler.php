@@ -7,7 +7,9 @@ return [
 //        'testing',
 //        'local',
     ],
-    'trackers' => [],
+    'trackers' => [
+        \JKocik\Laravel\Profiler\Trackers\BindingsTracker::class,
+    ],
     'processors' => [
         \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,
     ],
