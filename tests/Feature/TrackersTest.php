@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Trackers\RequestTracker;
 use JKocik\Laravel\Profiler\Trackers\BindingsTracker;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
@@ -40,5 +41,13 @@ class TrackersTest extends TestCase
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $this->assertContains(BindingsTracker::class, $defaultTrackers);
+    }
+
+    /** @test */
+    function request_tracker_is_enabled_by_default()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $this->assertContains(RequestTracker::class, $defaultTrackers);
     }
 }

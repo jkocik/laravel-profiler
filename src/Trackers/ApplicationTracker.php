@@ -32,5 +32,6 @@ class ApplicationTracker extends BaseTracker
         $this->meta->put('id', $this->generatorService->unique32CharsId());
         $this->meta->put('version', $this->app->version());
         $this->meta->put('env', $this->app->environment());
+        $this->meta->put('is_running_in_console', $this->app->runningInConsole());
     }
 }

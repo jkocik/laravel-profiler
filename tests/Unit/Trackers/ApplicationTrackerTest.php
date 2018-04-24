@@ -53,4 +53,15 @@ class ApplicationTrackerTest extends TestCase
         $this->assertTrue($tracker->meta()->has('env'));
         $this->assertEquals('local', $tracker->meta()->get('env'));
     }
+
+    /** @test */
+    function has_is_running_in_console()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('is_running_in_console'));
+        $this->assertEquals($this->app->runningInConsole(), $tracker->meta()->get('is_running_in_console'));
+    }
 }
