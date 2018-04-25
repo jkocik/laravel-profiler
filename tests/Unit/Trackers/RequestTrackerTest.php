@@ -15,7 +15,18 @@ class RequestTrackerTest extends TestCase
         $tracker->terminate();
 
         $this->assertTrue($tracker->meta()->has('method'));
-        $this->assertEquals(request()->method(), $tracker->meta()->get('method'));
+        $this->assertEquals('GET', $tracker->meta()->get('method'));
+    }
+
+    /** @test */
+    function has_path()
+    {
+        $tracker = $this->app->make(RequestTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('path'));
+        $this->assertEquals('/', $tracker->meta()->get('path'));
     }
 
     /** @test */
@@ -26,6 +37,6 @@ class RequestTrackerTest extends TestCase
         $tracker->terminate();
 
         $this->assertTrue($tracker->meta()->has('is_ajax'));
-        $this->assertEquals(request()->ajax(), $tracker->meta()->get('is_ajax'));
+        $this->assertEquals(false, $tracker->meta()->get('is_ajax'));
     }
 }
