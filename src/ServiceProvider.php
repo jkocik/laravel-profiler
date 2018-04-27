@@ -4,8 +4,12 @@ namespace JKocik\Laravel\Profiler;
 
 use ElephantIO\EngineInterface;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Contracts\DataService;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
+use JKocik\Laravel\Profiler\Services\LaravelDataService;
+use JKocik\Laravel\Profiler\Http\HttpKernelHandledListener;
+use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use JKocik\Laravel\Profiler\Services\BroadcastingEngineService;
 
@@ -24,6 +28,14 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->bind(EngineInterface::class, BroadcastingEngineService::class);
 
+        $this->app->singleton(DataService::class, function () {
+            return $this->app->make(LaravelDataService::class);
+        });
+
+        $this->app->singleton(RequestHandledListener::class, function () {
+            return $this->app->make(HttpKernelHandledListener::class);
+        });
+
         $this->app->singleton(Profiler::class, function () {
             return $this->app->make(ProfilerResolver::class)->resolve();
         });
@@ -35,6 +47,8 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(): void
     {
         $this->allowConfigFileToBePublished();
+
+        $this->app->make(RequestHandledListener::class)->listen();
 
         $this->app->make(Profiler::class)->boot(
             $this->app,

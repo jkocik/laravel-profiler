@@ -9,9 +9,11 @@ use JKocik\Laravel\Profiler\ServiceProvider;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use JKocik\Laravel\Profiler\Tests\Support\Framework;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 
 class TestCase extends BaseTestCase
 {
+    use MakesHttpRequests;
     use MockeryPHPUnitIntegration;
 
     /**
@@ -23,6 +25,11 @@ class TestCase extends BaseTestCase
      * @var Application
      */
     protected $app;
+
+    /**
+     * @var string
+     */
+    protected $baseUrl = 'http://localhost';
 
     /**
      * @return void
@@ -77,5 +84,13 @@ class TestCase extends BaseTestCase
         $app->register(ServiceProvider::class);
 
         return $app;
+    }
+
+    /**
+     * @return void
+     */
+    protected function turnOffProcessors(): void
+    {
+        $this->app->make('config')->set('profiler.processors', []);
     }
 }
