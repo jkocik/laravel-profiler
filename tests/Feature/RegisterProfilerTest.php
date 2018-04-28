@@ -154,6 +154,8 @@ class RegisterProfilerTest extends TestCase
      */
     protected function tearDown()
     {
+        parent::tearDown();
+
         putenv('APP_ENV=local');
         putenv('PROFILER_ENABLED');
     }

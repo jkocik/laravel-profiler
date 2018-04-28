@@ -3,10 +3,22 @@
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Tests\Support\PHPMockValues;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
 class ApplicationTrackerTest extends TestCase
 {
+    /** @test */
+    function has_execution_time_at()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('execution_time_at'));
+        $this->assertEquals(PHPMockValues::TIME, $tracker->meta()->get('execution_time_at'));
+    }
+
     /** @test */
     function has_profiler_single_execution_id()
     {

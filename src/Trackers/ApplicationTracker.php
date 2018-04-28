@@ -29,6 +29,7 @@ class ApplicationTracker extends BaseTracker
      */
     public function terminate(): void
     {
+        $this->meta->put('execution_time_at', time());
         $this->meta->put('id', $this->generatorService->unique32CharsId());
         $this->meta->put('version', $this->app->version());
         $this->meta->put('env', $this->app->environment());
