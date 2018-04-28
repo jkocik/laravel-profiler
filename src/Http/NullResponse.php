@@ -9,7 +9,8 @@ class NullResponse extends Response
     /**
      * @return null
      */
-    public function status() {
+    public function status()
+    {
         return null;
     }
 }

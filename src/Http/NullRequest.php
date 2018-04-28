@@ -9,14 +9,24 @@ class NullRequest extends Request
     /**
      * @return null
      */
-    public function method() {
+    public function method()
+    {
         return null;
     }
 
     /**
      * @return null
      */
-    public function path() {
+    public function path()
+    {
+        return null;
+    }
+
+    /**
+     * @return null
+     */
+    public function ajax()
+    {
         return null;
     }
 }

@@ -90,6 +90,7 @@ class RunningProfilerTest extends TestCase
 
         $this->assertNull($request->method());
         $this->assertNull($request->path());
+        $this->assertNull($request->ajax());
     }
 
     /** @test */
@@ -102,6 +103,7 @@ class RunningProfilerTest extends TestCase
 
         $this->assertEquals('POST', $dataService->request()->method());
         $this->assertEquals('666', $dataService->request()->path());
+        $this->assertFalse($dataService->request()->ajax());
     }
 
     /** @test */
