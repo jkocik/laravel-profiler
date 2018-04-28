@@ -10,7 +10,13 @@ interface Profiler
      * @param Application $app
      * @param DataTracker $dataTracker
      * @param DataProcessor $dataProcessor
+     * @param RequestHandledListener $requestHandledListener
      * @return void
      */
-    public function boot(Application $app, DataTracker $dataTracker, DataProcessor $dataProcessor): void;
+    public function boot(
+        Application $app,
+        DataTracker $dataTracker,
+        DataProcessor $dataProcessor,
+        RequestHandledListener $requestHandledListener
+    ): void;
 }

@@ -11,6 +11,7 @@ use JKocik\Laravel\Profiler\DisabledProfiler;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
+use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
 
 class RegisterProfilerTest extends TestCase
 {
@@ -18,18 +19,26 @@ class RegisterProfilerTest extends TestCase
      * @param Application $app
      * @param DataTracker $dataTracker
      * @param DataProcessor $dataProcessor
+     * @param RequestHandledListener $requestHandledListener
      * @return ServiceProvider
      */
     protected function serviceProvider(
         Application $app,
         DataTracker $dataTracker,
-        DataProcessor $dataProcessor
+        DataProcessor $dataProcessor,
+        RequestHandledListener $requestHandledListener
     ): ServiceProvider {
-        return new class($app, $dataTracker, $dataProcessor) extends ServiceProvider {
-            public function __construct(Application $app, DataTracker $dataTracker, DataProcessor $dataProcessor) {
+        return new class($app, $dataTracker, $dataProcessor, $requestHandledListener) extends ServiceProvider {
+            public function __construct(
+                Application $app,
+                DataTracker $dataTracker,
+                DataProcessor $dataProcessor,
+                RequestHandledListener $requestHandledListener
+            ) {
                 parent::__construct($app);
                 $this->dataTracker = $dataTracker;
                 $this->dataProcessor = $dataProcessor;
+                $this->requestHandledListener = $requestHandledListener;
             }
             public function register(): void {
                 parent::register();
@@ -38,6 +47,9 @@ class RegisterProfilerTest extends TestCase
                 });
                 $this->app->singleton(DataProcessor::class, function () {
                     return $this->dataProcessor;
+                });
+                $this->app->singleton(RequestHandledListener::class, function () {
+                    return $this->requestHandledListener;
                 });
             }
         };
@@ -115,8 +127,9 @@ class RegisterProfilerTest extends TestCase
     {
         $dataTracker = Mockery::spy(DataTracker::class);
         $dataProcessor = Mockery::spy(DataProcessor::class);
+        $requestHandledListener = Mockery::spy(RequestHandledListener::class);
         $this->app = $this->appWithoutProfiler();
-        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
+        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor, $requestHandledListener);
 
         $this->app->register($serviceProvider);
         $this->app->terminate();
@@ -127,6 +140,8 @@ class RegisterProfilerTest extends TestCase
         $dataTracker->shouldHaveReceived('terminate');
         $this->assertSame($dataProcessor, $this->app->make(DataProcessor::class));
         $dataProcessor->shouldHaveReceived('process');
+        $this->assertSame($requestHandledListener, $this->app->make(RequestHandledListener::class));
+        $requestHandledListener->shouldHaveReceived('listen');
     }
 
     /** @test */
@@ -135,8 +150,9 @@ class RegisterProfilerTest extends TestCase
         putenv('PROFILER_ENABLED=false');
         $dataTracker = Mockery::spy(DataTracker::class);
         $dataProcessor = Mockery::spy(DataProcessor::class);
+        $requestHandledListener = Mockery::spy(RequestHandledListener::class);
         $this->app = $this->appWithoutProfiler();
-        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
+        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor, $requestHandledListener);
 
         $this->app->register($serviceProvider);
         $this->app->terminate();
@@ -147,6 +163,8 @@ class RegisterProfilerTest extends TestCase
         $dataTracker->shouldNotHaveReceived('terminate');
         $this->assertSame($dataProcessor, $this->app->make(DataProcessor::class));
         $dataProcessor->shouldNotHaveReceived('process');
+        $this->assertSame($requestHandledListener, $this->app->make(RequestHandledListener::class));
+        $requestHandledListener->shouldNotHaveReceived('listen');
     }
 
     /**
