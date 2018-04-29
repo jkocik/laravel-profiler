@@ -9,7 +9,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Foundation\Application;
 use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use JKocik\Laravel\Profiler\Contracts\DataService;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
@@ -81,47 +80,5 @@ class RunningProfilerTest extends TestCase
         $client = $this->app->make(Client::class);
 
         $this->assertInstanceOf(Version2X::class, $client->getEngine());
-    }
-
-    /** @test */
-    function app_without_request_execution_has_fake_request()
-    {
-        $request = $this->app->make(DataService::class)->request();
-
-        $this->assertNull($request->method());
-        $this->assertNull($request->path());
-        $this->assertNull($request->ajax());
-    }
-
-    /** @test */
-    function app_with_request_execution_has_real_request()
-    {
-        $this->turnOffProcessors();
-        $dataService = $this->app->make(DataService::class);
-
-        $this->post('/666', []);
-
-        $this->assertEquals('POST', $dataService->request()->method());
-        $this->assertEquals('666', $dataService->request()->path());
-        $this->assertFalse($dataService->request()->ajax());
-    }
-
-    /** @test */
-    function app_without_request_execution_has_fake_response()
-    {
-        $response = $this->app->make(DataService::class)->response();
-
-        $this->assertNull($response->status());
-    }
-
-    /** @test */
-    function app_with_request_execution_has_real_response()
-    {
-        $this->turnOffProcessors();
-        $dataService = $this->app->make(DataService::class);
-
-        $this->post('/666', []);
-
-        $this->assertEquals('404', $dataService->response()->status());
     }
 }

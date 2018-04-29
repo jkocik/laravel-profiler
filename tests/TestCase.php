@@ -135,4 +135,12 @@ class TestCase extends BaseTestCase
     {
         $this->phpMock->disable();
     }
+
+    /**
+     * @return bool
+     */
+    protected function laravelVersionEqualOrGreaterThan55(): bool
+    {
+        return TESTS_FRAMEWORK_VERSION >= 5.5;
+    }
 }

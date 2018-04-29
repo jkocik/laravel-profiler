@@ -4,14 +4,13 @@ namespace JKocik\Laravel\Profiler;
 
 use ElephantIO\EngineInterface;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
-use JKocik\Laravel\Profiler\Contracts\DataService;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
-use JKocik\Laravel\Profiler\Services\LaravelDataService;
-use JKocik\Laravel\Profiler\Http\HttpKernelHandledListener;
-use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
+use JKocik\Laravel\Profiler\Contracts\ExecutionData;
+use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use JKocik\Laravel\Profiler\Services\BroadcastingEngineService;
+use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -26,14 +25,12 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->bind(DataProcessor::class, LaravelDataProcessor::class);
 
+        $this->app->bind(ExecutionWatcher::class, LaravelExecutionWatcher::class);
+
         $this->app->bind(EngineInterface::class, BroadcastingEngineService::class);
 
-        $this->app->singleton(DataService::class, function () {
-            return $this->app->make(LaravelDataService::class);
-        });
-
-        $this->app->singleton(RequestHandledListener::class, function () {
-            return $this->app->make(HttpKernelHandledListener::class);
+        $this->app->singleton(ExecutionData::class, function () {
+            return $this->app->make(LaravelExecutionData::class);
         });
 
         $this->app->singleton(Profiler::class, function () {
@@ -52,7 +49,7 @@ class ServiceProvider extends BaseServiceProvider
             $this->app,
             $this->app->make(DataTracker::class),
             $this->app->make(DataProcessor::class),
-            $this->app->make(RequestHandledListener::class)
+            $this->app->make(ExecutionWatcher::class)
         );
     }
 

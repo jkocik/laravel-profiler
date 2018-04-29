@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
+use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
 use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
 
 class LaravelProfiler implements Profiler
@@ -14,16 +15,16 @@ class LaravelProfiler implements Profiler
      * @param Application $app
      * @param DataTracker $dataTracker
      * @param DataProcessor $dataProcessor
-     * @param RequestHandledListener $requestHandledListener
+     * @param ExecutionWatcher $executionWatcher
      * @return void
      */
     public function boot(
         Application $app,
         DataTracker $dataTracker,
         DataProcessor $dataProcessor,
-        RequestHandledListener $requestHandledListener
+        ExecutionWatcher $executionWatcher
     ): void {
-        $requestHandledListener->listen();
+        $executionWatcher->watch();
 
         $dataTracker->track();
 

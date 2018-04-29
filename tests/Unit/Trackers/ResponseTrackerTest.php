@@ -4,23 +4,22 @@ namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
 use Mockery;
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use Symfony\Component\HttpFoundation\Response;
-use JKocik\Laravel\Profiler\Contracts\DataService;
+use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Trackers\ResponseTracker;
+use JKocik\Laravel\Profiler\Contracts\ExecutionResponse;
 
 class ResponseTrackerTest extends TestCase
 {
     /** @test */
-    function has_status()
+    function has_response_meta()
     {
-        $response = Mockery::mock(Response::class)->shouldIgnoreMissing();
-        $response->shouldReceive('status')->andReturn('201')->once();
-        $tracker = $this->app->make(ResponseTracker::class);
+        $response = Mockery::mock(ExecutionResponse::class);
+        $response->shouldReceive('meta')->andReturn(collect(['status' => 123]));
+        $this->app->make(ExecutionData::class)->setResponse($response);
 
-        $this->app->make(DataService::class)->setResponse($response);
+        $tracker = $this->app->make(ResponseTracker::class);
         $tracker->terminate();
 
-        $this->assertTrue($tracker->meta()->has('status'));
-        $this->assertEquals(201, $tracker->meta()->get('status'));
+        $this->assertEquals(123, $tracker->meta()->get('status'));
     }
 }

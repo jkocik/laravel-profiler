@@ -2,10 +2,10 @@
 
 namespace JKocik\Laravel\Profiler\Contracts;
 
-interface RequestHandledListener
+interface ExecutionWatcher
 {
     /**
      * @return void
      */
-    public function listen(): void;
+    public function watch(): void;
 }

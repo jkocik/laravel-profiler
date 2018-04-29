@@ -3,25 +3,25 @@
 namespace JKocik\Laravel\Profiler\Trackers;
 
 use Illuminate\Foundation\Application;
-use JKocik\Laravel\Profiler\Contracts\DataService;
+use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 
 class RequestTracker extends BaseTracker
 {
     /**
-     * @var DataService
+     * @var ExecutionData
      */
-    protected $dataService;
+    protected $executionData;
 
     /**
      * RequestTracker constructor.
      * @param Application $app
-     * @param DataService $dataService
+     * @param ExecutionData $executionData
      */
-    public function __construct(Application $app, DataService $dataService)
+    public function __construct(Application $app, ExecutionData $executionData)
     {
         parent::__construct($app);
 
-        $this->dataService = $dataService;
+        $this->executionData = $executionData;
     }
 
     /**
@@ -29,10 +29,6 @@ class RequestTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $request = $this->dataService->request();
-
-        $this->meta->put('method', $request->method());
-        $this->meta->put('path', $request->path());
-        $this->meta->put('is_ajax', $request->ajax());
+        $this->meta = $this->executionData->request()->meta();
     }
 }
