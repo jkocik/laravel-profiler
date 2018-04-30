@@ -37,26 +37,58 @@ class TrackersTest extends TestCase
     }
 
     /** @test */
+    function request_tracker_is_required()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $requestTracker = Mockery::mock(RequestTracker::class);
+        $requestTracker->shouldReceive('terminate')->once();
+        $requestTracker->shouldReceive('meta')->once()->andReturn(collect());
+        $requestTracker->shouldReceive('data')->once()->andReturn(collect());
+
+        $this->app = $this->appWith(function (Application $app) use ($requestTracker) {
+            $app->make('config')->set('profiler.trackers', []);
+            $app->make('config')->set('profiler.processors', []);
+            $app->singleton(RequestTracker::class, function () use ($requestTracker) {
+                return $requestTracker;
+            });
+        });
+
+        $this->app->terminate();
+
+        $this->assertNotContains(RequestTracker::class, $defaultTrackers);
+        $this->assertSame($requestTracker, $this->app->make(RequestTracker::class));
+    }
+
+    /** @test */
+    function response_tracker_is_required()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $responseTracker = Mockery::mock(ResponseTracker::class);
+        $responseTracker->shouldReceive('terminate')->once();
+        $responseTracker->shouldReceive('meta')->once()->andReturn(collect());
+        $responseTracker->shouldReceive('data')->once()->andReturn(collect());
+
+        $this->app = $this->appWith(function (Application $app) use ($responseTracker) {
+            $app->make('config')->set('profiler.trackers', []);
+            $app->make('config')->set('profiler.processors', []);
+            $app->singleton(ResponseTracker::class, function () use ($responseTracker) {
+                return $responseTracker;
+            });
+        });
+
+        $this->app->terminate();
+
+        $this->assertNotContains(ResponseTracker::class, $defaultTrackers);
+        $this->assertSame($responseTracker, $this->app->make(ResponseTracker::class));
+    }
+
+    /** @test */
     function bindings_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $this->assertContains(BindingsTracker::class, $defaultTrackers);
-    }
-
-    /** @test */
-    function request_tracker_is_enabled_by_default()
-    {
-        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
-
-        $this->assertContains(RequestTracker::class, $defaultTrackers);
-    }
-
-    /** @test */
-    function response_tracker_is_enabled_by_default()
-    {
-        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
-
-        $this->assertContains(ResponseTracker::class, $defaultTrackers);
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Contracts\Tracker;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Services\ConfigService;
+use JKocik\Laravel\Profiler\Trackers\RequestTracker;
+use JKocik\Laravel\Profiler\Trackers\ResponseTracker;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
 class LaravelDataTracker implements DataTracker
@@ -48,6 +50,8 @@ class LaravelDataTracker implements DataTracker
 
         $this->trackers = new Collection([
             $app->make(ApplicationTracker::class),
+            $app->make(RequestTracker::class),
+            $app->make(ResponseTracker::class),
         ]);
 
         $this->meta = new Collection();
