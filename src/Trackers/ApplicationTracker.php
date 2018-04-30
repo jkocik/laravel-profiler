@@ -29,10 +29,12 @@ class ApplicationTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $this->meta->put('execution_time_at', time());
+        $this->meta->put('execution_at', time());
         $this->meta->put('id', $this->generatorService->unique32CharsId());
-        $this->meta->put('version', $this->app->version());
+        $this->meta->put('laravel_version', $this->app->version());
+        $this->meta->put('php_version', phpversion());
         $this->meta->put('env', $this->app->environment());
         $this->meta->put('is_running_in_console', $this->app->runningInConsole());
+        $this->meta->put('memory_usage', memory_get_peak_usage());
     }
 }

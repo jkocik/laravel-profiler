@@ -3,16 +3,14 @@
 namespace JKocik\Laravel\Profiler\Tests;
 
 use Closure;
-use phpmock\MockBuilder;
 use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel;
 use phpmock\environment\MockEnvironment;
-use phpmock\functions\FixedValueFunction;
 use JKocik\Laravel\Profiler\ServiceProvider;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Tests\Support\Framework;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use JKocik\Laravel\Profiler\Tests\Support\PHPMockValues;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 
 class TestCase extends BaseTestCase
@@ -118,13 +116,7 @@ class TestCase extends BaseTestCase
      */
     protected function enablePhpMock(): void
     {
-        $time = new MockBuilder();
-        $time->setNamespace('JKocik\Laravel\Profiler\Trackers');
-        $time->setName('time');
-        $time->setFunctionProvider(new FixedValueFunction(PHPMockValues::TIME));
-
-        $this->phpMock = new MockEnvironment();
-        $this->phpMock->addMock($time->build());
+        $this->phpMock = PHPMock::phpMock();
         $this->phpMock->enable();
     }
 

@@ -3,20 +3,20 @@
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use JKocik\Laravel\Profiler\Tests\Support\PHPMockValues;
+use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
 class ApplicationTrackerTest extends TestCase
 {
     /** @test */
-    function has_execution_time_at()
+    function has_execution_at()
     {
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
 
-        $this->assertTrue($tracker->meta()->has('execution_time_at'));
-        $this->assertEquals(PHPMockValues::TIME, $tracker->meta()->get('execution_time_at'));
+        $this->assertTrue($tracker->meta()->has('execution_at'));
+        $this->assertEquals(PHPMock::TIME, $tracker->meta()->get('execution_at'));
     }
 
     /** @test */
@@ -45,14 +45,25 @@ class ApplicationTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_version()
+    function has_laravel_version()
     {
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
 
-        $this->assertTrue($tracker->meta()->has('version'));
-        $this->assertEquals($this->app->version(), $tracker->meta()->get('version'));
+        $this->assertTrue($tracker->meta()->has('laravel_version'));
+        $this->assertEquals($this->app->version(), $tracker->meta()->get('laravel_version'));
+    }
+
+    /** @test */
+    function has_php_version()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('php_version'));
+        $this->assertEquals(PHPMock::PHP_VERSION, $tracker->meta()->get('php_version'));
     }
 
     /** @test */
@@ -75,5 +86,16 @@ class ApplicationTrackerTest extends TestCase
 
         $this->assertTrue($tracker->meta()->has('is_running_in_console'));
         $this->assertEquals($this->app->runningInConsole(), $tracker->meta()->get('is_running_in_console'));
+    }
+
+    /** @test */
+    function has_memory_usage()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('memory_usage'));
+        $this->assertEquals(PHPMock::MEMORY_USAGE, $tracker->meta()->get('memory_usage'));
     }
 }
