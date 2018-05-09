@@ -85,7 +85,7 @@ class LaravelExecutionTest extends TestCase
         $this->post('/abc', [], ['X-Requested-With' => 'XMLHttpRequest']);
         $request = $executionData->request();
 
-        $this->assertEquals('http/ajax', $request->meta()->get('type'));
+        $this->assertEquals('http / ajax', $request->meta()->get('type'));
     }
 
     /** @test */
@@ -96,7 +96,7 @@ class LaravelExecutionTest extends TestCase
         $this->post('/abc', [], ['X-PJAX' => true]);
         $request = $executionData->request();
 
-        $this->assertEquals('http/pjax', $request->meta()->get('type'));
+        $this->assertEquals('http / pjax', $request->meta()->get('type'));
     }
 
     /** @test */
@@ -107,7 +107,7 @@ class LaravelExecutionTest extends TestCase
         $this->post('/abc', [], ['Content-Type' => 'application/json']);
         $request = $executionData->request();
 
-        $this->assertEquals('http/json', $request->meta()->get('type'));
+        $this->assertEquals('http / json', $request->meta()->get('type'));
     }
 
     /** @test */
@@ -121,7 +121,7 @@ class LaravelExecutionTest extends TestCase
         ]);
         $request = $executionData->request();
 
-        $this->assertEquals('http/ajax/json', $request->meta()->get('type'));
+        $this->assertEquals('http / ajax / json', $request->meta()->get('type'));
     }
 
     /** @test */

@@ -49,11 +49,11 @@ class HttpRequest implements ExecutionRequest
     {
         return collect([
             'http' => true,
-            '/ajax' => !! $this->request->ajax(),
-            '/pjax' => !! $this->request->pjax(),
-            '/json' => !! $this->request->isJson(),
+            'ajax' => !! $this->request->ajax(),
+            'pjax' => !! $this->request->pjax(),
+            'json' => !! $this->request->isJson(),
         ])->filter(function ($item) {
             return $item;
-        })->keys()->implode('');
+        })->keys()->implode(' / ');
     }
 }
