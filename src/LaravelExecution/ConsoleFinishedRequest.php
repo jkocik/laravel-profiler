@@ -14,9 +14,9 @@ class ConsoleFinishedRequest implements ExecutionRequest
 
     /**
      * ConsoleFinishedRequest constructor.
-     * @param string $command
+     * @param null|string $command
      */
-    public function __construct(string $command)
+    public function __construct(?string $command)
     {
         $this->command = $command;
     }
