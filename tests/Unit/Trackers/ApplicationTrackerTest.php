@@ -2,6 +2,8 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
+use Mockery;
+use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
@@ -80,12 +82,19 @@ class ApplicationTrackerTest extends TestCase
     /** @test */
     function has_is_running_in_console()
     {
+        $app = Mockery::mock(Application::class)
+            ->shouldIgnoreMissing()
+            ->shouldReceive('runningInConsole')
+            ->once()
+            ->andReturn(false)
+            ->getMock();
+        $this->app->instance(Application::class, $app);
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
 
         $this->assertTrue($tracker->meta()->has('is_running_in_console'));
-        $this->assertEquals($this->app->runningInConsole(), $tracker->meta()->get('is_running_in_console'));
+        $this->assertFalse($tracker->meta()->get('is_running_in_console'));
     }
 
     /** @test */
@@ -97,5 +106,74 @@ class ApplicationTrackerTest extends TestCase
 
         $this->assertTrue($tracker->meta()->has('memory_usage'));
         $this->assertEquals(PHPMock::MEMORY_USAGE, $tracker->meta()->get('memory_usage'));
+    }
+
+    /** @test */
+    function has_locale()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+        $application = $tracker->data()->get('application');
+
+        $this->assertTrue($application->has('locale'));
+        $this->assertEquals($this->app->getLocale(), $application->get('locale'));
+    }
+
+    /** @test */
+    function has_configuration_is_cached()
+    {
+        $app = Mockery::mock(Application::class)
+            ->shouldIgnoreMissing()
+            ->shouldReceive('configurationIsCached')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $this->app->instance(Application::class, $app);
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+        $application = $tracker->data()->get('application');
+
+        $this->assertTrue($application->has('configuration_is_cached'));
+        $this->assertTrue($application->get('configuration_is_cached'));
+    }
+
+    /** @test */
+    function has_routes_are_cached()
+    {
+        $app = Mockery::mock(Application::class)
+            ->shouldIgnoreMissing()
+            ->shouldReceive('routesAreCached')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $this->app->instance(Application::class, $app);
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+        $application = $tracker->data()->get('application');
+
+        $this->assertTrue($application->has('routes_are_cached'));
+        $this->assertTrue($application->get('routes_are_cached'));
+    }
+
+    /** @test */
+    function has_is_down_for_maintenance()
+    {
+        $app = Mockery::mock(Application::class)
+            ->shouldIgnoreMissing()
+            ->shouldReceive('isDownForMaintenance')
+            ->once()
+            ->andReturn(true)
+            ->getMock();
+        $this->app->instance(Application::class, $app);
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+        $application = $tracker->data()->get('application');
+
+        $this->assertTrue($application->has('is_down_for_maintenance'));
+        $this->assertTrue($application->get('is_down_for_maintenance'));
     }
 }
