@@ -8,6 +8,7 @@ return [
 //        'local',
     ],
     'trackers' => [
+        \JKocik\Laravel\Profiler\Trackers\PathsTracker::class,
         \JKocik\Laravel\Profiler\Trackers\BindingsTracker::class,
     ],
     'processors' => [
