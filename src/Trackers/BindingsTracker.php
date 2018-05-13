@@ -12,9 +12,7 @@ class BindingsTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $abstracts = array_keys($this->app->getBindings());
-
-        $bindings = Collection::make($abstracts)->map(function ($abstract) {
+        $bindings = $this->abstracts()->map(function ($abstract) {
             try {
                 $resolved = $this->resolved($abstract);
             } catch (InvalidArgumentException $e) {}
@@ -26,6 +24,16 @@ class BindingsTracker extends BaseTracker
         });
 
         $this->data->put('bindings', $bindings);
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function abstracts(): Collection
+    {
+        return Collection::make(
+            array_keys($this->app->getBindings())
+        );
     }
 
     /**

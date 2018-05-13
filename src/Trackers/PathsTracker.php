@@ -11,7 +11,7 @@ class PathsTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $paths = (new Collection([
+        $paths = Collection::make([
             'app_path' => $this->app->path(),
             'base_path' => $this->app->basePath(),
             'lang_path' => $this->app->langPath(),
@@ -26,11 +26,11 @@ class PathsTracker extends BaseTracker
             'cached_packages_path' => $this->getCachedPackagesPath(),
             'cached_services_path' => $this->app->getCachedServicesPath(),
             'environment_file_path' => $this->app->environmentFilePath(),
-        ]))->filter(function ($item) {
+        ])->filter(function ($item) {
             return !! $item;
         });
 
-        $this->data()->put('paths', $paths);
+        $this->data->put('paths', $paths);
     }
 
     /**

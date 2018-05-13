@@ -38,7 +38,7 @@ class ApplicationTracker extends BaseTracker
         $this->meta->put('is_running_in_console', $this->app->runningInConsole());
         $this->meta->put('memory_usage', memory_get_peak_usage());
 
-        $this->data->put('application', new Collection([
+        $this->data->put('application', Collection::make([
             'locale' => $this->app->getLocale(),
             'configuration_is_cached' => $this->app->configurationIsCached(),
             'routes_are_cached' => $this->app->routesAreCached(),

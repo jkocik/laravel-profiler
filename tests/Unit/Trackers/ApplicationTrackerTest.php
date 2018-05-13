@@ -82,12 +82,8 @@ class ApplicationTrackerTest extends TestCase
     /** @test */
     function has_is_running_in_console()
     {
-        $app = Mockery::mock(Application::class)
-            ->shouldIgnoreMissing()
-            ->shouldReceive('runningInConsole')
-            ->once()
-            ->andReturn(false)
-            ->getMock();
+        $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
+        $app->shouldReceive('runningInConsole')->once()->andReturn(false);
         $this->app->instance(Application::class, $app);
         $tracker = $this->app->make(ApplicationTracker::class);
 
@@ -123,12 +119,8 @@ class ApplicationTrackerTest extends TestCase
     /** @test */
     function has_configuration_is_cached()
     {
-        $app = Mockery::mock(Application::class)
-            ->shouldIgnoreMissing()
-            ->shouldReceive('configurationIsCached')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
+        $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
+        $app->shouldReceive('configurationIsCached')->once()->andReturn(true);
         $this->app->instance(Application::class, $app);
         $tracker = $this->app->make(ApplicationTracker::class);
 
@@ -142,12 +134,8 @@ class ApplicationTrackerTest extends TestCase
     /** @test */
     function has_routes_are_cached()
     {
-        $app = Mockery::mock(Application::class)
-            ->shouldIgnoreMissing()
-            ->shouldReceive('routesAreCached')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
+        $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
+        $app->shouldReceive('routesAreCached')->once()->andReturn(true);
         $this->app->instance(Application::class, $app);
         $tracker = $this->app->make(ApplicationTracker::class);
 
@@ -161,12 +149,8 @@ class ApplicationTrackerTest extends TestCase
     /** @test */
     function has_is_down_for_maintenance()
     {
-        $app = Mockery::mock(Application::class)
-            ->shouldIgnoreMissing()
-            ->shouldReceive('isDownForMaintenance')
-            ->once()
-            ->andReturn(true)
-            ->getMock();
+        $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
+        $app->shouldReceive('isDownForMaintenance')->once()->andReturn(true);
         $this->app->instance(Application::class, $app);
         $tracker = $this->app->make(ApplicationTracker::class);
 
