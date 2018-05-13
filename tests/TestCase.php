@@ -129,10 +129,30 @@ class TestCase extends BaseTestCase
     }
 
     /**
+     * @param float $version
      * @return bool
      */
-    protected function laravelVersionEqualOrGreaterThan55(): bool
+    protected function laravelVersionEqualOrGreaterThan(float $version): bool
     {
-        return TESTS_FRAMEWORK_VERSION >= 5.5;
+        if (TESTS_FRAMEWORK_VERSION >= $version) {
+            $this->assertTrue(true);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param float $version
+     * @return bool
+     */
+    protected function laravelVersionLowerThan(float $version): bool
+    {
+        if (TESTS_FRAMEWORK_VERSION < $version) {
+            $this->assertTrue(true);
+            return true;
+        }
+
+        return false;
     }
 }

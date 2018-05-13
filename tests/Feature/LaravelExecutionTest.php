@@ -125,10 +125,9 @@ class LaravelExecutionTest extends TestCase
     }
 
     /** @test */
-    function app_laravel_from_v_5_5_with_console_execution_has_console_request_and_response()
+    function console_execution_has_console_request_and_response()
     {
-        if (! $this->laravelVersionEqualOrGreaterThan55()) {
-            $this->assertTrue(true);
+        if ($this->laravelVersionLowerThan(5.5)) {
             return;
         }
 
@@ -150,10 +149,9 @@ class LaravelExecutionTest extends TestCase
     }
 
     /** @test */
-    function app_laravel_till_v_5_4_with_console_execution_has_console_request_and_response()
+    function in_old_laravel_versions_console_execution_has_console_request_and_response()
     {
-        if ($this->laravelVersionEqualOrGreaterThan55()) {
-            $this->assertTrue(true);
+        if ($this->laravelVersionEqualOrGreaterThan(5.5)) {
             return;
         }
 
