@@ -43,8 +43,8 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('app_path'));
-        $this->assertEquals($this->app->path(), $paths->get('app_path'));
+        $this->assertEquals($this->app->path(), $paths->where('name', 'app_path')->first()['path']);
+        $this->assertSame(0, $paths->keys()[0]);
     }
 
     /** @test */
@@ -55,8 +55,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('base_path'));
-        $this->assertEquals($this->app->basePath(), $paths->get('base_path'));
+        $this->assertEquals($this->app->basePath(), $paths->where('name', 'base_path')->first()['path']);
     }
 
     /** @test */
@@ -67,8 +66,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('lang_path'));
-        $this->assertEquals($this->app->langPath(), $paths->get('lang_path'));
+        $this->assertEquals($this->app->langPath(), $paths->where('name', 'lang_path')->first()['path']);
     }
 
     /** @test */
@@ -79,8 +77,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('config_path'));
-        $this->assertEquals($this->app->configPath(), $paths->get('config_path'));
+        $this->assertEquals($this->app->configPath(), $paths->where('name', 'config_path')->first()['path']);
     }
 
     /** @test */
@@ -91,8 +88,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('public_path'));
-        $this->assertEquals($this->app->publicPath(), $paths->get('public_path'));
+        $this->assertEquals($this->app->publicPath(), $paths->where('name', 'public_path')->first()['path']);
     }
 
     /** @test */
@@ -103,8 +99,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('storage_path'));
-        $this->assertEquals($this->app->storagePath(), $paths->get('storage_path'));
+        $this->assertEquals($this->app->storagePath(), $paths->where('name', 'storage_path')->first()['path']);
     }
 
     /** @test */
@@ -115,8 +110,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('database_path'));
-        $this->assertEquals($this->app->databasePath(), $paths->get('database_path'));
+        $this->assertEquals($this->app->databasePath(), $paths->where('name', 'database_path')->first()['path']);
     }
 
     /** @test */
@@ -131,8 +125,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('resource_path'));
-        $this->assertEquals($this->app->resourcePath(), $paths->get('resource_path'));
+        $this->assertEquals($this->app->resourcePath(), $paths->where('name', 'resource_path')->first()['path']);
     }
 
     /** @test */
@@ -158,8 +151,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('bootstrap_path'));
-        $this->assertEquals($this->app->bootstrapPath(), $paths->get('bootstrap_path'));
+        $this->assertEquals($this->app->bootstrapPath(), $paths->where('name', 'bootstrap_path')->first()['path']);
     }
 
     /** @test */
@@ -170,8 +162,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('cached_config_path'));
-        $this->assertEquals($this->app->getCachedConfigPath(), $paths->get('cached_config_path'));
+        $this->assertEquals($this->app->getCachedConfigPath(), $paths->where('name', 'cached_config_path')->first()['path']);
     }
 
     /** @test */
@@ -182,8 +173,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('cached_routes_path'));
-        $this->assertEquals($this->app->getCachedRoutesPath(), $paths->get('cached_routes_path'));
+        $this->assertEquals($this->app->getCachedRoutesPath(), $paths->where('name', 'cached_routes_path')->first()['path']);
     }
 
     /** @test */
@@ -194,8 +184,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('cached_services_path'));
-        $this->assertEquals($this->app->getCachedServicesPath(), $paths->get('cached_services_path'));
+        $this->assertEquals($this->app->getCachedServicesPath(), $paths->where('name', 'cached_services_path')->first()['path']);
     }
 
     /** @test */
@@ -210,8 +199,7 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('cached_packages_path'));
-        $this->assertEquals($this->app->getCachedPackagesPath(), $paths->get('cached_packages_path'));
+        $this->assertEquals($this->app->getCachedPackagesPath(), $paths->where('name', 'cached_packages_path')->first()['path']);
     }
 
     /** @test */
@@ -237,7 +225,6 @@ class PathsTrackerTest extends TestCase
         $tracker->terminate();
         $paths = $tracker->data()->get('paths');
 
-        $this->assertTrue($paths->has('environment_file_path'));
-        $this->assertEquals($this->app->environmentFilePath(), $paths->get('environment_file_path'));
+        $this->assertEquals($this->app->environmentFilePath(), $paths->where('name', 'environment_file_path')->first()['path']);
     }
 }
