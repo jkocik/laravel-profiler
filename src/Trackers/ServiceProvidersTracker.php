@@ -11,15 +11,7 @@ class ServiceProvidersTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $serviceProviders = $this->loadedProviders()->map(function ($provider) {
-            return [
-                'provider' => $provider,
-                'registered' => $this->registered($provider),
-                'booted' => $this->booted($provider),
-            ];
-        });
-
-        $this->data->put('serviceProviders', $serviceProviders);
+        $this->data->put('serviceProviders', $this->loadedProviders());
     }
 
     /**
