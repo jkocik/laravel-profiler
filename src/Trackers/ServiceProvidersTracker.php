@@ -11,7 +11,7 @@ class ServiceProvidersTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $serviceProviders = $this->loadedProviders()->map(function ($value, $provider) {
+        $serviceProviders = $this->loadedProviders()->map(function ($provider) {
             return [
                 'provider' => $provider,
                 'registered' => $this->registered($provider),
@@ -27,7 +27,9 @@ class ServiceProvidersTracker extends BaseTracker
      */
     protected function loadedProviders(): Collection
     {
-        return Collection::make($this->app->getLoadedProviders());
+        return Collection::make(
+            array_keys($this->app->getLoadedProviders())
+        );
     }
 
     /**

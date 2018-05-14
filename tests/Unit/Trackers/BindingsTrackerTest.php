@@ -21,6 +21,7 @@ class BindingsTrackerTest extends TestCase
 
         $this->assertNotNull($bindings);
         $this->assertCount(count($bindings), $this->app->getBindings());
+        $this->assertSame(0, $bindings->keys()[0]);
         $this->assertContains($bindings->first()['abstract'], array_keys($this->app->getBindings()));
     }
 

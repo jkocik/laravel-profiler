@@ -25,6 +25,7 @@ class ServiceProvidersTrackerTest extends TestCase
         $this->assertNotNull($serviceProviders);
         $this->assertTrue($serviceProviders->contains('provider', get_class($provider)));
         $this->assertCount(count($serviceProviders), $this->app->getLoadedProviders());
+        $this->assertSame(0, $serviceProviders->keys()[0]);
     }
 
     /** @test */
