@@ -10,6 +10,7 @@ return [
     'trackers' => [
         \JKocik\Laravel\Profiler\Trackers\PathsTracker::class,
         \JKocik\Laravel\Profiler\Trackers\BindingsTracker::class,
+        \JKocik\Laravel\Profiler\Trackers\ServiceProvidersTracker::class,
     ],
     'processors' => [
         \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,

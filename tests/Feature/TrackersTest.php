@@ -10,6 +10,7 @@ use JKocik\Laravel\Profiler\Trackers\RequestTracker;
 use JKocik\Laravel\Profiler\Trackers\ResponseTracker;
 use JKocik\Laravel\Profiler\Trackers\BindingsTracker;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
+use JKocik\Laravel\Profiler\Trackers\ServiceProvidersTracker;
 
 class TrackersTest extends TestCase
 {
@@ -91,6 +92,14 @@ class TrackersTest extends TestCase
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $this->assertContains(PathsTracker::class, $defaultTrackers);
+    }
+
+    /** @test */
+    function service_providers_tracker_is_enabled_by_default()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $this->assertContains(ServiceProvidersTracker::class, $defaultTrackers);
     }
 
     /** @test */
