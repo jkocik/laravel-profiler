@@ -14,8 +14,6 @@ class NullRequest implements ExecutionRequest
     {
         return collect([
             'type' => null,
-            'method' => null,
-            'path' => null,
         ]);
     }
 

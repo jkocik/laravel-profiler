@@ -12,9 +12,7 @@ class NullResponse implements ExecutionResponse
      */
     public function meta(): Collection
     {
-        return collect([
-            'status' => null,
-        ]);
+        return collect();
     }
 
     /**
