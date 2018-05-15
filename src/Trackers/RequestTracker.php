@@ -29,6 +29,9 @@ class RequestTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $this->meta = $this->executionData->request()->meta();
+        $request = $this->executionData->request();
+
+        $this->meta = $request->meta();
+        $this->data->put('request', $request->data());
     }
 }

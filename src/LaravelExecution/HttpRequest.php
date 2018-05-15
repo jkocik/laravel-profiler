@@ -28,9 +28,11 @@ class HttpRequest implements ExecutionRequest
     public function meta(): Collection
     {
         return collect([
-            'type' => $this->httpTypeWithSuffixes(),
+            'type' => 'http',
             'method' => $this->request->method(),
             'path' => $this->request->path(),
+            'ajax' => $this->request->ajax(),
+            'json' => $this->request->isJson(),
         ]);
     }
 
@@ -39,21 +41,16 @@ class HttpRequest implements ExecutionRequest
      */
     public function data(): Collection
     {
-        return collect();
-    }
-
-    /**
-     * @return string
-     */
-    protected function httpTypeWithSuffixes(): string
-    {
         return collect([
-            'http' => true,
-            'ajax' => !! $this->request->ajax(),
-            'pjax' => !! $this->request->pjax(),
-            'json' => !! $this->request->isJson(),
-        ])->filter(function ($item) {
-            return $item;
-        })->keys()->implode(' / ');
+            'pjax' => $this->request->pjax(),
+            'url' => $this->request->url(),
+            'query' => $this->request->query(),
+            'ip' => $this->request->ip(),
+            'server' => $this->request->server(),
+            'header' => $this->request->header(),
+            'input' => $this->request->input(),
+            'files' => $this->request->allFiles(),
+            'cookie' => $this->request->cookie(),
+        ]);
     }
 }

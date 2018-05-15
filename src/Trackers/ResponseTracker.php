@@ -29,6 +29,9 @@ class ResponseTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $this->meta = $this->executionData->response()->meta();
+        $response = $this->executionData->response();
+
+        $this->meta = $response->meta();
+        $this->data->put('response', $response->data());
     }
 }
