@@ -13,9 +13,7 @@ class ConsoleStartingRequest implements ExecutionRequest
     public function meta(): Collection
     {
         return collect([
-            'type' => 'command',
-            'method' => null,
-            'path' => null,
+            'type' => 'command-starting',
         ]);
     }
 

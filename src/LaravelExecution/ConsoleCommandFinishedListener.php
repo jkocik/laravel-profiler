@@ -33,7 +33,7 @@ class ConsoleCommandFinishedListener implements ExecutionListener
         });
 
         Event::listen(\Illuminate\Console\Events\CommandFinished::class, function ($event) {
-            $this->executionData->setRequest(new ConsoleFinishedRequest($event->command));
+            $this->executionData->setRequest(new ConsoleFinishedRequest($event->command, $event->input));
             $this->executionData->setResponse(new ConsoleFinishedResponse($event->exitCode));
         });
     }

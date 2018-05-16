@@ -15,7 +15,7 @@ class DummyCommand extends Command
      * DummyCommand constructor.
      * @param int $testExitCode
      */
-    public function __construct(int $testExitCode = 1)
+    public function __construct(int $testExitCode)
     {
         parent::__construct();
 
@@ -25,7 +25,7 @@ class DummyCommand extends Command
     /**
      * @var string
      */
-    protected $signature = 'dummy-command';
+    protected $signature = 'dummy-command {user?} {--number=}';
 
     /**
      * @var string

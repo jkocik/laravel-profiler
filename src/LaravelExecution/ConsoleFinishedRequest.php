@@ -3,22 +3,30 @@
 namespace JKocik\Laravel\Profiler\LaravelExecution;
 
 use Illuminate\Support\Collection;
+use Symfony\Component\Console\Input\InputInterface;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRequest;
 
 class ConsoleFinishedRequest implements ExecutionRequest
 {
     /**
-     * @var string
+     * @var null|string
      */
     protected $command;
 
     /**
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
      * ConsoleFinishedRequest constructor.
      * @param null|string $command
+     * @param InputInterface $input
      */
-    public function __construct(?string $command)
+    public function __construct(?string $command, InputInterface $input)
     {
         $this->command = $command;
+        $this->input = $input;
     }
 
     /**
@@ -27,8 +35,7 @@ class ConsoleFinishedRequest implements ExecutionRequest
     public function meta(): Collection
     {
         return collect([
-            'type' => 'command',
-            'method' => null,
+            'type' => 'command-finished',
             'path' => $this->command,
         ]);
     }
@@ -38,6 +45,9 @@ class ConsoleFinishedRequest implements ExecutionRequest
      */
     public function data(): Collection
     {
-        return collect();
+        return collect([
+            'arguments' => $this->input->getArguments(),
+            'options' => $this->input->getOptions(),
+        ]);
     }
 }
