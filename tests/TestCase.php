@@ -130,29 +130,25 @@ class TestCase extends BaseTestCase
 
     /**
      * @param float $version
-     * @return bool
+     * @param Closure $callback
+     * @return void
      */
-    protected function laravelVersionEqualOrGreaterThan(float $version): bool
+    protected function tapLaravelVersionTill(float $version, Closure $callback): void
     {
-        if (TESTS_FRAMEWORK_VERSION >= $version) {
-            $this->assertTrue(true);
-            return true;
+        if (TESTS_FRAMEWORK_VERSION <= $version) {
+            $callback->__invoke();
         }
-
-        return false;
     }
 
     /**
      * @param float $version
-     * @return bool
+     * @param Closure $callback
+     * @return void
      */
-    protected function laravelVersionLowerThan(float $version): bool
+    protected function tapLaravelVersionFrom(float $version, Closure $callback): void
     {
-        if (TESTS_FRAMEWORK_VERSION < $version) {
-            $this->assertTrue(true);
-            return true;
+        if (TESTS_FRAMEWORK_VERSION >= $version) {
+            $callback->__invoke();
         }
-
-        return false;
     }
 }

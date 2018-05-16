@@ -17,19 +17,6 @@ class LaravelHttpExecutionTest extends TestCase
     protected $executionData;
 
     /**
-     * @return bool
-     */
-    protected function isNotAbleToTestUploadedFile(): bool
-    {
-        if (! in_array('fake', get_class_methods(UploadedFile::class))) {
-            $this->assertTrue(true);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * @return void
      */
     protected function setUp()
@@ -40,7 +27,6 @@ class LaravelHttpExecutionTest extends TestCase
 
         $this->executionData = $this->app->make(ExecutionData::class);
     }
-
 
     /** @test */
     function has_http_request()
@@ -170,16 +156,15 @@ class LaravelHttpExecutionTest extends TestCase
     /** @test */
     function has_request_all_files()
     {
-        if ($this->isNotAbleToTestUploadedFile()) {
-            return;
-        }
+        $this->tapLaravelVersionTill(5.3, function () {
+            $this->assertTrue(true);
+        });
 
-        $this->post('/', [
-            'file-key-a' => UploadedFile::fake()->image('file-val-a'),
-        ]);
-        $request = $this->executionData->request();
-
-        $this->assertInstanceOf(UploadedFile::class, $request->data()->get('files')['file-key-a']);
+        $this->tapLaravelVersionFrom(5.4, function () {
+            $this->post('/', ['file-key-a' => UploadedFile::fake()->image('file-val-a')]);
+            $request = $this->executionData->request();
+            $this->assertInstanceOf(UploadedFile::class, $request->data()->get('files')['file-key-a']);
+        });
     }
 
     /** @test */
