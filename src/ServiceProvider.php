@@ -45,12 +45,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $this->allowConfigFileToBePublished();
 
-        $this->app->make(Profiler::class)->boot(
-            $this->app,
-            $this->app->make(DataTracker::class),
-            $this->app->make(DataProcessor::class),
-            $this->app->make(ExecutionWatcher::class)
-        );
+        $this->app->make(Profiler::class)->boot();
     }
 
     /**

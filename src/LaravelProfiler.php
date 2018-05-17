@@ -12,25 +12,57 @@ use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
 class LaravelProfiler implements Profiler
 {
     /**
+     * @var Application
+     */
+    protected $app;
+
+    /**
+     * @var DataTracker
+     */
+    protected $dataTracker;
+
+    /**
+     * @var DataProcessor
+     */
+    protected $dataProcessor;
+
+    /**
+     * @var ExecutionWatcher
+     */
+    protected $executionWatcher;
+
+    /**
+     * LaravelProfiler constructor.
      * @param Application $app
      * @param DataTracker $dataTracker
      * @param DataProcessor $dataProcessor
      * @param ExecutionWatcher $executionWatcher
-     * @return void
      */
-    public function boot(
+    public function __construct(
         Application $app,
         DataTracker $dataTracker,
         DataProcessor $dataProcessor,
         ExecutionWatcher $executionWatcher
-    ): void {
-        $executionWatcher->watch();
+    ) {
+        $this->app = $app;
+        $this->dataTracker = $dataTracker;
+        $this->dataProcessor = $dataProcessor;
+        $this->executionWatcher = $executionWatcher;
 
-        $dataTracker->track();
+    }
 
-        $app->terminating(function () use ($dataTracker, $dataProcessor) {
-            $dataTracker->terminate();
-            $dataProcessor->process($dataTracker);
+    /**
+     * @return void
+     */
+    public function boot(): void
+    {
+        $this->executionWatcher->watch();
+
+        $this->dataTracker->track();
+
+        $this->app->terminating(function () {
+            $this->dataTracker->terminate();
+            $this->dataProcessor->process($this->dataTracker);
         });
     }
 }
