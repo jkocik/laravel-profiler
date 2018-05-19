@@ -37,9 +37,9 @@ class LaravelDataProcessor implements DataProcessor
      */
     public function process(DataTracker $dataTracker): void
     {
-        array_map(function ($processor) use ($dataTracker) {
+        $this->configService->processors()->each(function (string $processor) use ($dataTracker) {
             $this->makeProcessor($processor)->process($dataTracker);
-        }, $this->configService->processors());
+        });
     }
 
     /**

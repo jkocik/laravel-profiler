@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler\Services;
 
 use Illuminate\Config\Repository;
+use Illuminate\Support\Collection;
 use Illuminate\Foundation\Application;
 
 class ConfigService
@@ -41,19 +42,19 @@ class ConfigService
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function trackers(): array
+    public function trackers(): Collection
     {
-        return $this->config->get('profiler.trackers');
+        return Collection::make($this->config->get('profiler.trackers'));
     }
 
     /**
-     * @return array
+     * @return Collection
      */
-    public function processors(): array
+    public function processors(): Collection
     {
-        return $this->config->get('profiler.processors');
+        return Collection::make($this->config->get('profiler.processors'));
     }
 
     /**

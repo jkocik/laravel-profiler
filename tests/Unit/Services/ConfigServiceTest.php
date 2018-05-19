@@ -24,8 +24,8 @@ class ConfigServiceTest extends TestCase
 
         $trackers = $this->app->make(ConfigService::class)->trackers();
 
-        $this->assertContains(TrackerA::class, $trackers);
-        $this->assertContains(TrackerB::class, $trackers);
+        $this->assertTrue($trackers->contains(TrackerA::class));
+        $this->assertTrue($trackers->contains(TrackerB::class));
     }
 
     /** @test */
@@ -40,8 +40,8 @@ class ConfigServiceTest extends TestCase
 
         $processors = $this->app->make(ConfigService::class)->processors();
 
-        $this->assertContains(ProcessorA::class, $processors);
-        $this->assertContains(ProcessorB::class, $processors);
+        $this->assertTrue($processors->contains(ProcessorA::class));
+        $this->assertTrue($processors->contains(ProcessorB::class));
     }
 
     /** @test */

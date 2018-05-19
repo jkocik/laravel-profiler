@@ -63,9 +63,9 @@ class LaravelDataTracker implements DataTracker
      */
     public function track(): void
     {
-        array_map(function ($tracker) {
+        $this->configService->trackers()->each(function (string $tracker) {
             $this->trackers->push($this->app->make($tracker));
-        }, $this->configService->trackers());
+        });
     }
 
     /**
