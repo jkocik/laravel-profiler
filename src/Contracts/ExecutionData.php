@@ -16,6 +16,17 @@ interface ExecutionData
     public function request(): ExecutionRequest;
 
     /**
+     * @param ExecutionRoute $route
+     * @return void
+     */
+    public function setRoute(ExecutionRoute $route): void;
+
+    /**
+     * @return ExecutionRoute
+     */
+    public function route(): ExecutionRoute;
+
+    /**
      * @param ExecutionResponse $response
      * @return void
      */

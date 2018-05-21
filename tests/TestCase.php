@@ -151,4 +151,17 @@ class TestCase extends BaseTestCase
             $callback->__invoke();
         }
     }
+
+    /**
+     * @param float $versionFrom
+     * @param float $versionTill
+     * @param Closure $callback
+     * @return void
+     */
+    protected function tapLaravelVersionBetween(float $versionFrom, float $versionTill, Closure $callback): void
+    {
+        if (TESTS_FRAMEWORK_VERSION >= $versionFrom && TESTS_FRAMEWORK_VERSION <= $versionTill) {
+            $callback->__invoke();
+        }
+    }
 }

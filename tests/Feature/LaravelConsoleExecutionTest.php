@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
+use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyCommand;
 use JKocik\Laravel\Profiler\LaravelExecution\ConsoleFinishedRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\ConsoleStartingRequest;
@@ -112,6 +113,15 @@ class LaravelConsoleExecutionTest extends TestCase
         $this->tapLaravelVersionFrom(5.5, function () use ($request) {
             $this->assertEquals(5, $request->data()->get('options')['number']);
         });
+    }
+
+    /** @test */
+    function has_null_route()
+    {
+        Artisan::call('dummy-command');
+        $route = $this->executionData->route();
+
+        $this->assertInstanceOf(NullRoute::class, $route);
     }
 
     /** @test */

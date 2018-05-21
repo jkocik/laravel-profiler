@@ -2,12 +2,20 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
+use ReflectionMethod;
+use ReflectionFunction;
+use ReflectionException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Route;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpResponse;
+use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyController;
+use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyFormRequest;
 
 class LaravelHttpExecutionTest extends TestCase
 {
@@ -174,6 +182,203 @@ class LaravelHttpExecutionTest extends TestCase
         $request = $this->executionData->request();
 
         $this->assertEquals(['cookie-key-a' => 'cookie-val-a'], $request->data()->get('cookie'));
+    }
+
+    /** @test */
+    function has_http_route()
+    {
+        $this->get('/');
+        $route = $this->executionData->route();
+
+        $this->assertInstanceOf(HttpRoute::class, $route);
+    }
+
+    /** @test */
+    function has_null_route_when_route_is_not_matched()
+    {
+        $this->get('/not-found');
+        $route = $this->executionData->route();
+
+        $this->assertInstanceOf(NullRoute::class, $route);
+    }
+
+    /** @test */
+    function has_route_methods()
+    {
+        Route::get('route-a/{id}', function ($id) {
+            return $id;
+        });
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals(['GET', 'HEAD'], $route->data()->get('methods'));
+    }
+
+    /** @test */
+    function has_route_uri()
+    {
+        Route::get('route-a/{id}', function ($id) {
+            return $id;
+        });
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals('route-a/{id}', $route->data()->get('uri'));
+    }
+
+    /** @test */
+    function has_route_name()
+    {
+        Route::get('route-a/{id}', function ($id) {
+            return $id;
+        })->name('route.a.with.id');
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals('route.a.with.id', $route->data()->get('name'));
+    }
+
+    /** @test */
+    function has_route_middleware()
+    {
+        Route::get('route-a/{id}', function ($id) {
+            return $id;
+        })->middleware('auth');
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals(['auth'], $route->data()->get('middleware'));
+    }
+
+    /** @test */
+    function has_route_parameters()
+    {
+        Route::get('route-a/{id}', function ($id) {
+            return $id;
+        });
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals(['id' => '123'], $route->data()->get('parameters'));
+    }
+
+    /** @test */
+    function has_route_prefix()
+    {
+        Route::group(['prefix' => 'admin'], function () {
+            Route::get('route-a/{id}', function ($id) {
+                return $id;
+            });
+        });
+
+        $this->get('/admin/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals('admin', $route->data()->get('prefix'));
+    }
+
+    /** @test */
+    function has_route_regex()
+    {
+        Route::get('route-a/{id}', function ($id) {
+            return $id;
+        })->where('id', '[0-9]+');
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertContains('/route\-a', $route->data()->get('regex'));
+        $this->assertContains('<id>[0-9]+', $route->data()->get('regex'));
+    }
+
+    /** @test */
+    function has_route_closure_action()
+    {
+        $uses = function (DummyFormRequest $request) {
+            return $request->get('id');
+        };
+        $action = new ReflectionFunction($uses);
+
+        Route::get('route-a/{id}', $uses);
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertContains(
+            'LaravelHttpExecutionTest.php:' . $action->getStartLine() . '-' . $action->getEndLine(),
+            $route->data()->get('uses')['closure']
+        );
+        $this->assertEquals(
+            DummyFormRequest::class,
+            $route->data()->get('uses')['form_request']
+        );
+    }
+
+    /** @test */
+    function has_route_controller_action()
+    {
+        Route::get('route-a/{id}', '\JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyController@dummyAction');
+        $action = new ReflectionMethod(DummyController::class, 'dummyAction');
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertContains(
+            'DummyController@dummyAction:' . $action->getStartLine() . '-' . $action->getEndLine(),
+            $route->data()->get('uses')['controller']
+        );
+        $this->assertEquals(
+            DummyFormRequest::class,
+            $route->data()->get('uses')['form_request']
+        );
+    }
+
+    /** @test */
+    function has_route_without_form_request_if_form_request_is_not_defined()
+    {
+        $uses = function ($id) {
+            return $id;
+        };
+
+        Route::get('route-a/{id}', $uses);
+
+        $this->get('/route-a/123');
+        $route = $this->executionData->route();
+
+        $this->assertEquals('', $route->data()->get('uses')['form_request']);
+    }
+
+    /** @test */
+    function has_route_with_not_existing_controller()
+    {
+        Route::get('route-a/{id}', '\JKocik\Laravel\Profiler\Tests\Support\Fixtures\NotExistingController@dummyAction');
+
+        $this->tapLaravelVersionTill(5.2, function () {
+            $this->get('/route-a/123');
+            $route = $this->executionData->route();
+
+            $this->assertInstanceOf(NullRoute::class, $route);
+        });
+
+        $this->tapLaravelVersionBetween(5.3, 5.3, function () {
+            try {
+                $this->get('/route-a/123');
+            } catch (ReflectionException $e) {
+                $this->assertTrue(true);
+            }
+        });
+
+        $this->tapLaravelVersionFrom(5.4, function () {
+            $this->get('/route-a/123');
+            $route = $this->executionData->route();
+
+            $this->assertEquals([], $route->data()->get('uses'));
+        });
     }
 
     /** @test */

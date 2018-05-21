@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler\LaravelExecution;
 
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
+use JKocik\Laravel\Profiler\Contracts\ExecutionRoute;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRequest;
 use JKocik\Laravel\Profiler\Contracts\ExecutionResponse;
 
@@ -14,6 +15,11 @@ class LaravelExecutionData implements ExecutionData
     protected $request;
 
     /**
+     * @var ExecutionRoute
+     */
+    protected $route;
+
+    /**
      * @var ExecutionResponse
      */
     protected $response;
@@ -23,8 +29,9 @@ class LaravelExecutionData implements ExecutionData
      */
     public function __construct()
     {
-        $this->request = new NullRequest();
-        $this->response = new NullResponse();
+        $this->setRequest(new NullRequest());
+        $this->setRoute(new NullRoute());
+        $this->setResponse(new NullResponse());
     }
 
     /**
@@ -42,6 +49,23 @@ class LaravelExecutionData implements ExecutionData
     public function request(): ExecutionRequest
     {
         return $this->request;
+    }
+
+    /**
+     * @param ExecutionRoute $route
+     * @return void
+     */
+    public function setRoute(ExecutionRoute $route): void
+    {
+        $this->route = $route;
+    }
+
+    /**
+     * @return ExecutionRoute
+     */
+    public function route(): ExecutionRoute
+    {
+        return $this->route;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
+use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\NullResponse;
 
@@ -44,6 +45,23 @@ class LaravelNullExecutionTest extends TestCase
         $this->assertNull($request->meta()->get('type'));
         $this->assertCount(1, $request->meta());
         $this->assertCount(0, $request->data());
+    }
+
+    /** @test */
+    function has_null_route()
+    {
+        $route = $this->executionData->route();
+
+        $this->assertInstanceOf(NullRoute::class, $route);
+    }
+
+    /** @test */
+    function null_route_is_empty()
+    {
+        $route = $this->executionData->route();
+
+        $this->assertCount(0, $route->meta());
+        $this->assertCount(0, $route->data());
     }
 
     /** @test */
