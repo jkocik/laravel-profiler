@@ -27,6 +27,17 @@ interface ExecutionData
     public function route(): ExecutionRoute;
 
     /**
+     * @param ExecutionSession $session
+     * @return void
+     */
+    public function setSession(ExecutionSession $session): void;
+
+    /**
+     * @return ExecutionSession
+     */
+    public function session(): ExecutionSession;
+
+    /**
      * @param ExecutionResponse $response
      * @return void
      */

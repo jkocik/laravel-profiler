@@ -6,6 +6,7 @@ use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRequest;
+use JKocik\Laravel\Profiler\LaravelExecution\NullSession;
 use JKocik\Laravel\Profiler\LaravelExecution\NullResponse;
 
 class LaravelNullExecutionTest extends TestCase
@@ -62,6 +63,23 @@ class LaravelNullExecutionTest extends TestCase
 
         $this->assertCount(0, $route->meta());
         $this->assertCount(0, $route->data());
+    }
+
+    /** @test */
+    function has_null_session()
+    {
+        $session = $this->executionData->session();
+
+        $this->assertInstanceOf(NullSession::class, $session);
+    }
+
+    /** @test */
+    function null_session_is_empty()
+    {
+        $session = $this->executionData->session();
+
+        $this->assertCount(0, $session->meta());
+        $this->assertCount(0, $session->data());
     }
 
     /** @test */

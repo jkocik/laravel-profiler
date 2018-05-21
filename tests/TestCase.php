@@ -12,10 +12,12 @@ use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Tests\Support\Framework;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
 
 class TestCase extends BaseTestCase
 {
     use MakesHttpRequests;
+    use InteractsWithSession;
     use MockeryPHPUnitIntegration;
 
     /**

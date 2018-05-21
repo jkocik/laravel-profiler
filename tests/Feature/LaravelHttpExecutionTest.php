@@ -13,6 +13,7 @@ use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpRequest;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpSession;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpResponse;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyController;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyFormRequest;
@@ -379,6 +380,28 @@ class LaravelHttpExecutionTest extends TestCase
 
             $this->assertEquals([], $route->data()->get('uses'));
         });
+    }
+
+    /** @test */
+    function has_http_session()
+    {
+        $this->get('/');
+        $session = $this->executionData->session();
+
+        $this->assertInstanceOf(HttpSession::class, $session);
+    }
+
+    /** @test */
+    function has_http_session_data()
+    {
+        $this->withSession([
+            'abc' => 123,
+            'xyz' => 789,
+        ])->get('/');
+        $session = $this->executionData->session();
+
+        $this->assertEquals(123, $session->data()->get('abc'));
+        $this->assertEquals(789, $session->data()->get('xyz'));
     }
 
     /** @test */

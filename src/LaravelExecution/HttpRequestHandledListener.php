@@ -33,12 +33,14 @@ class HttpRequestHandledListener implements ExecutionListener
         Event::listen('kernel.handled', function (Request $request, Response $response) {
             $this->executionData->setRequest(new HttpRequest($request));
             $this->executionData->setRoute($this->routeOf($request));
+            $this->executionData->setSession(new HttpSession(session()));
             $this->executionData->setResponse(new HttpResponse($response));
         });
 
         Event::listen(\Illuminate\Foundation\Http\Events\RequestHandled::class, function ($event) {
             $this->executionData->setRequest(new HttpRequest($event->request));
             $this->executionData->setRoute($this->routeOf($event->request));
+            $this->executionData->setSession(new HttpSession(session()));
             $this->executionData->setResponse(new HttpResponse($event->response));
         });
     }

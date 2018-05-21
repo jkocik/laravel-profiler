@@ -7,6 +7,7 @@ use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\NullSession;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyCommand;
 use JKocik\Laravel\Profiler\LaravelExecution\ConsoleFinishedRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\ConsoleStartingRequest;
@@ -122,6 +123,15 @@ class LaravelConsoleExecutionTest extends TestCase
         $route = $this->executionData->route();
 
         $this->assertInstanceOf(NullRoute::class, $route);
+    }
+
+    /** @test */
+    function has_null_session()
+    {
+        Artisan::call('dummy-command');
+        $session = $this->executionData->session();
+
+        $this->assertInstanceOf(NullSession::class, $session);
     }
 
     /** @test */
