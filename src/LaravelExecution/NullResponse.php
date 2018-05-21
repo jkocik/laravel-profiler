@@ -12,7 +12,7 @@ class NullResponse implements ExecutionResponse
      */
     public function meta(): Collection
     {
-        return collect();
+        return Collection::make();
     }
 
     /**
@@ -20,6 +20,6 @@ class NullResponse implements ExecutionResponse
      */
     public function data(): Collection
     {
-        return collect();
+        return Collection::make();
     }
 }

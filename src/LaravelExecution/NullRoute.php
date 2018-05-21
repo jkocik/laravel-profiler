@@ -12,7 +12,7 @@ class NullRoute implements ExecutionRoute
      */
     public function meta(): Collection
     {
-        return Collection::make([]);
+        return Collection::make();
     }
 
     /**
@@ -20,6 +20,6 @@ class NullRoute implements ExecutionRoute
      */
     public function data(): Collection
     {
-        return Collection::make([]);
+        return Collection::make();
     }
 }

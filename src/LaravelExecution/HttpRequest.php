@@ -27,7 +27,7 @@ class HttpRequest implements ExecutionRequest
      */
     public function meta(): Collection
     {
-        return collect([
+        return Collection::make([
             'type' => 'http',
             'method' => $this->request->method(),
             'path' => $this->request->path(),
@@ -41,7 +41,7 @@ class HttpRequest implements ExecutionRequest
      */
     public function data(): Collection
     {
-        return collect([
+        return Collection::make([
             'pjax' => $this->request->pjax(),
             'url' => $this->request->url(),
             'query' => $this->request->query(),

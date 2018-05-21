@@ -27,7 +27,7 @@ class HttpResponse implements ExecutionResponse
      */
     public function meta(): Collection
     {
-        return collect([
+        return Collection::make([
             'status' => $this->response->getStatusCode(),
         ]);
     }
@@ -37,7 +37,7 @@ class HttpResponse implements ExecutionResponse
      */
     public function data(): Collection
     {
-        return collect([
+        return Collection::make([
             'headers' => $this->response->headers->all(),
             'as_http_string' => (string) $this->response,
         ]);

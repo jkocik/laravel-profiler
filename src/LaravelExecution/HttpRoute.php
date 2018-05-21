@@ -33,7 +33,7 @@ class HttpRoute implements ExecutionRoute
      */
     public function meta(): Collection
     {
-        return Collection::make([]);
+        return Collection::make();
     }
 
     /**

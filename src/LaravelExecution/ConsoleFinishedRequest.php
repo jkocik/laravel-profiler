@@ -34,7 +34,7 @@ class ConsoleFinishedRequest implements ExecutionRequest
      */
     public function meta(): Collection
     {
-        return collect([
+        return Collection::make([
             'type' => 'command-finished',
             'path' => $this->command,
         ]);
@@ -45,7 +45,7 @@ class ConsoleFinishedRequest implements ExecutionRequest
      */
     public function data(): Collection
     {
-        return collect([
+        return Collection::make([
             'arguments' => $this->input->getArguments(),
             'options' => $this->input->getOptions(),
         ]);

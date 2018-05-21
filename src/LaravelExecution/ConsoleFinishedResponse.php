@@ -26,7 +26,7 @@ class ConsoleFinishedResponse implements ExecutionResponse
      */
     public function meta(): Collection
     {
-        return collect([
+        return Collection::make([
             'status' => $this->exitCode,
         ]);
     }
@@ -36,6 +36,6 @@ class ConsoleFinishedResponse implements ExecutionResponse
      */
     public function data(): Collection
     {
-        return collect();
+        return Collection::make();
     }
 }

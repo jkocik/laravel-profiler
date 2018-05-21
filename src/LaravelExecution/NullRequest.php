@@ -12,7 +12,7 @@ class NullRequest implements ExecutionRequest
      */
     public function meta(): Collection
     {
-        return collect([
+        return Collection::make([
             'type' => null,
         ]);
     }
@@ -22,6 +22,6 @@ class NullRequest implements ExecutionRequest
      */
     public function data(): Collection
     {
-        return collect();
+        return Collection::make();
     }
 }

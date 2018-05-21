@@ -12,7 +12,7 @@ class ConsoleStartingResponse implements ExecutionResponse
      */
     public function meta(): Collection
     {
-        return collect([
+        return Collection::make([
             'status' => null,
         ]);
     }
@@ -22,6 +22,6 @@ class ConsoleStartingResponse implements ExecutionResponse
      */
     public function data(): Collection
     {
-        return collect();
+        return Collection::make();
     }
 }
