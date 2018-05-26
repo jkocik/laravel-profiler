@@ -160,4 +160,19 @@ class ApplicationTrackerTest extends TestCase
         $this->assertTrue($application->has('is_down_for_maintenance'));
         $this->assertTrue($application->get('is_down_for_maintenance'));
     }
+
+    /** @test */
+    function has_should_skip_middleware()
+    {
+        $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
+        $app->shouldReceive('shouldSkipMiddleware')->once()->andReturn(true);
+        $this->app->instance(Application::class, $app);
+        $tracker = $this->app->make(ApplicationTracker::class);
+
+        $tracker->terminate();
+        $application = $tracker->data()->get('application');
+
+        $this->assertTrue($application->has('should_skip_middleware'));
+        $this->assertTrue($application->get('should_skip_middleware'));
+    }
 }

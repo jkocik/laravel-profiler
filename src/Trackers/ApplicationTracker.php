@@ -43,6 +43,7 @@ class ApplicationTracker extends BaseTracker
             'configuration_is_cached' => $this->app->configurationIsCached(),
             'routes_are_cached' => $this->app->routesAreCached(),
             'is_down_for_maintenance' => $this->app->isDownForMaintenance(),
+            'should_skip_middleware' => $this->app->shouldSkipMiddleware(),
         ]));
     }
 }
