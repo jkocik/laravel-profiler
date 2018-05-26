@@ -6,6 +6,7 @@ use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\PathsTracker;
+use JKocik\Laravel\Profiler\Trackers\ConfigTracker;
 use JKocik\Laravel\Profiler\Trackers\RequestTracker;
 use JKocik\Laravel\Profiler\Trackers\ResponseTracker;
 use JKocik\Laravel\Profiler\Trackers\BindingsTracker;
@@ -108,5 +109,13 @@ class TrackersTest extends TestCase
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $this->assertContains(BindingsTracker::class, $defaultTrackers);
+    }
+
+    /** @test */
+    function config_tracker_is_enabled_by_default()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $this->assertContains(ConfigTracker::class, $defaultTrackers);
     }
 }

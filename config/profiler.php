@@ -9,6 +9,7 @@ return [
     ],
     'trackers' => [
         \JKocik\Laravel\Profiler\Trackers\PathsTracker::class,
+        \JKocik\Laravel\Profiler\Trackers\ConfigTracker::class,
         \JKocik\Laravel\Profiler\Trackers\BindingsTracker::class,
         \JKocik\Laravel\Profiler\Trackers\ServiceProvidersTracker::class,
     ],
