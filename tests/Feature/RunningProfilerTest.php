@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Mockery;
 use ElephantIO\Client;
+use Psr\Log\NullLogger;
 use ElephantIO\EngineInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Application;
@@ -80,5 +81,22 @@ class RunningProfilerTest extends TestCase
         $client = $this->app->make(Client::class);
 
         $this->assertInstanceOf(Version2X::class, $client->getEngine());
+    }
+
+    /** @test */
+    function broadcasting_client_uses_null_logger()
+    {
+        $logger = Mockery::spy(NullLogger::class);
+        $this->app->instance(NullLogger::class, $logger);
+
+        $socketEngine = Mockery::mock(EngineInterface::class)->shouldIgnoreMissing();
+        $this->app->singleton(EngineInterface::class, function () use ($socketEngine) {
+            return $socketEngine;
+        });
+
+        $client = $this->app->make(Client::class);
+        $client->close();
+
+        $logger->shouldHaveReceived('debug');
     }
 }

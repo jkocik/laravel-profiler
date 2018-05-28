@@ -2,6 +2,8 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use ElephantIO\Client;
+use Psr\Log\NullLogger;
 use ElephantIO\EngineInterface;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
@@ -29,12 +31,19 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->app->bind(EngineInterface::class, BroadcastingEngineService::class);
 
-        $this->app->singleton(ExecutionData::class, function () {
-            return $this->app->make(LaravelExecutionData::class);
+        $this->app->bind(Client::class, function ($app) {
+            return new Client(
+                $app->make(EngineInterface::class),
+                $app->make(NullLogger::class)
+            );
         });
 
-        $this->app->singleton(Profiler::class, function () {
-            return $this->app->make(ProfilerResolver::class)->resolve();
+        $this->app->singleton(ExecutionData::class, function ($app) {
+            return $app->make(LaravelExecutionData::class);
+        });
+
+        $this->app->singleton(Profiler::class, function ($app) {
+            return $app->make(ProfilerResolver::class)->resolve();
         });
     }
 
