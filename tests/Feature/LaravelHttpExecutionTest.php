@@ -170,9 +170,28 @@ class LaravelHttpExecutionTest extends TestCase
         });
 
         $this->tapLaravelVersionFrom(5.4, function () {
-            $this->post('/', ['file-key-a' => UploadedFile::fake()->image('file-val-a')]);
+            $fileA = UploadedFile::fake()->image('file-val-a.jpg');
+            $fileB = UploadedFile::fake()->image('file-val-a.jpg');
+
+            $this->post('/', [
+                'file-key-a' => $fileA,
+                'file-key-b' => $fileB,
+            ]);
             $request = $this->executionData->request();
-            $this->assertInstanceOf(UploadedFile::class, $request->data()->get('files')['file-key-a']);
+            $this->assertEquals([
+                'client_original_name' => $fileA->getClientOriginalName(),
+                'client_original_extension' => $fileA->getClientOriginalExtension(),
+                'client_mime_type' => $fileA->getClientMimeType(),
+                'client_size' => $fileA->getClientSize(),
+                'path' => $fileA->path(),
+            ], $request->data()->get('files')['file-key-a']);
+            $this->assertEquals([
+                'client_original_name' => $fileB->getClientOriginalName(),
+                'client_original_extension' => $fileB->getClientOriginalExtension(),
+                'client_mime_type' => $fileB->getClientMimeType(),
+                'client_size' => $fileB->getClientSize(),
+                'path' => $fileB->path(),
+            ], $request->data()->get('files')['file-key-b']);
         });
     }
 

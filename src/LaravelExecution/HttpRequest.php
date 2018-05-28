@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler\LaravelExecution;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRequest;
 
@@ -49,8 +50,24 @@ class HttpRequest implements ExecutionRequest
             'server' => $this->request->server(),
             'header' => $this->request->header(),
             'input' => $this->request->input(),
-            'files' => $this->request->allFiles(),
+            'files' => $this->files(),
             'cookie' => $this->request->cookie(),
         ]);
+    }
+
+    /**
+     * @return Collection
+     */
+    protected function files(): Collection
+    {
+        return Collection::make($this->request->allFiles())->map(function (UploadedFile $file) {
+            return [
+                'client_original_name' => $file->getClientOriginalName(),
+                'client_original_extension' => $file->getClientOriginalExtension(),
+                'client_mime_type' => $file->getClientMimeType(),
+                'client_size' => $file->getClientSize(),
+                'path' => $file->path(),
+            ];
+        });
     }
 }
