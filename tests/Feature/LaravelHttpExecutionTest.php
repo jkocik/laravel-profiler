@@ -171,27 +171,70 @@ class LaravelHttpExecutionTest extends TestCase
 
         $this->tapLaravelVersionFrom(5.4, function () {
             $fileA = UploadedFile::fake()->image('file-val-a.jpg');
-            $fileB = UploadedFile::fake()->image('file-val-a.jpg');
+            $fileB = UploadedFile::fake()->image('file-val-b.jpg');
+            $typeA = get_class($fileA);
+            $typeB = get_class($fileB);
 
             $this->post('/', [
                 'file-key-a' => $fileA,
                 'file-key-b' => $fileB,
             ]);
+
             $request = $this->executionData->request();
+
             $this->assertEquals([
-                'client_original_name' => $fileA->getClientOriginalName(),
-                'client_original_extension' => $fileA->getClientOriginalExtension(),
-                'client_mime_type' => $fileA->getClientMimeType(),
-                'client_size' => $fileA->getClientSize(),
+                'client original name' => $fileA->getClientOriginalName(),
+                'client original extension' => $fileA->getClientOriginalExtension(),
+                'client mime type' => $fileA->getClientMimeType(),
+                'client size' => $fileA->getClientSize(),
                 'path' => $fileA->path(),
-            ], $request->data()->get('files')['file-key-a']);
+            ], $request->data()->get('files')['file-key-a'][$typeA]);
             $this->assertEquals([
-                'client_original_name' => $fileB->getClientOriginalName(),
-                'client_original_extension' => $fileB->getClientOriginalExtension(),
-                'client_mime_type' => $fileB->getClientMimeType(),
-                'client_size' => $fileB->getClientSize(),
+                'client original name' => $fileB->getClientOriginalName(),
+                'client original extension' => $fileB->getClientOriginalExtension(),
+                'client mime type' => $fileB->getClientMimeType(),
+                'client size' => $fileB->getClientSize(),
                 'path' => $fileB->path(),
-            ], $request->data()->get('files')['file-key-b']);
+            ], $request->data()->get('files')['file-key-b'][$typeB]);
+        });
+    }
+
+    /** @test */
+    function has_request_all_files_if_they_are_in_array()
+    {
+        $this->tapLaravelVersionTill(5.3, function () {
+            $this->assertTrue(true);
+        });
+
+        $this->tapLaravelVersionFrom(5.4, function () {
+            $fileA = UploadedFile::fake()->image('file-val-a.jpg');
+            $fileB = UploadedFile::fake()->image('file-val-b.jpg');
+            $fileX = UploadedFile::fake()->image('file-val-x.jpg');
+            $fileY = UploadedFile::fake()->image('file-val-y.jpg');
+            $typeA = get_class($fileA);
+            $typeB = get_class($fileB);
+            $typeX = get_class($fileX);
+            $typeY = get_class($fileY);
+
+            $this->post('/', [
+                'file-key-1' => [
+                    'a' => $fileA,
+                    'b' => $fileB,
+                ],
+                'file-key-2' => [
+                    'subkey' => [
+                        'x' => $fileX,
+                        'y' => $fileY,
+                    ],
+                ],
+            ]);
+
+            $request = $this->executionData->request();
+
+            $this->assertContains($fileA->path(), $request->data()->get('files')['file-key-1']['a'][$typeA]);
+            $this->assertContains($fileB->path(), $request->data()->get('files')['file-key-1']['b'][$typeB]);
+            $this->assertContains($fileX->path(), $request->data()->get('files')['file-key-2']['subkey']['x'][$typeX]);
+            $this->assertContains($fileY->path(), $request->data()->get('files')['file-key-2']['subkey']['y'][$typeY]);
         });
     }
 

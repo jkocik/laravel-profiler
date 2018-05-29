@@ -60,14 +60,39 @@ class HttpRequest implements ExecutionRequest
      */
     protected function files(): Collection
     {
-        return Collection::make($this->request->allFiles())->map(function (UploadedFile $file) {
-            return [
-                'client_original_name' => $file->getClientOriginalName(),
-                'client_original_extension' => $file->getClientOriginalExtension(),
-                'client_mime_type' => $file->getClientMimeType(),
-                'client_size' => $file->getClientSize(),
-                'path' => $file->path(),
-            ];
+        $files = Collection::make($this->request->allFiles());
+
+        return $this->filesMap($files);
+    }
+
+    /**
+     * @param Collection $files
+     * @return Collection
+     */
+    protected function filesMap(Collection $files): Collection
+    {
+        return $files->map(function ($file) {
+            if (is_array($file)) {
+                $files = Collection::make($file);
+                return $this->filesMap($files);
+            }
+
+            return [get_class($file) => $this->file($file)];
         });
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @return array
+     */
+    protected function file(UploadedFile $file): array
+    {
+        return [
+            'client original name' => $file->getClientOriginalName(),
+            'client original extension' => $file->getClientOriginalExtension(),
+            'client mime type' => $file->getClientMimeType(),
+            'client size' => $file->getClientSize(),
+            'path' => $file->path(),
+        ];
     }
 }
