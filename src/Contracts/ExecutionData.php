@@ -2,6 +2,9 @@
 
 namespace JKocik\Laravel\Profiler\Contracts;
 
+use Illuminate\View\View;
+use Illuminate\Support\Collection;
+
 interface ExecutionData
 {
     /**
@@ -47,4 +50,15 @@ interface ExecutionData
      * @return ExecutionResponse
      */
     public function response(): ExecutionResponse;
+
+    /**
+     * @param View $view
+     * @return void
+     */
+    public function pushView(View $view): void;
+
+    /**
+     * @return Collection
+     */
+    public function views(): Collection;
 }
