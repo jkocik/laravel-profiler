@@ -11,7 +11,7 @@ class ServiceProvidersTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $this->data->put('serviceProviders', $this->loadedProviders());
+        $this->data->put('service_providers', $this->loadedProviders());
     }
 
     /**

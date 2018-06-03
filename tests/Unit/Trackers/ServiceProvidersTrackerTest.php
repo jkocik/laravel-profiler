@@ -18,7 +18,7 @@ class ServiceProvidersTrackerTest extends TestCase
         $tracker = $this->app->make(ServiceProvidersTracker::class);
 
         $tracker->terminate();
-        $serviceProviders = $tracker->data()->get('serviceProviders');
+        $serviceProviders = $tracker->data()->get('service_providers');
 
         $this->assertNotNull($serviceProviders);
         $this->assertTrue($serviceProviders->contains(get_class($provider)));
