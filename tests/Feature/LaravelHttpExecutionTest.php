@@ -482,6 +482,7 @@ class LaravelHttpExecutionTest extends TestCase
         $response = $this->executionData->response();
 
         $this->assertEquals(404, $response->meta()->get('status'));
+        $this->assertEquals('Not Found', $response->meta()->get('status_text'));
     }
 
     /** @test */
@@ -494,13 +495,13 @@ class LaravelHttpExecutionTest extends TestCase
     }
 
     /** @test */
-    function has_response_http_string()
+    function has_response_content()
     {
         $this->get('/');
         $response = $this->executionData->response();
 
-        $this->assertContains('HTTP/1.1 200 OK', $response->data()->get('as_http_string'));
-        $this->assertContains('</body>', $response->data()->get('as_http_string'));
-        $this->assertContains('</html>', $response->data()->get('as_http_string'));
+        $this->assertNotContains('HTTP/1.1 200 OK', $response->data()->get('content'));
+        $this->assertContains('</body>', $response->data()->get('content'));
+        $this->assertContains('</html>', $response->data()->get('content'));
     }
 }

@@ -29,6 +29,7 @@ class HttpResponse implements ExecutionResponse
     {
         return Collection::make([
             'status' => $this->response->getStatusCode(),
+            'status_text' => $this->response::$statusTexts[$this->response->getStatusCode()],
         ]);
     }
 
@@ -39,7 +40,7 @@ class HttpResponse implements ExecutionResponse
     {
         return Collection::make([
             'headers' => $this->response->headers->all(),
-            'as_http_string' => (string) $this->response,
+            'content' => $this->response->getContent(),
         ]);
     }
 }
