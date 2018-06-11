@@ -1,12 +1,16 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\LaravelExecution;
+namespace JKocik\Laravel\Profiler\LaravelListeners;
 
 use Illuminate\Support\Facades\Event;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
-use JKocik\Laravel\Profiler\Contracts\ExecutionListener;
+use JKocik\Laravel\Profiler\Contracts\LaravelListener;
+use JKocik\Laravel\Profiler\LaravelExecution\ConsoleStartingRequest;
+use JKocik\Laravel\Profiler\LaravelExecution\ConsoleFinishedRequest;
+use JKocik\Laravel\Profiler\LaravelExecution\ConsoleStartingResponse;
+use JKocik\Laravel\Profiler\LaravelExecution\ConsoleFinishedResponse;
 
-class ConsoleCommandFinishedListener implements ExecutionListener
+class ConsoleCommandFinishedListener implements LaravelListener
 {
     /**
      * @var ExecutionData

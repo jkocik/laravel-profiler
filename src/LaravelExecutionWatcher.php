@@ -3,8 +3,8 @@
 namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
-use JKocik\Laravel\Profiler\LaravelExecution\HttpRequestHandledListener;
-use JKocik\Laravel\Profiler\LaravelExecution\ConsoleCommandFinishedListener;
+use JKocik\Laravel\Profiler\LaravelListeners\HttpRequestHandledListener;
+use JKocik\Laravel\Profiler\LaravelListeners\ConsoleCommandFinishedListener;
 
 class LaravelExecutionWatcher implements ExecutionWatcher
 {

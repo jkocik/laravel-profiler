@@ -11,8 +11,8 @@ use JKocik\Laravel\Profiler\DisabledProfiler;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
-use JKocik\Laravel\Profiler\LaravelExecution\HttpRequestHandledListener;
-use JKocik\Laravel\Profiler\LaravelExecution\ConsoleCommandFinishedListener;
+use JKocik\Laravel\Profiler\LaravelListeners\HttpRequestHandledListener;
+use JKocik\Laravel\Profiler\LaravelListeners\ConsoleCommandFinishedListener;
 
 class RegisterProfilerTest extends TestCase
 {

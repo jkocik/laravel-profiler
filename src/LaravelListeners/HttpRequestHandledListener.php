@@ -1,15 +1,20 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\LaravelExecution;
+namespace JKocik\Laravel\Profiler\LaravelListeners;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRoute;
-use JKocik\Laravel\Profiler\Contracts\ExecutionListener;
+use JKocik\Laravel\Profiler\Contracts\LaravelListener;
+use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpSession;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpRequest;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpResponse;
 
-class HttpRequestHandledListener implements ExecutionListener
+class HttpRequestHandledListener implements LaravelListener
 {
     /**
      * @var ExecutionData
