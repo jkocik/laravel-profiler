@@ -8,6 +8,7 @@ use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\PathsTracker;
 use JKocik\Laravel\Profiler\Trackers\RouteTracker;
 use JKocik\Laravel\Profiler\Trackers\ViewsTracker;
+use JKocik\Laravel\Profiler\Trackers\EventsTracker;
 use JKocik\Laravel\Profiler\Trackers\ConfigTracker;
 use JKocik\Laravel\Profiler\Trackers\SessionTracker;
 use JKocik\Laravel\Profiler\Trackers\RequestTracker;
@@ -144,5 +145,13 @@ class TrackersTest extends TestCase
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $this->assertContains(ViewsTracker::class, $defaultTrackers);
+    }
+
+    /** @test */
+    function events_tracker_is_enabled_by_default()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $this->assertContains(EventsTracker::class, $defaultTrackers);
     }
 }

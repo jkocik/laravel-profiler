@@ -12,6 +12,7 @@ return [
         \JKocik\Laravel\Profiler\Trackers\RouteTracker::class,
         \JKocik\Laravel\Profiler\Trackers\ViewsTracker::class,
         \JKocik\Laravel\Profiler\Trackers\ConfigTracker::class,
+        \JKocik\Laravel\Profiler\Trackers\EventsTracker::class,
         \JKocik\Laravel\Profiler\Trackers\SessionTracker::class,
         \JKocik\Laravel\Profiler\Trackers\BindingsTracker::class,
         \JKocik\Laravel\Profiler\Trackers\ServiceProvidersTracker::class,
