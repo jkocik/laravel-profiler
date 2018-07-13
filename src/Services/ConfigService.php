@@ -75,4 +75,12 @@ class ConfigService
 
         return  $address . ':' . $port;
     }
+
+    /**
+     * @return bool
+     */
+    public function broadcastingLogErrors(): bool
+    {
+        return $this->config->get('profiler.broadcasting_log_errors');
+    }
 }

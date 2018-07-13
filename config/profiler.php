@@ -23,4 +23,5 @@ return [
     'broadcasting_event' => 'laravel-profiler-broadcasting',
     'broadcasting_address' => 'http://10.0.2.2',
     'broadcasting_port' => '1902',
+    'broadcasting_log_errors' => true,
 ];

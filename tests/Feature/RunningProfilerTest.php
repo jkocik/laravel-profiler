@@ -7,6 +7,7 @@ use ElephantIO\Client;
 use Psr\Log\NullLogger;
 use ElephantIO\EngineInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Application;
 use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -98,5 +99,28 @@ class RunningProfilerTest extends TestCase
         $client->close();
 
         $logger->shouldHaveReceived('debug');
+    }
+
+    /** @test */
+    function broadcasting_exception_is_caught_and_not_processed_if_is_off_in_config()
+    {
+        $this->app = $this->appWith(function (Application $app) {
+            $app->make('config')->set('profiler.broadcasting_log_errors', false);
+        });
+
+        Log::shouldReceive('error')
+            ->times(0);
+
+        $this->app->terminate();
+    }
+
+    /** @test */
+    function broadcasting_exception_is_caught_and_processed_if_is_on_in_config()
+    {
+        Log::shouldReceive('error')
+            ->once()
+            ->with(\Exception::class);
+
+        $this->app->terminate();
     }
 }

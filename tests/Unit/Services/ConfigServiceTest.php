@@ -59,4 +59,19 @@ class ConfigServiceTest extends TestCase
 
         $this->assertEquals('http://10.0.2.2:1902', $url);
     }
+
+    /** @test */
+    function returns_laravel_profiler_broadcasting_log_errors()
+    {
+        $appA = $this->app;
+        $appB = $this->appWith(function (Application $app) {
+            $app->make('config')->set('profiler.broadcasting_log_errors', false);
+        });
+
+        $logErrorsA = $appA->make(ConfigService::class)->broadcastingLogErrors();
+        $logErrorsB = $appB->make(ConfigService::class)->broadcastingLogErrors();
+
+        $this->assertTrue($logErrorsA);
+        $this->assertFalse($logErrorsB);
+    }
 }
