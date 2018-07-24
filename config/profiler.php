@@ -3,9 +3,9 @@
 return [
     'enabled' => env('PROFILER_ENABLED', true),
     'force_disable_on' => [
-        'production',
-//        'testing',
-//        'local',
+        'production' => true,
+        'testing' => false,
+        'local' => false,
     ],
     'trackers' => [
         \JKocik\Laravel\Profiler\Trackers\PathsTracker::class,

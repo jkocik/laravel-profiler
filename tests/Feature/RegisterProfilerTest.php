@@ -97,7 +97,7 @@ class RegisterProfilerTest extends TestCase
         putenv('APP_ENV=test-profiler');
         putenv('PROFILER_ENABLED=true');
         $this->app = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.force_disable_on', ['test-profiler']);
+            $app->make('config')->set('profiler.force_disable_on', ['test-profiler' => true]);
         });
 
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));

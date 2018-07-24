@@ -34,7 +34,12 @@ class ConfigService
      */
     public function isProfilerEnabled(): bool
     {
-        if ($this->app->environment($this->config->get('profiler.force_disable_on'))) {
+        $forceDisableOn = Collection::make($this->config->get('profiler.force_disable_on'));
+        $envToDisable = $forceDisableOn->filter(function ($disable) {
+            return $disable;
+        })->keys();
+
+        if ($this->app->environment($envToDisable->toArray())) {
             return false;
         }
 
