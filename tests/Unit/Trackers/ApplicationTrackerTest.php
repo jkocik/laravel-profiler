@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
@@ -84,7 +85,9 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('runningInConsole')->once()->andReturn(false);
+        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
+
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
@@ -105,6 +108,20 @@ class ApplicationTrackerTest extends TestCase
     }
 
     /** @test */
+    function has_laravel_execution_time()
+    {
+        $tracker = $this->app->make(ApplicationTracker::class);
+        $timer = $this->app->make(Timer::class);
+
+        $timer->finishLaravel();
+        $tracker->terminate();
+
+        $this->assertTrue($tracker->meta()->has('laravel_execution_time'));
+        $this->assertGreaterThan(0, $tracker->meta()->get('laravel_execution_time'));
+        $this->assertEquals($timer->milliseconds('laravel'), $tracker->meta()->get('laravel_execution_time'));
+    }
+
+    /** @test */
     function has_locale()
     {
         $tracker = $this->app->make(ApplicationTracker::class);
@@ -121,7 +138,9 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('configurationIsCached')->once()->andReturn(true);
+        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
+
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
@@ -136,7 +155,9 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('routesAreCached')->once()->andReturn(true);
+        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
+
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
@@ -151,7 +172,9 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('isDownForMaintenance')->once()->andReturn(true);
+        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
+
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();
@@ -166,7 +189,9 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('shouldSkipMiddleware')->once()->andReturn(true);
+        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
+
         $tracker = $this->app->make(ApplicationTracker::class);
 
         $tracker->terminate();

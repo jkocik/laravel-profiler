@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\ServiceProvider;
 use JKocik\Laravel\Profiler\LaravelProfiler;
 use JKocik\Laravel\Profiler\DisabledProfiler;
@@ -18,27 +19,34 @@ class RegisterProfilerTest extends TestCase
 {
     /**
      * @param Application $app
+     * @param Timer $timer
      * @param DataTracker $dataTracker
      * @param DataProcessor $dataProcessor
      * @return ServiceProvider
      */
     protected function serviceProvider(
         Application $app,
+        Timer $timer,
         DataTracker $dataTracker,
         DataProcessor $dataProcessor
     ): ServiceProvider {
-        return new class($app, $dataTracker, $dataProcessor) extends ServiceProvider {
+        return new class($app, $timer, $dataTracker, $dataProcessor) extends ServiceProvider {
             public function __construct(
                 Application $app,
+                Timer $timer,
                 DataTracker $dataTracker,
                 DataProcessor $dataProcessor
             ) {
                 parent::__construct($app);
+                $this->timer = $timer;
                 $this->dataTracker = $dataTracker;
                 $this->dataProcessor = $dataProcessor;
             }
             public function register(): void {
                 parent::register();
+                $this->app->singleton(Timer::class, function () {
+                    return $this->timer;
+                });
                 $this->app->singleton(DataTracker::class, function () {
                     return $this->dataTracker;
                 });
@@ -119,6 +127,7 @@ class RegisterProfilerTest extends TestCase
     /** @test */
     function enabled_profiler_tracks_laravel()
     {
+        $timer = Mockery::spy(Timer::class);
         $dataTracker = Mockery::spy(DataTracker::class);
         $dataProcessor = Mockery::spy(DataProcessor::class);
         $httpRequestHandledListener = Mockery::spy(HttpRequestHandledListener::class);
@@ -127,12 +136,14 @@ class RegisterProfilerTest extends TestCase
         $this->app = $this->appWithoutProfiler();
         $this->app->instance(HttpRequestHandledListener::class, $httpRequestHandledListener);
         $this->app->instance(ConsoleCommandFinishedListener::class, $consoleCommandFinishedListener);
-        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
+        $serviceProvider = $this->serviceProvider($this->app, $timer, $dataTracker, $dataProcessor);
         $this->app->register($serviceProvider);
 
         $this->app->terminate();
 
         $this->assertInstanceOf(LaravelProfiler::class, $this->app->make(Profiler::class));
+        $this->assertSame($timer, $this->app->make(Timer::class));
+        $timer->shouldHaveReceived('finishLaravel');
         $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
         $dataTracker->shouldHaveReceived('track');
         $dataTracker->shouldHaveReceived('terminate');
@@ -146,6 +157,7 @@ class RegisterProfilerTest extends TestCase
     function disabled_profiler_does_not_track_laravel()
     {
         putenv('PROFILER_ENABLED=false');
+        $timer = Mockery::spy(Timer::class);
         $dataTracker = Mockery::spy(DataTracker::class);
         $dataProcessor = Mockery::spy(DataProcessor::class);
         $httpRequestHandledListener = Mockery::spy(HttpRequestHandledListener::class);
@@ -154,12 +166,14 @@ class RegisterProfilerTest extends TestCase
         $this->app = $this->appWithoutProfiler();
         $this->app->instance(HttpRequestHandledListener::class, $httpRequestHandledListener);
         $this->app->instance(ConsoleCommandFinishedListener::class, $consoleCommandFinishedListener);
-        $serviceProvider = $this->serviceProvider($this->app, $dataTracker, $dataProcessor);
+        $serviceProvider = $this->serviceProvider($this->app, $timer, $dataTracker, $dataProcessor);
         $this->app->register($serviceProvider);
 
         $this->app->terminate();
 
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
+        $this->assertSame($timer, $this->app->make(Timer::class));
+        $timer->shouldNotHaveReceived('finishLaravel');
         $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
         $dataTracker->shouldNotHaveReceived('track');
         $dataTracker->shouldNotHaveReceived('terminate');
