@@ -5,6 +5,8 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\NullServer;
+use JKocik\Laravel\Profiler\LaravelExecution\NullContent;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\NullSession;
 use JKocik\Laravel\Profiler\LaravelExecution\NullResponse;
@@ -83,6 +85,23 @@ class LaravelNullExecutionTest extends TestCase
     }
 
     /** @test */
+    function has_null_server()
+    {
+        $server = $this->executionData->server();
+
+        $this->assertInstanceOf(NullServer::class, $server);
+    }
+
+    /** @test */
+    function null_server_is_empty()
+    {
+        $server = $this->executionData->server();
+
+        $this->assertCount(0, $server->meta());
+        $this->assertCount(0, $server->data());
+    }
+
+    /** @test */
     function has_null_response()
     {
         $response = $this->executionData->response();
@@ -97,5 +116,22 @@ class LaravelNullExecutionTest extends TestCase
 
         $this->assertCount(0, $response->meta());
         $this->assertCount(0, $response->data());
+    }
+
+    /** @test */
+    function has_null_content()
+    {
+        $content = $this->executionData->content();
+
+        $this->assertInstanceOf(NullContent::class, $content);
+    }
+
+    /** @test */
+    function null_content_is_empty()
+    {
+        $content = $this->executionData->content();
+
+        $this->assertCount(0, $content->meta());
+        $this->assertCount(0, $content->data());
     }
 }

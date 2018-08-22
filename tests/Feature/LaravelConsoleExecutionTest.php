@@ -7,6 +7,8 @@ use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\NullServer;
+use JKocik\Laravel\Profiler\LaravelExecution\NullContent;
 use JKocik\Laravel\Profiler\LaravelExecution\NullSession;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyCommand;
 use JKocik\Laravel\Profiler\LaravelExecution\ConsoleFinishedRequest;
@@ -135,6 +137,15 @@ class LaravelConsoleExecutionTest extends TestCase
     }
 
     /** @test */
+    function has_null_server()
+    {
+        Artisan::call('dummy-command');
+        $server = $this->executionData->server();
+
+        $this->assertInstanceOf(NullServer::class, $server);
+    }
+
+    /** @test */
     function has_console_response()
     {
         Artisan::call('dummy-command');
@@ -167,5 +178,14 @@ class LaravelConsoleExecutionTest extends TestCase
             $this->assertCount(1, $response->meta());
             $this->assertCount(0, $response->data());
         });
+    }
+
+    /** @test */
+    function has_null_content()
+    {
+        Artisan::call('dummy-command');
+        $content = $this->executionData->content();
+
+        $this->assertInstanceOf(NullContent::class, $content);
     }
 }

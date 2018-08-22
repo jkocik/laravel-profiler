@@ -47,7 +47,6 @@ class HttpRequest implements ExecutionRequest
             'url' => $this->request->url(),
             'query' => $this->request->query(),
             'ip' => $this->request->ip(),
-            'server' => $this->request->server(),
             'header' => $this->request->header(),
             'input' => $this->request->input(),
             'files' => $this->files(),

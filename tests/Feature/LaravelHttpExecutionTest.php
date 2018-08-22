@@ -135,9 +135,9 @@ class LaravelHttpExecutionTest extends TestCase
     function has_request_server()
     {
         $this->get('/');
-        $request = $this->executionData->request();
+        $server = $this->executionData->server();
 
-        $this->assertEquals($this->app->make('request')->server(), $request->data()->get('server'));
+        $this->assertEquals($this->app->make('request')->server(), $server->data()->toArray());
     }
 
     /** @test */
@@ -498,10 +498,10 @@ class LaravelHttpExecutionTest extends TestCase
     function has_response_content()
     {
         $this->get('/');
-        $response = $this->executionData->response();
+        $content = $this->executionData->content();
 
-        $this->assertNotContains('HTTP/1.1 200 OK', $response->data()->get('content'));
-        $this->assertContains('</body>', $response->data()->get('content'));
-        $this->assertContains('</html>', $response->data()->get('content'));
+        $this->assertNotContains('HTTP/1.1 200 OK', $content->data()->get('content'));
+        $this->assertContains('</body>', $content->data()->get('content'));
+        $this->assertContains('</html>', $content->data()->get('content'));
     }
 }

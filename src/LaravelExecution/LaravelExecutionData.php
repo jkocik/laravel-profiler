@@ -4,7 +4,9 @@ namespace JKocik\Laravel\Profiler\LaravelExecution;
 
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRoute;
+use JKocik\Laravel\Profiler\Contracts\ExecutionServer;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRequest;
+use JKocik\Laravel\Profiler\Contracts\ExecutionContent;
 use JKocik\Laravel\Profiler\Contracts\ExecutionSession;
 use JKocik\Laravel\Profiler\Contracts\ExecutionResponse;
 
@@ -26,9 +28,19 @@ class LaravelExecutionData implements ExecutionData
     protected $session;
 
     /**
+     * @var ExecutionServer
+     */
+    protected $server;
+
+    /**
      * @var ExecutionResponse
      */
     protected $response;
+
+    /**
+     * @var ExecutionContent
+     */
+    protected $content;
 
     /**
      * LaravelExecutionData constructor.
@@ -38,7 +50,9 @@ class LaravelExecutionData implements ExecutionData
         $this->setRequest(new NullRequest());
         $this->setRoute(new NullRoute());
         $this->setSession(new NullSession());
+        $this->setServer(new NullServer());
         $this->setResponse(new NullResponse());
+        $this->setContent(new NullContent());
     }
 
     /**
@@ -93,6 +107,23 @@ class LaravelExecutionData implements ExecutionData
     }
 
     /**
+     * @param ExecutionServer $server
+     * @return void
+     */
+    public function setServer(ExecutionServer $server): void
+    {
+        $this->server = $server;
+    }
+
+    /**
+     * @return ExecutionServer
+     */
+    public function server(): ExecutionServer
+    {
+        return $this->server;
+    }
+
+    /**
      * @param ExecutionResponse $response
      * @return void
      */
@@ -107,5 +138,22 @@ class LaravelExecutionData implements ExecutionData
     public function response(): ExecutionResponse
     {
         return $this->response;
+    }
+
+    /**
+     * @param ExecutionContent $content
+     * @return void
+     */
+    public function setContent(ExecutionContent $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @return ExecutionContent
+     */
+    public function content(): ExecutionContent
+    {
+        return $this->content;
     }
 }

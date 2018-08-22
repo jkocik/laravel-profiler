@@ -38,6 +38,17 @@ interface ExecutionData
     public function session(): ExecutionSession;
 
     /**
+     * @param ExecutionServer $server
+     * @return void
+     */
+    public function setServer(ExecutionServer $server): void;
+
+    /**
+     * @return ExecutionServer
+     */
+    public function server(): ExecutionServer;
+
+    /**
      * @param ExecutionResponse $response
      * @return void
      */
@@ -47,4 +58,15 @@ interface ExecutionData
      * @return ExecutionResponse
      */
     public function response(): ExecutionResponse;
+
+    /**
+     * @param ExecutionContent $content
+     * @return void
+     */
+    public function setContent(ExecutionContent $content): void;
+
+    /**
+     * @return ExecutionContent
+     */
+    public function content(): ExecutionContent;
 }

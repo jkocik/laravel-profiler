@@ -4,9 +4,9 @@ namespace JKocik\Laravel\Profiler\LaravelExecution;
 
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
-use JKocik\Laravel\Profiler\Contracts\ExecutionResponse;
+use JKocik\Laravel\Profiler\Contracts\ExecutionContent;
 
-class HttpResponse implements ExecutionResponse
+class HttpContent implements ExecutionContent
 {
     /**
      * @var Response
@@ -14,7 +14,7 @@ class HttpResponse implements ExecutionResponse
     protected $response;
 
     /**
-     * HttpResponse constructor.
+     * HttpContent constructor.
      * @param Response $response
      */
     public function __construct(Response $response)
@@ -27,10 +27,7 @@ class HttpResponse implements ExecutionResponse
      */
     public function meta(): Collection
     {
-        return Collection::make([
-            'status' => $this->response->getStatusCode(),
-            'status_text' => $this->response::$statusTexts[$this->response->getStatusCode()],
-        ]);
+        return Collection::make();
     }
 
     /**
@@ -39,7 +36,7 @@ class HttpResponse implements ExecutionResponse
     public function data(): Collection
     {
         return Collection::make([
-            'headers' => $this->response->headers->all(),
+            'content' => $this->response->getContent(),
         ]);
     }
 }

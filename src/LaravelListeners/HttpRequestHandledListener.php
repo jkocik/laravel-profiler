@@ -10,7 +10,9 @@ use JKocik\Laravel\Profiler\Contracts\ExecutionRoute;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpRoute;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpServer;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpSession;
+use JKocik\Laravel\Profiler\LaravelExecution\HttpContent;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpResponse;
 
@@ -39,14 +41,18 @@ class HttpRequestHandledListener implements LaravelListener
             $this->executionData->setRequest(new HttpRequest($request));
             $this->executionData->setRoute($this->routeOf($request));
             $this->executionData->setSession(new HttpSession(session()));
+            $this->executionData->setServer(new HttpServer($request));
             $this->executionData->setResponse(new HttpResponse($response));
+            $this->executionData->setContent(new HttpContent($response));
         });
 
         Event::listen(\Illuminate\Foundation\Http\Events\RequestHandled::class, function ($event) {
             $this->executionData->setRequest(new HttpRequest($event->request));
             $this->executionData->setRoute($this->routeOf($event->request));
             $this->executionData->setSession(new HttpSession(session()));
+            $this->executionData->setServer(new HttpServer($event->request));
             $this->executionData->setResponse(new HttpResponse($event->response));
+            $this->executionData->setContent(new HttpContent($event->response));
         });
     }
 
