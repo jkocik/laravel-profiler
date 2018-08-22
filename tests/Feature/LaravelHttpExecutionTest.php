@@ -244,7 +244,7 @@ class LaravelHttpExecutionTest extends TestCase
         $this->call('GET', '/', [], ['cookie-key-a' => Crypt::encrypt('cookie-val-a')]);
         $request = $this->executionData->request();
 
-        $this->assertEquals(['cookie-key-a' => 'cookie-val-a'], $request->data()->get('cookie'));
+        $this->assertContains('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
     }
 
     /** @test */
