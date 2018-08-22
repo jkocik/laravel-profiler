@@ -21,8 +21,9 @@ return [
     'processors' => [
         \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,
     ],
-    'broadcasting_event' => 'laravel-profiler-broadcasting',
-    'broadcasting_address' => 'http://10.0.2.2',
-    'broadcasting_port' => '1902',
-    'broadcasting_log_errors' => true,
+    'broadcasting' => [
+        'address' => 'http://localhost',
+        'port' => '8099',
+        'log_errors_enabled' => true,
+    ],
 ];

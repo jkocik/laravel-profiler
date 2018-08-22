@@ -3,14 +3,12 @@
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Mockery;
-use ElephantIO\Client;
-use Psr\Log\NullLogger;
-use ElephantIO\EngineInterface;
-use Illuminate\Support\Collection;
+use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Application;
-use ElephantIO\Engine\SocketIO\Version2X;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
@@ -57,55 +55,27 @@ class RunningProfilerTest extends TestCase
     /** @test */
     function collected_data_are_broadcast_by_default()
     {
-        $socketEngine = Mockery::mock(EngineInterface::class);
-        $socketEngine->shouldReceive('connect')->once();
-        $socketEngine->shouldReceive('close')->once();
-        $socketEngine->shouldNotReceive('keepAlive');
-        $socketEngine->shouldReceive('emit')->withArgs(function ($arg1, $arg2) {
-            return $arg1 === 'laravel-profiler-broadcasting'
-                && $arg2['meta'] instanceof Collection
-                && $arg2['data'] instanceof Collection;
+        $config = $this->app->make(ConfigService::class);
+        $client = Mockery::mock(Client::class);
+        $client->shouldReceive('request')->withArgs(function ($arg1, $arg2, $arg3) use ($config) {
+            return $arg1 === 'POST'
+                && $arg2 === $config->broadcastingUrl()
+                && is_array($arg3['json']['meta'])
+                && is_array($arg3['json']['data']);
         })->once();
 
-        $this->app->singleton(EngineInterface::class, function () use ($socketEngine) {
-            return $socketEngine;
-        });
+        $this->app->instance(Client::class, $client);
 
         $this->app->terminate();
 
-        $this->assertSame($socketEngine, $this->app->make(EngineInterface::class));
+        $this->assertSame($client, $this->app->make(Client::class));
     }
 
     /** @test */
-    function broadcasting_client_uses_version_2_of_socket_engine()
-    {
-        $client = $this->app->make(Client::class);
-
-        $this->assertInstanceOf(Version2X::class, $client->getEngine());
-    }
-
-    /** @test */
-    function broadcasting_client_uses_null_logger()
-    {
-        $logger = Mockery::spy(NullLogger::class);
-        $this->app->instance(NullLogger::class, $logger);
-
-        $socketEngine = Mockery::mock(EngineInterface::class)->shouldIgnoreMissing();
-        $this->app->singleton(EngineInterface::class, function () use ($socketEngine) {
-            return $socketEngine;
-        });
-
-        $client = $this->app->make(Client::class);
-        $client->close();
-
-        $logger->shouldHaveReceived('debug');
-    }
-
-    /** @test */
-    function broadcasting_exception_is_caught_and_not_processed_if_is_off_in_config()
+    function broadcasting_exception_is_caught_and_not_processed_if_is_disabled_in_config()
     {
         $this->app = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.broadcasting_log_errors', false);
+            $app->make('config')->set('profiler.broadcasting.log_errors_enabled', false);
         });
 
         Log::shouldReceive('error')
@@ -115,11 +85,11 @@ class RunningProfilerTest extends TestCase
     }
 
     /** @test */
-    function broadcasting_exception_is_caught_and_processed_if_is_on_in_config()
+    function broadcasting_exception_is_caught_and_processed_if_is_enabled_in_config()
     {
         Log::shouldReceive('error')
             ->once()
-            ->with(\Exception::class);
+            ->with(Exception::class);
 
         $this->app->terminate();
     }

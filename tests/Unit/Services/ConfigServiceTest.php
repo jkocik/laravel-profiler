@@ -45,31 +45,23 @@ class ConfigServiceTest extends TestCase
     }
 
     /** @test */
-    function returns_laravel_profiler_broadcasting_event_name()
-    {
-        $event = $this->app->make(ConfigService::class)->broadcastingEvent();
-
-        $this->assertEquals('laravel-profiler-broadcasting', $event);
-    }
-
-    /** @test */
     function returns_laravel_profiler_broadcasting_url()
     {
         $url = $this->app->make(ConfigService::class)->broadcastingUrl();
 
-        $this->assertEquals('http://10.0.2.2:1902', $url);
+        $this->assertEquals('http://localhost:8099', $url);
     }
 
     /** @test */
-    function returns_laravel_profiler_broadcasting_log_errors()
+    function returns_laravel_profiler_broadcasting_log_errors_enabled()
     {
         $appA = $this->app;
         $appB = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.broadcasting_log_errors', false);
+            $app->make('config')->set('profiler.broadcasting.log_errors_enabled', false);
         });
 
-        $logErrorsA = $appA->make(ConfigService::class)->broadcastingLogErrors();
-        $logErrorsB = $appB->make(ConfigService::class)->broadcastingLogErrors();
+        $logErrorsA = $appA->make(ConfigService::class)->broadcastingLogErrorsEnabled();
+        $logErrorsB = $appB->make(ConfigService::class)->broadcastingLogErrorsEnabled();
 
         $this->assertTrue($logErrorsA);
         $this->assertFalse($logErrorsB);

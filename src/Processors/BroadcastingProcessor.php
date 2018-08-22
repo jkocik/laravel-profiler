@@ -3,7 +3,7 @@
 namespace JKocik\Laravel\Profiler\Processors;
 
 use Exception;
-use ElephantIO\Client;
+use GuzzleHttp\Client;
 use JKocik\Laravel\Profiler\ProfilerConfig;
 use JKocik\Laravel\Profiler\Services\LogService;
 use JKocik\Laravel\Profiler\Contracts\Processor;
@@ -47,13 +47,14 @@ class BroadcastingProcessor implements Processor
     public function process(DataTracker $dataTracker): void
     {
         try {
-            $this->client->initialize();
-            $this->client->emit($this->configService->broadcastingEvent(), [
-                'meta' => $dataTracker->meta(),
-                'data' => $dataTracker->data(),
+            $this->client->request('POST', $this->configService->broadcastingUrl(), [
+                'json' => [
+                    'meta' => $dataTracker->meta()->toArray(),
+                    'data' => $dataTracker->data()->toArray(),
+                ],
             ]);
         } catch (Exception $e) {
-            $this->logService->error($e, $this->configService->broadcastingLogErrors());
+            $this->logService->error($e, $this->configService->broadcastingLogErrorsEnabled());
         }
     }
 }

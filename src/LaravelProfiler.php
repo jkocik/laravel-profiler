@@ -2,9 +2,6 @@
 
 namespace JKocik\Laravel\Profiler;
 
-use ElephantIO\Client;
-use Psr\Log\NullLogger;
-use ElephantIO\EngineInterface;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
@@ -12,7 +9,6 @@ use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
 use JKocik\Laravel\Profiler\Services\Timer\TimerService;
 use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
-use JKocik\Laravel\Profiler\Services\BroadcastingEngineService;
 use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
 
 class LaravelProfiler extends BaseProfiler
@@ -27,15 +23,6 @@ class LaravelProfiler extends BaseProfiler
         $this->app->bind(DataProcessor::class, LaravelDataProcessor::class);
 
         $this->app->bind(ExecutionWatcher::class, LaravelExecutionWatcher::class);
-
-        $this->app->bind(EngineInterface::class, BroadcastingEngineService::class);
-
-        $this->app->bind(Client::class, function ($app) {
-            return new Client(
-                $app->make(EngineInterface::class),
-                $app->make(NullLogger::class)
-            );
-        });
 
         $this->app->singleton(ExecutionData::class, function ($app) {
             return $app->make(LaravelExecutionData::class);
@@ -60,6 +47,7 @@ class LaravelProfiler extends BaseProfiler
 
         $executionWatcher->watch();
         $dataTracker->track();
+
         $this->app->terminating(function () use ($timer, $dataTracker, $dataProcessor) {
             $timer->finishLaravel();
             $dataTracker->terminate();

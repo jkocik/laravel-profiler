@@ -65,18 +65,10 @@ class ConfigService
     /**
      * @return string
      */
-    public function broadcastingEvent(): string
-    {
-        return $this->config->get('profiler.broadcasting_event');
-    }
-
-    /**
-     * @return string
-     */
     public function broadcastingUrl(): string
     {
-        $address = $this->config->get('profiler.broadcasting_address');
-        $port = $this->config->get('profiler.broadcasting_port');
+        $address = $this->config->get('profiler.broadcasting.address');
+        $port = $this->config->get('profiler.broadcasting.port');
 
         return  $address . ':' . $port;
     }
@@ -84,8 +76,8 @@ class ConfigService
     /**
      * @return bool
      */
-    public function broadcastingLogErrors(): bool
+    public function broadcastingLogErrorsEnabled(): bool
     {
-        return $this->config->get('profiler.broadcasting_log_errors');
+        return $this->config->get('profiler.broadcasting.log_errors_enabled');
     }
 }
