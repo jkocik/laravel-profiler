@@ -40,17 +40,15 @@ class LaravelProfiler extends BaseProfiler
      */
     public function boot(): void
     {
-        $dataTracker = $this->app->make(DataTracker::class);
-        $dataProcessor = $this->app->make(DataProcessor::class);
-        $executionWatcher = $this->app->make(ExecutionWatcher::class);
+        $this->app->make(ExecutionWatcher::class)->watch();
 
-        $executionWatcher->watch();
+        $dataTracker = $this->app->make(DataTracker::class);
         $dataTracker->track();
 
-        $this->app->terminating(function () use ($dataTracker, $dataProcessor) {
+        $this->app->terminating(function () use ($dataTracker) {
             $this->app->make(Timer::class)->finishLaravel();
             $dataTracker->terminate();
-            $dataProcessor->process($dataTracker);
+            $this->app->make(DataProcessor::class)->process($dataTracker);
         });
     }
 }
