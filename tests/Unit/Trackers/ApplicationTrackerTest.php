@@ -85,7 +85,6 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('runningInConsole')->once()->andReturn(false);
-        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
 
         $tracker = $this->app->make(ApplicationTracker::class);
@@ -138,7 +137,6 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('configurationIsCached')->once()->andReturn(true);
-        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
 
         $tracker = $this->app->make(ApplicationTracker::class);
@@ -155,7 +153,6 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('routesAreCached')->once()->andReturn(true);
-        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
 
         $tracker = $this->app->make(ApplicationTracker::class);
@@ -172,7 +169,6 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('isDownForMaintenance')->once()->andReturn(true);
-        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
 
         $tracker = $this->app->make(ApplicationTracker::class);
@@ -189,7 +185,6 @@ class ApplicationTrackerTest extends TestCase
     {
         $app = Mockery::mock(Application::class)->shouldIgnoreMissing();
         $app->shouldReceive('shouldSkipMiddleware')->once()->andReturn(true);
-        $app->shouldReceive('make')->once()->andReturn($this->app->make(Timer::class));
         $this->app->instance(Application::class, $app);
 
         $tracker = $this->app->make(ApplicationTracker::class);
