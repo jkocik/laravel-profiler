@@ -28,4 +28,10 @@ return [
         'port' => '8099',
         'log_errors_enabled' => true,
     ],
+    'data' => [
+        'events' => false,
+    ],
+    'group' => [
+        'events' => true,
+    ],
 ];

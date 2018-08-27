@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\LaravelListeners;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Collection;
+use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
 class EventsListener implements LaravelListener
@@ -14,27 +15,34 @@ class EventsListener implements LaravelListener
     protected $dispatcher;
 
     /**
-     * @var array
+     * @var ConfigService
      */
-    protected $event = [];
+    protected $configService;
 
     /**
      * @var array
      */
-    protected $payload = [];
+    protected $events = [];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $name = [];
+    protected $lastEventName = '';
+
+    /**
+     * @var int
+     */
+    protected $count = 0;
 
     /**
      * EventsListener constructor.
      * @param Dispatcher $dispatcher
+     * @param ConfigService $configService
      */
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(Dispatcher $dispatcher, ConfigService $configService)
     {
         $this->dispatcher = $dispatcher;
+        $this->configService = $configService;
     }
 
     /**
@@ -43,9 +51,22 @@ class EventsListener implements LaravelListener
     public function listen(): void
     {
         $this->dispatcher->listen('*', function ($event, $payload = null) {
-            $this->event[] = $event;
-            $this->payload[] = $payload;
-            $this->name[] = $this->resolveName($event, $payload);
+            $this->count++;
+
+            $name = $this->resolveName($event, $payload);
+
+            if ($this->shouldGroup($name)) {
+                return $this->incrementLastEventCount();
+            }
+
+            array_push($this->events, [
+                $event,
+                $payload,
+                $name,
+                1,
+            ]);
+
+            $this->lastEventName = $name;
         });
     }
 
@@ -54,7 +75,15 @@ class EventsListener implements LaravelListener
      */
     public function events(): Collection
     {
-        return Collection::make($this->event)->zip($this->payload, $this->name);
+        return Collection::make($this->events);
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->count;
     }
 
     /**
@@ -65,5 +94,22 @@ class EventsListener implements LaravelListener
     protected function resolveName($event, $payload): string
     {
         return is_array($payload) ? $event : $this->dispatcher->firing();
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    protected function shouldGroup(string $name): bool
+    {
+        return $this->configService->isEventsGroupEnabled() && $name == $this->lastEventName;
+    }
+
+    /**
+     * @return void
+     */
+    protected function incrementLastEventCount(): void
+    {
+        $this->events[count($this->events) - 1][3]++;
     }
 }

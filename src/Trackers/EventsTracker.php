@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\Trackers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Application;
+use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Services\ParamsService;
 use JKocik\Laravel\Profiler\LaravelListeners\EventsListener;
 
@@ -15,6 +16,11 @@ class EventsTracker extends BaseTracker
     protected $paramsService;
 
     /**
+     * @var ConfigService
+     */
+    protected $configService;
+
+    /**
      * @var EventsListener
      */
     protected $eventsListener;
@@ -23,13 +29,19 @@ class EventsTracker extends BaseTracker
      * EventsTracker constructor.
      * @param Application $app
      * @param ParamsService $paramsService
+     * @param ConfigService $configService
      * @param EventsListener $eventsListener
      */
-    public function __construct(Application $app, ParamsService $paramsService, EventsListener $eventsListener)
-    {
+    public function __construct(
+        Application $app,
+        ParamsService $paramsService,
+        ConfigService $configService,
+        EventsListener $eventsListener
+    ) {
         parent::__construct($app);
 
         $this->paramsService = $paramsService;
+        $this->configService = $configService;
         $this->eventsListener = $eventsListener;
         $this->eventsListener->listen();
     }
@@ -39,16 +51,35 @@ class EventsTracker extends BaseTracker
      */
     public function terminate(): void
     {
+        $this->meta->put('events_count', $this->eventsListener->count());
+
         $events = $this->eventsListener->events()->map(function ($item) {
-            $data = $this->resolveData($item[0], $item[1]);
+            list($event, $payload, $name, $count) = $item;
+
+            if ($this->shouldTrackData($count)) {
+                return [
+                    'name' => $name,
+                    'count' => $count,
+                    'data' => $this->resolveData($event, $payload),
+                ];
+            }
 
             return [
-                'name' => $item[2],
-                'data' => $data,
+                'name' => $name,
+                'count' => $count,
             ];
         });
 
         $this->data->put('events', $events);
+    }
+
+    /**
+     * @param int $count
+     * @return bool
+     */
+    protected function shouldTrackData(int $count): bool
+    {
+        return $this->configService->isEventsDataEnabled() && $count == 1;
     }
 
     /**

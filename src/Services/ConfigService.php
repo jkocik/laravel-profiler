@@ -80,4 +80,20 @@ class ConfigService
     {
         return $this->config->get('profiler.broadcasting.log_errors_enabled');
     }
+
+    /**
+     * @return bool
+     */
+    public function isEventsDataEnabled(): bool
+    {
+        return $this->config->get('profiler.data.events');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEventsGroupEnabled(): bool
+    {
+        return $this->config->get('profiler.group.events');
+    }
 }

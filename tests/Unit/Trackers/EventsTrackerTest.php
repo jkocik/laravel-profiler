@@ -29,11 +29,15 @@ class EventsTrackerTest extends TestCase
         $this->assertNotNull($events);
         $this->assertTrue($events->contains('name', 'testing: tracker'));
         $this->assertTrue($events->contains('name', DummyEventA::class));
+        $this->assertEquals(2, $tracker->meta()->get('events_count'));
     }
 
     /** @test */
     function has_data_of_fired_events()
     {
+        $this->app->make('config')->set('profiler.data.events', true);
+        $this->app->make('config')->set('profiler.group.events', false);
+
         $tracker = $this->app->make(EventsTracker::class);
 
         $user = new User(['email' => 'a@example.com']);
@@ -61,5 +65,103 @@ class EventsTrackerTest extends TestCase
         $this->assertEquals([DummyClassA::class, DummyClassB::class], $eventB['data']['dummyClasses']);
         $this->assertEquals(['a' => 1, 'c' => 2], $eventB['data']['dataA']);
         $this->assertEquals('c', $eventB['data']['dataB']);
+    }
+
+    /** @test */
+    function has_not_data_of_fired_events_if_data_tracking_is_disabled_in_config()
+    {
+        $this->app->make('config')->set('profiler.group.events', false);
+
+        $tracker = $this->app->make(EventsTracker::class);
+
+        $user = new User(['email' => 'a@example.com']);
+        $usersA = collect([new User(['email' => 'b@example.com']), new User(['email' => 'c@example.com'])]);
+        $usersB = [new User(['email' => 'd@example.com']), new User(['email' => 'e@example.com'])];
+        $dummyClasses = [new DummyClassA(), new DummyClassB()];
+        $dataA = ['a' => 1, 'c' => 2];
+        $dataB = 'c';
+
+        event(new DummyEventB($user, $usersA, $usersB, $dummyClasses, $dataA, $dataB));
+
+        $tracker->terminate();
+        $events = $tracker->data()->get('events');
+        $eventB = $events->where('name', DummyEventB::class)->first();
+
+        $this->assertArrayNotHasKey('data', $eventB);
+    }
+
+    /** @test */
+    function can_group_events_with_the_same_name()
+    {
+        $this->app->make('config')->set('profiler.data.events', true);
+
+        $tracker = $this->app->make(EventsTracker::class);
+        $dispatcher = $this->app->make(Dispatcher::class);
+
+        $dispatcher->fire('testing: eventA', [new \stdClass()]);
+        $dispatcher->fire('testing: eventB', [new \stdClass()]);
+        $dispatcher->fire('testing: eventB', [new \stdClass()]);
+        $dispatcher->fire('testing: eventC', [new \stdClass()]);
+        $dispatcher->fire('testing: eventC', [new \stdClass()]);
+        $dispatcher->fire('testing: eventC', [new \stdClass()]);
+        $dispatcher->fire('testing: eventC', [new \stdClass()]);
+        $dispatcher->fire('testing: eventD', [new \stdClass()]);
+
+        $tracker->terminate();
+        $events = $tracker->data()->get('events');
+
+        $this->assertEquals([
+            'name' => 'testing: eventA',
+            'count' => 1,
+            'data' => collect([]),
+        ], $events->pull(0));
+        $this->assertEquals([
+            'name' => 'testing: eventB',
+            'count' => 2,
+        ], $events->pull(1));
+        $this->assertEquals([
+            'name' => 'testing: eventC',
+            'count' => 4,
+        ], $events->pull(2));
+        $this->assertEquals([
+            'name' => 'testing: eventD',
+            'count' => 1,
+            'data' => collect([]),
+        ], $events->pull(3));
+        $this->assertEquals(8, $tracker->meta()->get('events_count'));
+    }
+
+    /** @test */
+    function does_not_group_events_if_events_group_is_disabled_in_config()
+    {
+        $this->app->make('config')->set('profiler.data.events', true);
+        $this->app->make('config')->set('profiler.group.events', false);
+
+        $tracker = $this->app->make(EventsTracker::class);
+        $dispatcher = $this->app->make(Dispatcher::class);
+
+        $dispatcher->fire('testing: eventA', [new \stdClass()]);
+        $dispatcher->fire('testing: eventB', [new \stdClass()]);
+        $dispatcher->fire('testing: eventB', [new \stdClass()]);
+
+        $tracker->terminate();
+        $events = $tracker->data()->get('events');
+
+        $this->assertEquals([
+            'name' => 'testing: eventA',
+            'count' => 1,
+            'data' => collect([]),
+        ], $events->pull(0));
+        $this->assertEquals([
+            'name' => 'testing: eventB',
+            'count' => 1,
+            'data' => collect([]),
+        ], $events->pull(1));
+        $this->assertEquals([
+            'name' => 'testing: eventB',
+            'count' => 1,
+            'data' => collect([]),
+        ], $events->pull(2));
+        $this->assertEquals(3, $tracker->meta()->get('events_count'));
     }
 }
