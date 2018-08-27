@@ -84,6 +84,14 @@ class ConfigService
     /**
      * @return bool
      */
+    public function isViewsDataEnabled(): bool
+    {
+        return $this->config->get('profiler.data.views');
+    }
+
+    /**
+     * @return bool
+     */
     public function isEventsDataEnabled(): bool
     {
         return $this->config->get('profiler.data.events');

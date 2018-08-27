@@ -10,17 +10,9 @@ use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 class ViewsListener implements LaravelListener
 {
     /**
-     * @var Collection
+     * @var array
      */
-    protected $views;
-
-    /**
-     * ViewsListener constructor.
-     */
-    public function __construct()
-    {
-        $this->views = new Collection();
-    }
+    protected $views = [];
 
     /**
      * @return void
@@ -28,7 +20,7 @@ class ViewsListener implements LaravelListener
     public function listen(): void
     {
         Event::listen('composing:*', function (...$view) {
-            $this->views->push($this->resolveView($view));
+            array_push($this->views, $this->resolveView($view));
         });
     }
 
@@ -37,7 +29,7 @@ class ViewsListener implements LaravelListener
      */
     public function views(): Collection
     {
-        return $this->views;
+        return Collection::make($this->views);
     }
 
     /**

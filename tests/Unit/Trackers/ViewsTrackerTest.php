@@ -61,6 +61,8 @@ class ViewsTrackerTest extends TestCase
     /** @test */
     function has_view_data()
     {
+        $this->app->make('config')->set('profiler.data.views', true);
+
         $tracker = $this->app->make(ViewsTracker::class);
 
         $user = ['name' => 'Joe'];
@@ -70,5 +72,19 @@ class ViewsTrackerTest extends TestCase
         $views = $tracker->data()->get('views');
 
         $this->assertEquals(['name' => 'Joe'], $views->first()['data']['user']);
+    }
+
+    /** @test */
+    function has_not_data_of_views_if_data_tracking_is_disabled_in_config()
+    {
+        $tracker = $this->app->make(ViewsTracker::class);
+
+        $user = ['name' => 'Joe'];
+        view('tests::dummy-view-a', compact('user'))->render();
+
+        $tracker->terminate();
+        $views = $tracker->data()->get('views');
+
+        $this->assertArrayNotHasKey('data', $views->first());
     }
 }

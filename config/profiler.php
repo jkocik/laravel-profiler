@@ -29,6 +29,7 @@ return [
         'log_errors_enabled' => true,
     ],
     'data' => [
+        'views' => false,
         'events' => false,
     ],
     'group' => [
