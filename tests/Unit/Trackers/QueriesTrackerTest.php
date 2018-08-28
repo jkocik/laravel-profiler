@@ -104,4 +104,18 @@ class QueriesTrackerTest extends TestCase
 
         $this->assertContains("where email = {object}", $queries->first()['query']);
     }
+
+    /** @test */
+    function has_query_bindings_truncated_if_binding_string_is_long()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::select('select * from users where email = :email', ['email' => str_repeat('a', 255)]);
+        DB::select('select * from users where email = :email', ['email' => str_repeat('a', 256)]);
+
+        $tracker->terminate();
+        $queries = $tracker->data()->get('queries');
+
+        $this->assertContains("where email = '". str_repeat('a', 255) ."'", $queries->first()['query']);
+        $this->assertContains("where email = '". str_repeat('a', 255) ."...{truncated}'", $queries->last()['query']);
+    }
 }

@@ -65,6 +65,12 @@ class QueriesListener implements LaravelListener
             return '{object}';
         }
 
+        if (strlen($binding) > 255) {
+            return $event->connection->getPdo()->quote(
+                substr($binding, 0, 255) . '...{truncated}'
+            );
+        }
+
         return $event->connection->getPdo()->quote($binding);
     }
 }
