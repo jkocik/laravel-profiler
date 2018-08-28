@@ -3,7 +3,6 @@
 namespace JKocik\Laravel\Profiler\Trackers;
 
 use Illuminate\Foundation\Application;
-use Illuminate\Database\Events\QueryExecuted;
 use JKocik\Laravel\Profiler\LaravelListeners\QueriesListener;
 
 class QueriesTracker extends BaseTracker
@@ -31,16 +30,18 @@ class QueriesTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $queries = $this->queriesListener->queries()->map(function (QueryExecuted $event) {
-            $sql = $this->formatSql($event->sql);
+        $queries = $this->queriesListener->queries()->map(function ($item) {
+            list($sql, $time, $database, $name, $bindings, $bindingsQuoted) = $item;
+
+            $formattedSql = $this->formatSql($sql);
 
             return [
-                'sql' => $sql,
-                'bindings' => $event->bindings,
-                'time' => $event->time,
-                'database' => $event->connection->getDatabaseName(),
-                'name' => $event->connectionName,
-                'query' => $this->queryWithBindings($event, $sql),
+                'sql' => $formattedSql,
+                'bindings' => $bindings,
+                'time' => $time,
+                'database' => $database,
+                'name' => $name,
+                'query' => $this->queryWithBindings($bindingsQuoted, $formattedSql),
             ];
         });
 
@@ -57,17 +58,17 @@ class QueriesTracker extends BaseTracker
     }
 
     /**
-     * @param QueryExecuted $event
-     * @param string $sql
+     * @param array $bindingsQuoted
+     * @param string $formattedSql
      * @return string
      */
-    protected function queryWithBindings(QueryExecuted $event, string $sql): string
+    protected function queryWithBindings(array $bindingsQuoted, string $formattedSql): string
     {
-        foreach ($event->bindings as $key => $binding) {
-            $sql = preg_replace($this->bindingRegex($key), $this->bindingValue($event, $binding), $sql, 1);
+        foreach ($bindingsQuoted as $key => $binding) {
+            $formattedSql = preg_replace($this->bindingRegex($key), $binding, $formattedSql, 1);
         }
 
-        return $sql;
+        return $formattedSql;
     }
 
     /**
@@ -77,19 +78,5 @@ class QueriesTracker extends BaseTracker
     protected function bindingRegex($key): string
     {
         return is_int($key) ? "/\?/" : "/:{$key}/";
-    }
-
-    /**
-     * @param QueryExecuted $event
-     * @param $binding
-     * @return mixed
-     */
-    protected function bindingValue(QueryExecuted $event, $binding)
-    {
-        if (is_int($binding) || is_float($binding)) {
-            return $binding;
-        }
-
-        return $event->connection->getPdo()->quote($binding);
     }
 }

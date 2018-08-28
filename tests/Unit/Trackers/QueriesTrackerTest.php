@@ -92,4 +92,16 @@ class QueriesTrackerTest extends TestCase
 
         $this->assertContains("where email = 'abc@example.com' and name = 1", $queries->first()['query']);
     }
+
+    /** @test */
+    function has_query_bindings_objects()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::select('select * from users where email = :email', ['email' => new \DateTime()]);
+
+        $tracker->terminate();
+        $queries = $tracker->data()->get('queries');
+
+        $this->assertContains("where email = {object}", $queries->first()['query']);
+    }
 }
