@@ -20,13 +20,15 @@ class QueriesListener implements LaravelListener
     public function listen(): void
     {
         Event::listen(QueryExecuted::class, function (QueryExecuted $event) {
+            list($bindings, $bindingsQuoted) = $this->formatBindings($event);
+
             array_push($this->queries, [
                 $event->sql,
                 $event->time,
                 $event->connection->getDatabaseName(),
                 $event->connectionName,
-                $event->bindings,
-                $this->bindingsQuoted($event),
+                $bindings,
+                $bindingsQuoted,
             ]);
         });
     }
@@ -43,11 +45,30 @@ class QueriesListener implements LaravelListener
      * @param QueryExecuted $event
      * @return array
      */
-    protected function bindingsQuoted(QueryExecuted $event): array
+    protected function formatBindings(QueryExecuted $event): array
     {
-        return array_map(function ($binding) use ($event) {
-            return $this->quote($event, $binding);
-        }, $event->bindings);
+        foreach ($event->bindings as $key => $binding) {
+            $bindings[$key] = $this->truncate($binding);
+            $bindingsQuoted[$key] = $this->quote($event, $bindings[$key]);
+        }
+
+        return [
+            $bindings ?? [],
+            $bindingsQuoted ?? [],
+        ];
+    }
+
+    /**
+     * @param $binding
+     * @return mixed
+     */
+    protected function truncate($binding)
+    {
+        if (is_string($binding) && strlen($binding) > 255) {
+            return substr($binding, 0, 255) . '...{truncated}';
+        }
+
+        return $binding;
     }
 
     /**
@@ -63,12 +84,6 @@ class QueriesListener implements LaravelListener
 
         if (is_object($binding)) {
             return '{object}';
-        }
-
-        if (strlen($binding) > 255) {
-            return $event->connection->getPdo()->quote(
-                substr($binding, 0, 255) . '...{truncated}'
-            );
         }
 
         return $event->connection->getPdo()->quote($binding);

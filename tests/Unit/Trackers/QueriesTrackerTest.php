@@ -50,6 +50,19 @@ class QueriesTrackerTest extends TestCase
     }
 
     /** @test */
+    function has_bindings_keys_names_if_specified()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::select('select * from users where email = :email and name = :name', ['email' => 'abc@example.com', 'name' => 1]);
+
+        $tracker->terminate();
+        $queries = $tracker->data()->get('queries');
+
+        $this->assertArrayHasKey('email', $queries->first()['bindings']);
+        $this->assertArrayHasKey('name', $queries->first()['bindings']);
+    }
+
+    /** @test */
     function has_query_bindings_for_int_and_float_values()
     {
         $tracker = $this->app->make(QueriesTracker::class);
@@ -116,6 +129,8 @@ class QueriesTrackerTest extends TestCase
         $queries = $tracker->data()->get('queries');
 
         $this->assertContains("where email = '". str_repeat('a', 255) ."'", $queries->first()['query']);
+        $this->assertContains(str_repeat('a', 255), $queries->first()['bindings']);
         $this->assertContains("where email = '". str_repeat('a', 255) ."...{truncated}'", $queries->last()['query']);
+        $this->assertContains(str_repeat('a', 255) . '...{truncated}', $queries->last()['bindings']);
     }
 }
