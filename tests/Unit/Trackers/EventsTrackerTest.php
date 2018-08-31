@@ -42,7 +42,7 @@ class EventsTrackerTest extends TestCase
 
         $user = new User(['email' => 'a@example.com']);
         $usersA = collect([new User(['email' => 'b@example.com']), new User(['email' => 'c@example.com'])]);
-        $usersB = [new User(['email' => 'd@example.com']), new User(['email' => 'e@example.com'])];
+        $usersB = [new User(['email' => 'd@example.com']), new User(['email' => collect(['email' => 'e@example.com'])])];
         $dummyClasses = [new DummyClassA(), new DummyClassB()];
         $dataA = ['a' => 1, 'c' => 2];
         $dataB = 'c';
@@ -60,7 +60,7 @@ class EventsTrackerTest extends TestCase
         ], $eventB['data']['usersA']);
         $this->assertEquals([
             0 => ['email' => 'd@example.com'],
-            1 => ['email' => 'e@example.com'],
+            1 => ['email' => ['email' => 'e@example.com']],
         ], $eventB['data']['usersB']);
         $this->assertEquals([DummyClassA::class, DummyClassB::class], $eventB['data']['dummyClasses']);
         $this->assertEquals(['a' => 1, 'c' => 2], $eventB['data']['dataA']);

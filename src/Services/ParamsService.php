@@ -6,19 +6,15 @@ class ParamsService
 {
     /**
      * @param $param
-     * @return array|string
+     * @return mixed
      */
     public function resolve($param)
     {
-        if ($this->isObjectWithToArrayMethod($param)) {
-            return $param->toArray();
+        if (is_object($param)) {
+            return $this->resolveObject($param);
         }
 
-        if ($this->isObject($param)) {
-            return get_class($param);
-        }
-
-        if ($this->isArray($param)) {
+        if (is_array($param)) {
             return array_map(function ($item) {
                 return $this->resolve($item);
             }, $param);
@@ -29,28 +25,14 @@ class ParamsService
 
     /**
      * @param $param
-     * @return bool
+     * @return array|string
      */
-    protected function isObjectWithToArrayMethod($param): bool
+    protected function resolveObject($param)
     {
-        return is_object($param) && method_exists($param, 'toArray');
-    }
+        if (method_exists($param, 'toArray')) {
+            return $this->resolve($param->toArray());
+        }
 
-    /**
-     * @param $param
-     * @return bool
-     */
-    protected function isObject($param): bool
-    {
-        return is_object($param);
-    }
-
-    /**
-     * @param $param
-     * @return bool
-     */
-    protected function isArray($param): bool
-    {
-        return is_array($param);
+        return get_class($param);
     }
 }
