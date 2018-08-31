@@ -82,6 +82,10 @@ class QueriesListener implements LaravelListener
             return $binding;
         }
 
+        if (is_bool($binding)) {
+            return (int) $binding;
+        }
+
         if (is_object($binding)) {
             return '{object}';
         }

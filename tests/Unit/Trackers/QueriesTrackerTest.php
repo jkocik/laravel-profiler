@@ -95,6 +95,20 @@ class QueriesTrackerTest extends TestCase
     }
 
     /** @test */
+    function has_query_bindings_for_bool_values()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::select('select * from users where 1 = :first and 0 = :second', ['first' => true, 'second' => false]);
+
+        $tracker->terminate();
+        $queries = $tracker->data()->get('queries');
+
+        $this->assertContains("where 1 = 1 and 0 = 0", $queries->first()['query']);
+        $this->assertSame(true, $queries->first()['bindings']['first']);
+        $this->assertSame(false, $queries->first()['bindings']['second']);
+    }
+
+    /** @test */
     function has_query_bindings_names_as_string()
     {
         $tracker = $this->app->make(QueriesTracker::class);
