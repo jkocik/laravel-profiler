@@ -59,14 +59,9 @@ class EventsListener implements LaravelListener
                 return $this->incrementLastEventCount();
             }
 
-            array_push($this->events, [
-                $event,
-                $payload,
-                $name,
-                1,
-            ]);
-
             $this->lastEventName = $name;
+
+            array_push($this->events, $this->resolveEvent($name, $event, $payload));
         });
     }
 
@@ -84,6 +79,21 @@ class EventsListener implements LaravelListener
     public function count(): int
     {
         return $this->count;
+    }
+
+    /**
+     * @param string $name
+     * @param $event
+     * @param $payload
+     * @return array
+     */
+    protected function resolveEvent(string $name, $event, $payload): array
+    {
+        if ($this->configService->isEventsDataEnabled()) {
+            return [$event, $payload, $name, 1];
+        }
+
+        return [null, null, $name, 1];
     }
 
     /**
