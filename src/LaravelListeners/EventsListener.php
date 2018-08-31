@@ -27,7 +27,7 @@ class EventsListener implements LaravelListener
     /**
      * @var string
      */
-    protected $lastEventName = '';
+    protected $previousEventName = '';
 
     /**
      * @var int
@@ -56,10 +56,10 @@ class EventsListener implements LaravelListener
             $name = $this->resolveName($event, $payload);
 
             if ($this->shouldGroup($name)) {
-                return $this->incrementLastEventCount();
+                return $this->groupToPreviousEvent();
             }
 
-            $this->lastEventName = $name;
+            $this->previousEventName = $name;
 
             array_push($this->events, $this->resolveEvent($name, $event, $payload));
         });
@@ -112,13 +112,13 @@ class EventsListener implements LaravelListener
      */
     protected function shouldGroup(string $name): bool
     {
-        return $this->configService->isEventsGroupEnabled() && $name == $this->lastEventName;
+        return $this->configService->isEventsGroupEnabled() && $name == $this->previousEventName;
     }
 
     /**
      * @return void
      */
-    protected function incrementLastEventCount(): void
+    protected function groupToPreviousEvent(): void
     {
         $this->events[count($this->events) - 1][3]++;
     }

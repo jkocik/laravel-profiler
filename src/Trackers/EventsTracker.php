@@ -51,8 +51,6 @@ class EventsTracker extends BaseTracker
      */
     public function terminate(): void
     {
-        $this->meta->put('events_count', $this->eventsListener->count());
-
         $events = $this->eventsListener->events()->map(function ($item) {
             list($event, $payload, $name, $count) = $item;
 
@@ -70,6 +68,7 @@ class EventsTracker extends BaseTracker
             ];
         });
 
+        $this->meta->put('events_count', $this->eventsListener->count());
         $this->data->put('events', $events);
     }
 
