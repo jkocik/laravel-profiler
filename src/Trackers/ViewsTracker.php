@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Trackers;
 use Illuminate\View\View;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Services\ConfigService;
+use JKocik\Laravel\Profiler\Services\ParamsService;
 use JKocik\Laravel\Profiler\LaravelListeners\ViewsListener;
 
 class ViewsTracker extends BaseTracker
@@ -15,6 +16,11 @@ class ViewsTracker extends BaseTracker
     protected $configService;
 
     /**
+     * @var ParamsService
+     */
+    protected $paramsService;
+
+    /**
      * @var ViewsListener
      */
     protected $viewsListener;
@@ -23,13 +29,19 @@ class ViewsTracker extends BaseTracker
      * ViewsTracker constructor.
      * @param Application $app
      * @param ConfigService $configService
+     * @param ParamsService $paramsService
      * @param ViewsListener $viewsListener
      */
-    public function __construct(Application $app, ConfigService $configService, ViewsListener $viewsListener)
-    {
+    public function __construct(
+        Application $app,
+        ConfigService $configService,
+        ParamsService $paramsService,
+        ViewsListener $viewsListener
+    ) {
         parent::__construct($app);
 
         $this->configService = $configService;
+        $this->paramsService = $paramsService;
         $this->viewsListener = $viewsListener;
         $this->viewsListener->listen();
     }
@@ -51,6 +63,7 @@ class ViewsTracker extends BaseTracker
             return [
                 'name' => $view->name(),
                 'path' => $view->getPath(),
+                'params' => $this->paramsService->resolveFlattenFromArray($view->getData()),
             ];
         })->values();
 

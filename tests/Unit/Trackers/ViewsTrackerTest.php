@@ -2,6 +2,7 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit;
 
+use App\User;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\ViewsTracker;
 
@@ -72,6 +73,7 @@ class ViewsTrackerTest extends TestCase
         $views = $tracker->data()->get('views');
 
         $this->assertEquals(['name' => 'Joe'], $views->first()['data']['user']);
+        $this->assertArrayNotHasKey('params', $views->first());
     }
 
     /** @test */
@@ -86,5 +88,48 @@ class ViewsTrackerTest extends TestCase
         $views = $tracker->data()->get('views');
 
         $this->assertArrayNotHasKey('data', $views->first());
+    }
+
+    /** @test */
+    function has_view_params_if_data_tracking_is_disabled_in_config()
+    {
+        $tracker = $this->app->make(ViewsTracker::class);
+
+        $name = 'Joe';
+        $visits = 125;
+        $price = 5.89;
+        $active = true;
+        $address = null;
+        $related = new User(['email' => 'a@example.com']);
+        $roles = collect(['publisher', 'viewer']);
+        $tags = ['a'];
+        $comments = [];
+        view('tests::dummy-view-a', compact(
+            'name',
+            'visits',
+            'price',
+            'active',
+            'address',
+            'related',
+            'roles',
+            'tags',
+            'comments'
+        ))->render();
+
+        $tracker->terminate();
+        $views = $tracker->data()->get('views');
+
+        $this->assertArrayNotHasKey('data', $views->first());
+        $this->assertEquals([
+            'name' => 'string',
+            'visits' => 'integer',
+            'price' => 'double',
+            'active' => 'boolean',
+            'address' => 'NULL',
+            'related' => 'App\User',
+            'roles' => 'Illuminate\Support\Collection: 2 item(s)',
+            'tags' => 'array: 1 item(s)',
+            'comments' => 'array: 0 item(s)',
+        ], $views->first()['params']);
     }
 }
