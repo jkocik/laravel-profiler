@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler\Tests\Unit;
 
 use App\User;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -40,6 +41,7 @@ class QueriesTrackerTest extends TestCase
         $queries = $tracker->data()->get('queries');
 
         $this->assertNotNull($queries);
+        $this->assertContains('query', $queries->first()['type']);
         $this->assertContains('insert into `users` (`name`, `email`, `password`', $queries->first()['sql']);
         $this->assertContains($user->email, $queries->first()['bindings']);
         $this->assertArrayHasKey('time', $queries->first());
@@ -47,6 +49,70 @@ class QueriesTrackerTest extends TestCase
         $this->assertEquals('sqlite', $queries->first()['name']);
         $this->assertContains('insert into `users` (`name`, `email`, `password`', $queries->first()['query']);
         $this->assertContains("values ('{$user->name}', '{$user->email}", $queries->first()['query']);
+    }
+
+    /** @test */
+    function has_committed_transactions()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::transaction(function () {
+            factory(User::class)->create();
+        });
+
+        $tracker->terminate();
+        $queries = $tracker->data()->get('queries');
+
+        $this->assertContains('transaction-begin', $queries->first()['type']);
+        $this->assertEquals(':memory:', $queries->first()['database']);
+        $this->assertEquals('sqlite', $queries->first()['name']);
+
+        $this->assertContains('transaction-commit', $queries->last()['type']);
+        $this->assertEquals(':memory:', $queries->last()['database']);
+        $this->assertEquals('sqlite', $queries->last()['name']);
+    }
+
+    /** @test */
+    function has_rolled_back_transactions()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        try {
+            DB::transaction(function () {
+                throw new Exception();
+            });
+        } catch (Exception $e) {}
+
+        $tracker->terminate();
+        $queries = $tracker->data()->get('queries');
+
+        $this->assertContains('transaction-rollback', $queries->last()['type']);
+        $this->assertEquals(':memory:', $queries->last()['database']);
+        $this->assertEquals('sqlite', $queries->last()['name']);
+    }
+
+    /** @test */
+    function can_count_queries()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::select('select * from users');
+        factory(User::class)->create();
+
+        $tracker->terminate();
+
+        $this->assertEquals(2, $tracker->meta()->get('queries_count'));
+    }
+
+    /** @test */
+    function can_count_queries_without_transactions()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::transaction(function () {
+            DB::select('select * from users');
+            factory(User::class)->create();
+        });
+
+        $tracker->terminate();
+
+        $this->assertEquals(2, $tracker->meta()->get('queries_count'));
     }
 
     /** @test */

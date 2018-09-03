@@ -31,21 +31,66 @@ class QueriesTracker extends BaseTracker
     public function terminate(): void
     {
         $queries = $this->queriesListener->queries()->map(function ($item) {
-            list($sql, $time, $database, $name, $bindings, $bindingsQuoted) = $item;
+            if ($this->isTransactionType($item[0])) {
+                return $this->terminateTransaction($item);
+            }
 
-            $formattedSql = $this->formatSql($sql);
-
-            return [
-                'sql' => $formattedSql,
-                'bindings' => $bindings,
-                'time' => $time,
-                'database' => $database,
-                'name' => $name,
-                'query' => $this->queryWithBindings($bindingsQuoted, $formattedSql),
-            ];
+            return $this->terminateQuery($item);
         });
 
+        $this->meta->put('queries_count', $this->queriesListener->count());
         $this->data->put('queries', $queries);
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     */
+    protected function terminateTransaction(array $item): array
+    {
+        list($type, $database, $name) = $item;
+
+        return [
+            'type' => $type,
+            'database' => $database,
+            'name' => $name,
+        ];
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     */
+    protected function terminateQuery(array $item): array
+    {
+        list($type, $sql, $time, $database, $name, $bindings, $bindingsQuoted) = $item;
+
+        $formattedSql = $this->formatSql($sql);
+
+        return [
+            'type' => $type,
+            'sql' => $formattedSql,
+            'bindings' => $bindings,
+            'time' => $time,
+            'database' => $database,
+            'name' => $name,
+            'query' => $this->queryWithBindings($bindingsQuoted, $formattedSql),
+        ];
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    protected function isTransactionType(string $type): bool
+    {
+        $transactionTypes = [
+            'transaction-begin',
+            'transaction-commit',
+            'transaction-rollback',
+        ];
+
+        return in_array($type, $transactionTypes);
     }
 
     /**
