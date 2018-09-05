@@ -1,0 +1,16 @@
+language: php
+
+php:
+    - 7.1
+    - 7.2
+
+before_script:
+    - composer install --no-interaction
+
+script:
+    - vendor/bin/phpunit -c phpunit-laravel-52.xml
+    - vendor/bin/phpunit -c phpunit-laravel-53.xml
+    - vendor/bin/phpunit -c phpunit-laravel-54.xml
+    - vendor/bin/phpunit -c phpunit-laravel-55.xml
+    - vendor/bin/phpunit -c phpunit-laravel-56.xml
+    - vendor/bin/phpunit -c phpunit-laravel-57.xml
