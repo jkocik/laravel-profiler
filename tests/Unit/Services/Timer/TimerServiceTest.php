@@ -2,6 +2,8 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Services\Timer;
 
+use Mockery;
+use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Services\Timer\TimerService;
 
@@ -31,19 +33,33 @@ class TimerServiceTest extends TestCase
     /** @test */
     function counts_laravel_execution_time()
     {
-        $timerA = $this->app->make(TimerService::class);
-        $timerB = $this->app->make(TimerService::class);
+        $appL = Mockery::mock(Application::class);
+        $appL->shouldReceive('environment')->with('testing')->andReturn(false)->once();
+
+        $appT = Mockery::mock(Application::class);
+        $appT->shouldReceive('environment')->with('testing')->andReturn(true)->once();
+
+        $timerA1 = new TimerService($appL);
+        $timerB1 = new TimerService($appT);
+        $timerA2 = new TimerService($appL);
+        $timerB2 = new TimerService($appT);
         $millisecondsWithLaravelStartDefined = \microtime(true) * 1000;
 
-        $timerA->startLaravel();
-        $timerA->finishLaravel();
+        $timerA1->startLaravel();
+        $timerA1->finishLaravel();
+        $timerB1->startLaravel();
+        $timerB1->finishLaravel();
 
         define('LARAVEL_START', 0);
-        $timerB->startLaravel();
-        $timerB->finishLaravel();
+        $timerA2->startLaravel();
+        $timerA2->finishLaravel();
+        $timerB2->startLaravel();
+        $timerB2->finishLaravel();
 
-        $this->assertLessThan($millisecondsWithLaravelStartDefined, $timerA->milliseconds('laravel'));
-        $this->assertGreaterThanOrEqual($millisecondsWithLaravelStartDefined, $timerB->milliseconds('laravel'));
+        $this->assertLessThan($millisecondsWithLaravelStartDefined, $timerA1->milliseconds('laravel'));
+        $this->assertGreaterThanOrEqual($millisecondsWithLaravelStartDefined, $timerA2->milliseconds('laravel'));
+        $this->assertLessThan($millisecondsWithLaravelStartDefined, $timerB1->milliseconds('laravel'));
+        $this->assertLessThan($millisecondsWithLaravelStartDefined, $timerB2->milliseconds('laravel'));
     }
 
     /** @test */

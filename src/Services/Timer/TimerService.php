@@ -3,10 +3,16 @@
 namespace JKocik\Laravel\Profiler\Services\Timer;
 
 use Illuminate\Support\Collection;
+use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 
 class TimerService implements Timer
 {
+    /**
+     * @var Application
+     */
+    protected $app;
+
     /**
      * @var Collection
      */
@@ -14,9 +20,11 @@ class TimerService implements Timer
 
     /**
      * TimerService constructor.
+     * @param Application $app
      */
-    public function __construct()
+    public function __construct(Application $app)
     {
+        $this->app = $app;
         $this->time = Collection::make();
     }
 
@@ -96,7 +104,9 @@ class TimerService implements Timer
      */
     protected function laravelStartTimeOrNow(): float
     {
-        return defined('LARAVEL_START') ? LARAVEL_START : $this->now();
+        return defined('LARAVEL_START') && ! $this->app->environment('testing')
+            ? LARAVEL_START
+            : $this->now();
     }
 
     /**
