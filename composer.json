@@ -1,4 +1,15 @@
 {
+    "name": "jkocik/laravel-profiler",
+    "description": "Profiler for Laravel framework 5.2+",
+    "keywords": ["laravel", "profiler", "debugbar"],
+    "homepage": "https://github.com/jkocik/laravel-profiler",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Janusz Kocik",
+            "email": "janusz.kocik@gmail.com"
+        }
+    ],
     "require": {
         "php": ">=7.1.0",
         "guzzlehttp/guzzle": "^5.0 || ^6.0"
