@@ -4,10 +4,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | General profiler enable / disable setting
+    | General Laravel Profiler enable / disable setting
     |--------------------------------------------------------------------------
     |
-    | This value enables / disables profiler. If set to false all settings
+    | This value enables / disables Profiler. If set to false all settings
     | below it do not take effect.
     |
     */
@@ -16,10 +16,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Override enabled profiler by env
+    | Override enabled Profiler by env
     |--------------------------------------------------------------------------
     |
-    | Can disable profiler on particular env. Profiler is disabled by default
+    | Can disable Profiler on particular env. Profiler is disabled by default
     | on production. Take effect only if above (enabled) is set to true.
     |
     */
@@ -60,7 +60,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Processors process data collected by trackers. Default processor
-    | broadcasts data through profiler server to profiler client.
+    | broadcasts data through Profiler Server to Profiler Client.
     |
     */
 
@@ -73,8 +73,8 @@ return [
     | BroadcastingProcessor settings
     |--------------------------------------------------------------------------
     |
-    | These settings let you set up connection between profiler and profiler
-    | server using http protocol.
+    | These settings let you set up connection between Profiler Package
+    | (this Laravel package) and Profiler Server using HTTP protocol.
     |
     */
 
