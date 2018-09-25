@@ -37,6 +37,7 @@ class HttpRequestHandledListener implements LaravelListener
      */
     public function listen(): void
     {
+        /** @codeCoverageIgnoreStart */
         Event::listen('kernel.handled', function (Request $request, Response $response) {
             $this->executionData->setRequest(new HttpRequest($request));
             $this->executionData->setRoute($this->routeOf($request));
@@ -45,6 +46,7 @@ class HttpRequestHandledListener implements LaravelListener
             $this->executionData->setResponse(new HttpResponse($response));
             $this->executionData->setContent(new HttpContent($response));
         });
+        /** @codeCoverageIgnoreEnd */
 
         Event::listen(\Illuminate\Foundation\Http\Events\RequestHandled::class, function ($event) {
             $this->executionData->setRequest(new HttpRequest($event->request));

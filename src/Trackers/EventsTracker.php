@@ -100,7 +100,7 @@ class EventsTracker extends BaseTracker
             return $this->propsMapWithKeys($publicProps, $event);
         }
 
-        return $this->propsMap($publicProps, $event);
+        return $this->propsMap($publicProps, $event); // @codeCoverageIgnore
     }
 
     /**
@@ -118,6 +118,8 @@ class EventsTracker extends BaseTracker
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param Collection $publicProps
      * @param $event
      * @return Collection

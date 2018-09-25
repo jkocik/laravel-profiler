@@ -6,6 +6,7 @@ use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Services\Timer\TimerService;
+use JKocik\Laravel\Profiler\Services\Timer\NullTimerService;
 
 class TimerServiceTest extends TestCase
 {
@@ -92,5 +93,17 @@ class TimerServiceTest extends TestCase
 
         $this->assertEquals(-1, $timer->milliseconds('testA'));
         $this->assertEquals(-1, $timer->milliseconds('testB'));
+    }
+
+    /** @test */
+    function returns_empty_values_for_null_timer()
+    {
+        $timer = new NullTimerService();
+
+        $timer->start('testA');
+        $timer->finish('testA');
+
+        $this->assertEquals(0, $timer->milliseconds('testA'));
+        $this->assertEquals([], $timer->all());
     }
 }

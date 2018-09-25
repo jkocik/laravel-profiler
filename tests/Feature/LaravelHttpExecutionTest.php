@@ -137,6 +137,7 @@ class LaravelHttpExecutionTest extends TestCase
         $this->get('/');
         $server = $this->executionData->server();
 
+        $this->assertCount(0, $server->meta());
         $this->assertEquals($this->app->make('request')->server(), $server->data()->toArray());
     }
 
@@ -500,6 +501,7 @@ class LaravelHttpExecutionTest extends TestCase
         $this->get('/');
         $content = $this->executionData->content();
 
+        $this->assertCount(0, $content->meta());
         $this->assertNotContains('HTTP/1.1 200 OK', $content->data()->get('content'));
         $this->assertContains('</body>', $content->data()->get('content'));
         $this->assertContains('</html>', $content->data()->get('content'));

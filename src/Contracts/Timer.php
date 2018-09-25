@@ -11,20 +11,10 @@ interface Timer
     public function start(string $name): void;
 
     /**
-     * @return void
-     */
-    public function startLaravel(): void;
-
-    /**
      * @param string $name
      * @return void
      */
     public function finish(string $name): void;
-
-    /**
-     * @return void
-     */
-    public function finishLaravel(): void;
 
     /**
      * @param string $name
