@@ -1,6 +1,7 @@
 ## Laravel Profiler
 
 [![Build Status](https://travis-ci.org/jkocik/laravel-profiler.svg?branch=master)](https://travis-ci.org/jkocik/laravel-profiler)
+[![Coverage Status](https://coveralls.io/repos/github/jkocik/laravel-profiler/badge.svg?branch=master)](https://coveralls.io/github/jkocik/laravel-profiler?branch=master)
 
 The aim of this project is to track console and web Laravel framework execution and give developers
 better understanding what is going on under the hood. Laravel Profiler is designed for Laravel 5.2+.
