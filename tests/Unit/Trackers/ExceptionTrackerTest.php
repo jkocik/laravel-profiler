@@ -38,7 +38,7 @@ class ExceptionTrackerTest extends TestCase
         $this->assertSame($this->exception->getFile(), $exception->get('file'));
         $this->assertSame($this->exception->getLine(), $exception->get('line'));
         $this->assertEquals(collect($this->exception->getTrace())->map(function ($trace) {
-            return Arr::except($trace, ['args']);
+            return Arr::except($trace, ['args', 'type']);
         }), $exception->get('trace'));
     }
 

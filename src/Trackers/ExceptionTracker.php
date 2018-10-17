@@ -53,7 +53,7 @@ class ExceptionTracker extends BaseTracker
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
             'trace' => Collection::make($exception->getTrace())->map(function ($trace) {
-                return Arr::except($trace, ['args']);
+                return Arr::except($trace, ['args', 'type']);
             }),
         ]);
     }
