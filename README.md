@@ -30,15 +30,17 @@ Profiler Server passes data to Profiler Client using WebSockets.
 #### Trackers
 
 Data tracked, collected and delivered to Profiler Client are:
-- database queries
-- events
+- auth
+- route
 - views
-- application (Laravel status, config, loaded service providers, framework paths)
+- events
+- session
+- exceptions
+- server status
+- database queries
 - request (web) / input (console)
 - response (web) / output (console)
-- session
-- route
-- server status
+- application (Laravel status, config, loaded service providers, framework paths)
 
 ## Installation and configuration
 
@@ -113,3 +115,49 @@ and using Laravel Client GUI (top right plugin icon).
 ### Done!
  
 You are ready to use Laravel Profiler. Enjoy!
+
+### Usage
+
+#### Laravel Profiler for testing
+
+When testing Profiler will deliver the same data as for regular request. However application should be
+terminated. Lets see two default tests Laravel is shipped with:
+
+```
+public function testBasicTest()
+{
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
+}
+``` 
+
+First test will terminate application and Profiler will work as expected. However second test
+
+```
+public function testBasicTest()
+{
+    $this->assertTrue(true);
+}
+```
+
+... will not provide any data because this time application is not terminated. You can force
+Profiler to work by adding terminate method:
+
+```
+public function testBasicTest()
+{
+    $this->assertTrue(true);
+    
+    $this->app->terminate();
+}
+```
+
+Important notice: It is not possible to separate peak of memory usage for each test.
+Anyway peak of memory usage is still visible (gray light font color).
+
+#### Using together with Laravel Debugbar
+
+It is not recommended using Laravel Profiler and Laravel Debugbar together. Profiler will always finish
+it's work after Debugbar and Profiler execution time, peak of memory usage and tracked events will
+be increased by Debugbar activity. Use Profiler or Debugbar one at a time.
