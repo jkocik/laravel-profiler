@@ -3,9 +3,11 @@
 namespace JKocik\Laravel\Profiler\Tests\Unit;
 
 use App\User;
+use Exception;
 use Illuminate\Events\Dispatcher;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\EventsTracker;
+use JKocik\Laravel\Profiler\Events\ExceptionHandling;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassB;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyEventA;
@@ -163,5 +165,17 @@ class EventsTrackerTest extends TestCase
             'data' => collect([]),
         ], $events->pull(2));
         $this->assertEquals(3, $tracker->meta()->get('events_count'));
+    }
+
+    /** @test */
+    function does_not_track_laravel_profiler_internal_events()
+    {
+        $tracker = $this->app->make(EventsTracker::class);
+
+        event(new ExceptionHandling(new Exception()));
+
+        $tracker->terminate();
+
+        $this->assertEquals(0, $tracker->meta()->get('events_count'));
     }
 }

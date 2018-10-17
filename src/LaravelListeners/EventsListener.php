@@ -51,9 +51,13 @@ class EventsListener implements LaravelListener
     public function listen(): void
     {
         $this->dispatcher->listen('*', function ($event, $payload = null) {
-            $this->count++;
-
             $name = $this->resolveName($event, $payload);
+
+            if ($this->isLaravelProfilerInternalEvent($name)) {
+                return;
+            }
+
+            $this->count++;
 
             if ($this->shouldGroup($name)) {
                 return $this->groupToPreviousEvent();
@@ -121,5 +125,18 @@ class EventsListener implements LaravelListener
     protected function groupToPreviousEvent(): void
     {
         $this->events[count($this->events) - 1][3]++;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    protected function isLaravelProfilerInternalEvent(string $name): bool
+    {
+        $laravelProfilerInternalEvents = Collection::make([
+            \JKocik\Laravel\Profiler\Events\ExceptionHandling::class,
+        ]);
+
+        return $laravelProfilerInternalEvents->contains($name);
     }
 }
