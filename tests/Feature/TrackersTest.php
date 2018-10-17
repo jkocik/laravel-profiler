@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Trackers\AuthTracker;
 use JKocik\Laravel\Profiler\Trackers\PathsTracker;
 use JKocik\Laravel\Profiler\Trackers\RouteTracker;
 use JKocik\Laravel\Profiler\Trackers\ViewsTracker;
@@ -180,5 +181,13 @@ class TrackersTest extends TestCase
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
         $this->assertNotContains(ContentTracker::class, $defaultTrackers);
+    }
+
+    /** @test */
+    function auth_tracker_is_enabled_by_default()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $this->assertContains(AuthTracker::class, $defaultTrackers);
     }
 }

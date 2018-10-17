@@ -52,6 +52,7 @@ return [
         \JKocik\Laravel\Profiler\Trackers\ViewsTracker::class, // Views tab
         \JKocik\Laravel\Profiler\Trackers\EventsTracker::class, // Events tab
         \JKocik\Laravel\Profiler\Trackers\QueriesTracker::class, // Queries tab
+        \JKocik\Laravel\Profiler\Trackers\AuthTracker::class, // Auth tab
     ],
 
     /*
