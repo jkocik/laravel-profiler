@@ -6,6 +6,7 @@ use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Services\Timer\TimerService;
+use JKocik\Laravel\Profiler\Services\Timer\TimerException;
 use JKocik\Laravel\Profiler\Services\Timer\NullTimerService;
 
 class TimerServiceTest extends TestCase
@@ -89,10 +90,8 @@ class TimerServiceTest extends TestCase
         $timer = $this->app->make(TimerService::class);
 
         $timer->start('testA');
-        $timer->finish('testB');
 
         $this->assertEquals(-1, $timer->milliseconds('testA'));
-        $this->assertEquals(-1, $timer->milliseconds('testB'));
     }
 
     /** @test */
@@ -105,5 +104,53 @@ class TimerServiceTest extends TestCase
 
         $this->assertEquals(0, $timer->milliseconds('testA'));
         $this->assertEquals([], $timer->all());
+    }
+
+    /** @test */
+    function the_same_timer_can_not_be_started_more_than_once()
+    {
+        try {
+            $timer = $this->app->make(TimerService::class);
+
+            $timer->start('testA');
+            $timer->start('testA');
+        } catch (TimerException $e) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail('TimerException should be thrown');
+    }
+
+    /** @test */
+    function the_same_timer_can_not_be_finished_more_than_once()
+    {
+        try {
+            $timer = $this->app->make(TimerService::class);
+
+            $timer->start('testA');
+            $timer->finish('testA');
+            $timer->finish('testA');
+        } catch (TimerException $e) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail('TimerException should be thrown');
+    }
+
+    /** @test */
+    function timer_can_not_be_finished_if_is_not_started_before()
+    {
+        try {
+            $timer = $this->app->make(TimerService::class);
+
+            $timer->finish('testA');
+        } catch (TimerException $e) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail('TimerException should be thrown');
     }
 }

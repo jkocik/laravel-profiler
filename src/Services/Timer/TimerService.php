@@ -34,6 +34,8 @@ class TimerService implements Timer
      */
     public function start(string $name): void
     {
+        $this->guardTimerAlreadyStarted($name);
+
         $this->time->put($name, [
             'start' => $this->now(),
         ]);
@@ -55,6 +57,10 @@ class TimerService implements Timer
      */
     public function finish(string $name): void
     {
+        $this->guardTimerAlreadyFinished($name);
+
+        $this->guardTimerNotStartedYet($name);
+
         $this->time->put($name, array_merge($this->getByName($name), [
             'finish' => $this->now(),
         ]));
@@ -140,5 +146,41 @@ class TimerService implements Timer
     protected function isCompleted(array $item): bool
     {
         return isset($item['start']) && isset($item['finish']);
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     * @throws TimerException
+     */
+    protected function guardTimerAlreadyStarted(string $name): void
+    {
+        if ($this->time->has($name)) {
+            throw new TimerException("Timer for {$name} already exists and can not be started twice");
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     * @throws TimerException
+     */
+    protected function guardTimerAlreadyFinished(string $name): void
+    {
+        if ($this->isCompleted($this->getByName($name))) {
+            throw new TimerException("Timer for {$name} already exists and can not be finished twice");
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     * @throws TimerException
+     */
+    protected function guardTimerNotStartedYet(string $name): void
+    {
+        if (! $this->time->has($name)) {
+            throw new TimerException("Timer for {$name} is not started yet");
+        }
     }
 }
