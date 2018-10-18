@@ -1,13 +1,13 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\Tests\Unit\Services\Timer;
+namespace JKocik\Laravel\Profiler\Tests\Unit\Services\Performance;
 
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use JKocik\Laravel\Profiler\Services\Timer\TimerService;
-use JKocik\Laravel\Profiler\Services\Timer\TimerException;
-use JKocik\Laravel\Profiler\Services\Timer\NullTimerService;
+use JKocik\Laravel\Profiler\Services\Performance\TimerService;
+use JKocik\Laravel\Profiler\Services\Performance\TimerException;
+use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
 
 class TimerServiceTest extends TestCase
 {

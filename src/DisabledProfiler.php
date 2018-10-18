@@ -3,7 +3,7 @@
 namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\Timer;
-use JKocik\Laravel\Profiler\Services\Timer\NullTimerService;
+use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
 
 class DisabledProfiler extends BaseProfiler
 {

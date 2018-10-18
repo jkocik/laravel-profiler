@@ -4,8 +4,8 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\Timer;
-use JKocik\Laravel\Profiler\Services\Timer\TimerService;
-use JKocik\Laravel\Profiler\Services\Timer\NullTimerService;
+use JKocik\Laravel\Profiler\Services\Performance\TimerService;
+use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
 
 class TimerTest extends TestCase
 {

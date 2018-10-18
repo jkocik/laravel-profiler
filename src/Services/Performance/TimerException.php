@@ -1,6 +1,6 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\Services\Timer;
+namespace JKocik\Laravel\Profiler\Services\Performance;
 
 use Exception;
 

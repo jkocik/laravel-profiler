@@ -8,8 +8,8 @@ use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
-use JKocik\Laravel\Profiler\Services\Timer\TimerService;
 use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
+use JKocik\Laravel\Profiler\Services\Performance\TimerService;
 use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
 
 class LaravelProfiler extends BaseProfiler
