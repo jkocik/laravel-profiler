@@ -10,6 +10,7 @@ use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Trackers\RequestTracker;
 use JKocik\Laravel\Profiler\Trackers\ResponseTracker;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
+use JKocik\Laravel\Profiler\Trackers\PerformanceTracker;
 
 class LaravelDataTracker implements DataTracker
 {
@@ -52,6 +53,7 @@ class LaravelDataTracker implements DataTracker
             $app->make(ApplicationTracker::class),
             $app->make(RequestTracker::class),
             $app->make(ResponseTracker::class),
+            $app->make(PerformanceTracker::class),
         ]);
 
         $this->meta = new Collection();

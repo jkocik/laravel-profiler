@@ -20,6 +20,7 @@ use JKocik\Laravel\Profiler\Trackers\ResponseTracker;
 use JKocik\Laravel\Profiler\Trackers\BindingsTracker;
 use JKocik\Laravel\Profiler\Trackers\ExceptionTracker;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
+use JKocik\Laravel\Profiler\Trackers\PerformanceTracker;
 use JKocik\Laravel\Profiler\Trackers\ServiceProvidersTracker;
 
 class TrackersTest extends TestCase
@@ -94,6 +95,30 @@ class TrackersTest extends TestCase
 
         $this->assertNotContains(ResponseTracker::class, $defaultTrackers);
         $this->assertSame($responseTracker, $this->app->make(ResponseTracker::class));
+    }
+
+    /** @test */
+    function performance_tracker_is_required()
+    {
+        $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
+
+        $performanceTracker = Mockery::mock(PerformanceTracker::class);
+        $performanceTracker->shouldReceive('terminate')->once();
+        $performanceTracker->shouldReceive('meta')->once()->andReturn(collect());
+        $performanceTracker->shouldReceive('data')->once()->andReturn(collect());
+
+        $this->app = $this->appWith(function (Application $app) use ($performanceTracker) {
+            $app->make('config')->set('profiler.trackers', []);
+            $app->make('config')->set('profiler.processors', []);
+            $app->singleton(PerformanceTracker::class, function () use ($performanceTracker) {
+                return $performanceTracker;
+            });
+        });
+
+        $this->app->terminate();
+
+        $this->assertNotContains(PerformanceTracker::class, $defaultTrackers);
+        $this->assertSame($performanceTracker, $this->app->make(PerformanceTracker::class));
     }
 
     /** @test */
