@@ -107,20 +107,6 @@ class ApplicationTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_laravel_execution_time()
-    {
-        $tracker = $this->app->make(ApplicationTracker::class);
-        $timer = $this->app->make(Timer::class);
-
-        $timer->finishLaravel();
-        $tracker->terminate();
-
-        $this->assertTrue($tracker->meta()->has('laravel_execution_time'));
-        $this->assertGreaterThan(0, $tracker->meta()->get('laravel_execution_time'));
-        $this->assertEquals($timer->milliseconds('laravel'), $tracker->meta()->get('laravel_execution_time'));
-    }
-
-    /** @test */
     function has_locale()
     {
         $tracker = $this->app->make(ApplicationTracker::class);

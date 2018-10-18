@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\Timer;
+use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
@@ -32,7 +33,7 @@ class LaravelProfiler extends BaseProfiler
             return $app->make(TimerService::class);
         });
 
-        $this->app->make(Timer::class)->startLaravel();
+        $this->initPerformance();
     }
 
     /**
@@ -46,9 +47,33 @@ class LaravelProfiler extends BaseProfiler
         $dataTracker->track();
 
         $this->app->terminating(function () use ($dataTracker) {
-            $this->app->make(Timer::class)->finishLaravel();
+            $this->finishPerformance();
             $dataTracker->terminate();
             $this->app->make(DataProcessor::class)->process($dataTracker);
         });
+    }
+
+    /**
+     * @return void
+     */
+    protected function initPerformance(): void
+    {
+        $timer = $this->app->make(Timer::class);
+        $timer->startLaravel();
+
+        $this->app->beforeBootstrapping(BootProviders::class, function () use ($timer) {
+            $timer->start('bootstrap');
+        });
+        $this->app->afterBootstrapping(BootProviders::class, function () use ($timer) {
+            $timer->finish('bootstrap');
+        });
+    }
+
+    /**
+     * @return void
+     */
+    protected function finishPerformance(): void
+    {
+        $this->app->make(Timer::class)->finishLaravel();
     }
 }
