@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\Timer;
+use JKocik\Laravel\Profiler\Contracts\Memory;
 use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
@@ -10,6 +11,7 @@ use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
 use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
 use JKocik\Laravel\Profiler\Services\Performance\TimerService;
+use JKocik\Laravel\Profiler\Services\Performance\MemoryService;
 use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
 
 class LaravelProfiler extends BaseProfiler
@@ -31,6 +33,10 @@ class LaravelProfiler extends BaseProfiler
 
         $this->app->singleton(Timer::class, function ($app) {
             return $app->make(TimerService::class);
+        });
+
+        $this->app->singleton(Memory::class, function ($app) {
+            return $app->make(MemoryService::class);
         });
 
         $this->initPerformance();
@@ -75,5 +81,6 @@ class LaravelProfiler extends BaseProfiler
     protected function finishPerformance(): void
     {
         $this->app->make(Timer::class)->finishLaravel();
+        $this->app->make(Memory::class)->recordPeak();
     }
 }

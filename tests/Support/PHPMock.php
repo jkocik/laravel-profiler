@@ -53,7 +53,7 @@ class PHPMock
     protected static function memoryUsageMock(): MockBuilder
     {
         return (new MockBuilder())
-            ->setNamespace('JKocik\Laravel\Profiler\Trackers')
+            ->setNamespace('JKocik\Laravel\Profiler\Services\Performance')
             ->setName('memory_get_peak_usage')
             ->setFunctionProvider(new FixedValueFunction(self::MEMORY_USAGE));
     }

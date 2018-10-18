@@ -36,7 +36,6 @@ class ApplicationTracker extends BaseTracker
         $this->meta->put('php_version', phpversion());
         $this->meta->put('env', $this->app->environment());
         $this->meta->put('is_running_in_console', $this->app->runningInConsole());
-        $this->meta->put('memory_usage', memory_get_peak_usage());
 
         $this->data->put('application', Collection::make([
             'locale' => $this->app->getLocale(),

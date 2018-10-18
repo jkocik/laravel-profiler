@@ -5,7 +5,6 @@ namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 use Mockery;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Trackers\ApplicationTracker;
 
@@ -93,17 +92,6 @@ class ApplicationTrackerTest extends TestCase
 
         $this->assertTrue($tracker->meta()->has('is_running_in_console'));
         $this->assertFalse($tracker->meta()->get('is_running_in_console'));
-    }
-
-    /** @test */
-    function has_memory_usage()
-    {
-        $tracker = $this->app->make(ApplicationTracker::class);
-
-        $tracker->terminate();
-
-        $this->assertTrue($tracker->meta()->has('memory_usage'));
-        $this->assertEquals(PHPMock::MEMORY_USAGE, $tracker->meta()->get('memory_usage'));
     }
 
     /** @test */

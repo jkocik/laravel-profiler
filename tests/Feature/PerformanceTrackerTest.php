@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\Timer;
+use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\PerformanceProcessor;
 
@@ -50,5 +51,14 @@ class PerformanceTrackerTest extends TestCase
 
         $this->assertGreaterThan(0, $timer->milliseconds('bootstrap'));
         $this->assertEquals($timer->milliseconds('bootstrap'), $processor->performance->get('timer')['bootstrap']);
+    }
+
+    /** @test */
+    function has_memory_peak()
+    {
+        $this->app->terminate();
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertEquals(PHPMock::MEMORY_USAGE, $processor->performance->get('memory')['peak']);
     }
 }
