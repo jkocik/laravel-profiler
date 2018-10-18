@@ -19,6 +19,11 @@ class TimerService implements Timer
     protected $time;
 
     /**
+     * @var string
+     */
+    protected $customNamePrefix = 'custom-';
+
+    /**
      * TimerService constructor.
      * @param Application $app
      */
@@ -34,11 +39,50 @@ class TimerService implements Timer
      */
     public function start(string $name): void
     {
-        $this->guardTimerAlreadyStarted($name);
-
         $this->time->put($name, [
             'start' => $this->now(),
         ]);
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function finish(string $name): void
+    {
+        $this->time->put($name, array_merge($this->getByName($name), [
+            'finish' => $this->now(),
+        ]));
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     * @throws TimerException
+     */
+    public function startCustom(string $name): void
+    {
+        $customName = $this->customNamePrefix . $name;
+
+        $this->guardTimerAlreadyStarted($customName);
+
+        $this->start($customName);
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     * @throws TimerException
+     */
+    public function finishCustom(string $name): void
+    {
+        $customName = $this->customNamePrefix . $name;
+
+        $this->guardTimerAlreadyFinished($customName);
+
+        $this->guardTimerNotStartedYet($customName);
+
+        $this->finish($customName);
     }
 
     /**
@@ -49,21 +93,6 @@ class TimerService implements Timer
         $this->time->put('laravel', [
             'start' => $this->laravelStartTimeOrNow(),
         ]);
-    }
-
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function finish(string $name): void
-    {
-        $this->guardTimerAlreadyFinished($name);
-
-        $this->guardTimerNotStartedYet($name);
-
-        $this->time->put($name, array_merge($this->getByName($name), [
-            'finish' => $this->now(),
-        ]));
     }
 
     /**
@@ -83,6 +112,15 @@ class TimerService implements Timer
         return $this->millisecondsOf(
             $this->getByName($name)
         );
+    }
+
+    /**
+     * @param string $name
+     * @return float
+     */
+    public function millisecondsCustom(string $name): float
+    {
+        return $this->milliseconds($this->customNamePrefix . $name);
     }
 
     /**

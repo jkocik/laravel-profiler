@@ -10,7 +10,7 @@ class NullTimerService implements Timer
      * @param string $name
      * @return void
      */
-    public function start(string $name): void
+    public function startCustom(string $name): void
     {
 
     }
@@ -19,7 +19,7 @@ class NullTimerService implements Timer
      * @param string $name
      * @return void
      */
-    public function finish(string $name): void
+    public function finishCustom(string $name): void
     {
 
     }
@@ -28,16 +28,8 @@ class NullTimerService implements Timer
      * @param string $name
      * @return float
      */
-    public function milliseconds(string $name): float
+    public function millisecondsCustom(string $name): float
     {
-        return 0;
-    }
-
-    /**
-     * @return array
-     */
-    public function all(): array
-    {
-        return [];
+        return -1;
     }
 }

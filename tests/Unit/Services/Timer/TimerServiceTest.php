@@ -95,25 +95,36 @@ class TimerServiceTest extends TestCase
     }
 
     /** @test */
+    function allows_custom_timer_for_application_developers_but_keep_it_in_different_namespace()
+    {
+        $timer = $this->app->make(TimerService::class);
+
+        $timer->startCustom('testA');
+        $timer->finishCustom('testA');
+
+        $this->assertGreaterThan(0, $timer->millisecondsCustom('testA'));
+        $this->assertNotEquals($timer->milliseconds('testA'), $timer->millisecondsCustom('testA'));
+    }
+
+    /** @test */
     function returns_empty_values_for_null_timer()
     {
         $timer = new NullTimerService();
 
-        $timer->start('testA');
-        $timer->finish('testA');
+        $timer->startCustom('testA');
+        $timer->finishCustom('testA');
 
-        $this->assertEquals(0, $timer->milliseconds('testA'));
-        $this->assertEquals([], $timer->all());
+        $this->assertEquals(-1, $timer->millisecondsCustom('testA'));
     }
 
     /** @test */
-    function the_same_timer_can_not_be_started_more_than_once()
+    function the_same_custom_timer_can_not_be_started_more_than_once()
     {
         try {
             $timer = $this->app->make(TimerService::class);
 
-            $timer->start('testA');
-            $timer->start('testA');
+            $timer->startCustom('testA');
+            $timer->startCustom('testA');
         } catch (TimerException $e) {
             $this->assertTrue(true);
             return;
@@ -123,14 +134,14 @@ class TimerServiceTest extends TestCase
     }
 
     /** @test */
-    function the_same_timer_can_not_be_finished_more_than_once()
+    function the_same_custom_timer_can_not_be_finished_more_than_once()
     {
         try {
             $timer = $this->app->make(TimerService::class);
 
-            $timer->start('testA');
-            $timer->finish('testA');
-            $timer->finish('testA');
+            $timer->startCustom('testA');
+            $timer->finishCustom('testA');
+            $timer->finishCustom('testA');
         } catch (TimerException $e) {
             $this->assertTrue(true);
             return;
@@ -140,12 +151,12 @@ class TimerServiceTest extends TestCase
     }
 
     /** @test */
-    function timer_can_not_be_finished_if_is_not_started_before()
+    function custom_timer_can_not_be_finished_if_is_not_started_before()
     {
         try {
             $timer = $this->app->make(TimerService::class);
 
-            $timer->finish('testA');
+            $timer->finishCustom('testA');
         } catch (TimerException $e) {
             $this->assertTrue(true);
             return;
