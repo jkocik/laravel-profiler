@@ -29,7 +29,7 @@ class PerformanceTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_timer_laravel()
+    function has_laravel_total_execution_time()
     {
         $this->app->terminate();
         $timer = $this->app->make(Timer::class);
@@ -41,7 +41,7 @@ class PerformanceTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_timer_bootstrap()
+    function has_bootstrap_time()
     {
         event('bootstrapping: ' . BootProviders::class, [$this]);
         event('bootstrapped: ' . BootProviders::class, [$this]);
@@ -51,6 +51,40 @@ class PerformanceTrackerTest extends TestCase
 
         $this->assertGreaterThan(0, $timer->milliseconds('bootstrap'));
         $this->assertEquals($timer->milliseconds('bootstrap'), $processor->performance->get('timer')['bootstrap']);
+    }
+
+    /** @test */
+    function has_middleware_time()
+    {
+        event('bootstrapped: ' . BootProviders::class, [$this]);
+        $this->get('/');
+        $timer = $this->app->make(Timer::class);
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertGreaterThan(0, $timer->milliseconds('middleware'));
+        $this->assertEquals($timer->milliseconds('middleware'), $processor->performance->get('timer')['middleware']);
+    }
+
+    /** @test */
+    function has_handle_request_time()
+    {
+        $this->get('/');
+        $timer = $this->app->make(Timer::class);
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertGreaterThan(0, $timer->milliseconds('request'));
+        $this->assertEquals($timer->milliseconds('request'), $processor->performance->get('timer')['request']);
+    }
+
+    /** @test */
+    function has_send_response_and_terminate_time()
+    {
+        $this->get('/');
+        $timer = $this->app->make(Timer::class);
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertGreaterThan(0, $timer->milliseconds('response'));
+        $this->assertEquals($timer->milliseconds('response'), $processor->performance->get('timer')['response']);
     }
 
     /** @test */

@@ -72,6 +72,7 @@ class LaravelProfiler extends BaseProfiler
         });
         $this->app->afterBootstrapping(BootProviders::class, function () use ($timer) {
             $timer->finish('bootstrap');
+            $timer->start('middleware');
         });
     }
 
@@ -80,7 +81,10 @@ class LaravelProfiler extends BaseProfiler
      */
     protected function finishPerformance(): void
     {
-        $this->app->make(Timer::class)->finishLaravel();
         $this->app->make(Memory::class)->recordPeak();
+
+        $timer = $this->app->make(Timer::class);
+        $timer->finish('response');
+        $timer->finishLaravel();
     }
 }
