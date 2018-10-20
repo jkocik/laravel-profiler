@@ -82,7 +82,7 @@ class TestCase extends BaseTestCase
     {
         $app = $this->appBeforeBootstrap();
 
-        $app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use ($app) {
+        $app->afterBootstrapping(RegisterProviders::class, function () use ($app) {
             $app->register(ServiceProvider::class);
         });
 
@@ -99,7 +99,7 @@ class TestCase extends BaseTestCase
     {
         $app = $this->appBeforeBootstrap();
 
-        $app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use ($app, $beforeServiceProvider) {
+        $app->afterBootstrapping(RegisterProviders::class, function () use ($app, $beforeServiceProvider) {
             $beforeServiceProvider($app);
             $app->register(ServiceProvider::class);
         });

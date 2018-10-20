@@ -52,7 +52,7 @@ class LaravelProfiler extends BaseProfiler
             return $app->make(MemoryService::class);
         });
 
-        $this->app['events']->fire(ProfilerBound::class);
+        event(new ProfilerBound());
     }
 
     /**
@@ -65,7 +65,7 @@ class LaravelProfiler extends BaseProfiler
         $dataTracker = $this->app->make(DataTracker::class);
         $dataTracker->track();
 
-        $this->app['events']->fire(Tracking::class);
+        event(new Tracking());
 
         return $dataTracker;
     }
@@ -77,7 +77,7 @@ class LaravelProfiler extends BaseProfiler
     protected function listenForTerminating(DataTracker $dataTracker): void
     {
         $this->app->terminating(function () use ($dataTracker) {
-            $this->app['events']->fire(Terminating::class);
+            event(new Terminating());
 
             $dataTracker->terminate();
             $this->app->make(DataProcessor::class)->process($dataTracker);

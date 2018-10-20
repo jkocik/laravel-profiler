@@ -25,6 +25,6 @@ class DisabledProfiler extends BaseProfiler
             return $app->make(NullTimerService::class);
         });
 
-        $this->app['events']->fire(ProfilerBound::class);
+        event(ProfilerBound::class);
     }
 }

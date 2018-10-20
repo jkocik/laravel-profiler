@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Mockery;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -48,7 +49,7 @@ class RegisterProfilerTest extends TestCase
                 $this->dataProcessor = $dataProcessor;
             }
             public function register(): void {
-                $this->app['events']->listen(ProfilerBound::class, function () {
+                Event::listen(ProfilerBound::class, function () {
                     $this->app->singleton(Timer::class, function () {
                         return $this->timer;
                     });
@@ -63,7 +64,7 @@ class RegisterProfilerTest extends TestCase
             }
         };
 
-        $app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use ($app, $provider) {
+        $app->afterBootstrapping(RegisterProviders::class, function () use ($app, $provider) {
             $app->register($provider);
         });
 
@@ -198,7 +199,7 @@ class RegisterProfilerTest extends TestCase
         $eventsExecuted = 0;
         $this->app = $this->appBeforeBootstrap();
 
-        $this->app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use (&$eventsExecuted) {
+        $this->app->afterBootstrapping(RegisterProviders::class, function () use (&$eventsExecuted) {
             $this->app->register(ServiceProvider::class);
             $this->assertFalse($this->app->resolved(Timer::class));
             $eventsExecuted++;
@@ -221,7 +222,7 @@ class RegisterProfilerTest extends TestCase
         $eventsExecuted = 0;
         $this->app = $this->appBeforeBootstrap();
 
-        $this->app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use (&$eventsExecuted) {
+        $this->app->afterBootstrapping(RegisterProviders::class, function () use (&$eventsExecuted) {
             $this->app->register(ServiceProvider::class);
             $this->assertFalse($this->app->resolved(Timer::class));
             $eventsExecuted++;

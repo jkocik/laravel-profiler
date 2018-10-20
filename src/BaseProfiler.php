@@ -27,7 +27,7 @@ abstract class BaseProfiler implements Profiler
      */
     public function listenForBoot(): void
     {
-        $this->app['events']->listen('bootstrapping: ' . BootProviders::class, function () {
+        $this->app->beforeBootstrapping(BootProviders::class, function () {
             $this->boot();
         });
     }
