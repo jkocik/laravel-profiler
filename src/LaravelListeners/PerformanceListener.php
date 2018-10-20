@@ -60,6 +60,7 @@ class PerformanceListener implements LaravelListener
 
         $this->app->booted(function () {
             $this->timer->finish('boot');
+            $this->timer->start('total-request');
             $this->timer->start('middleware');
         });
 
@@ -71,12 +72,14 @@ class PerformanceListener implements LaravelListener
         /** @codeCoverageIgnoreStart */
         Event::listen('kernel.handled', function () {
             $this->timer->finish('request');
+            $this->timer->finish('total-request');
             $this->timer->start('response');
         });
         /** @codeCoverageIgnoreEnd */
 
         Event::listen(RequestHandled::class, function () {
             $this->timer->finish('request');
+            $this->timer->finish('total-request');
             $this->timer->start('response');
         });
 
