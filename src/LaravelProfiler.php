@@ -2,8 +2,10 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use JKocik\Laravel\Profiler\Events\Tracking;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
+use JKocik\Laravel\Profiler\Events\Terminating;
 use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
@@ -22,7 +24,9 @@ class LaravelProfiler extends BaseProfiler
     {
         $this->bind();
 
-        $this->initTracking();
+        $dataTracker = $this->track();
+
+        $this->listenForTerminating($dataTracker);
     }
 
     /**
@@ -52,21 +56,28 @@ class LaravelProfiler extends BaseProfiler
     }
 
     /**
-     * @return void
+     * @return DataTracker
      */
-    protected function initTracking(): void
+    protected function track(): DataTracker
     {
-        $this->app->make(Timer::class)->startLaravel();
         $this->app->make(ExecutionWatcher::class)->watch();
 
         $dataTracker = $this->app->make(DataTracker::class);
         $dataTracker->track();
-        $this->app->terminating(function () use ($dataTracker) {
-            $this->app->make(Memory::class)->recordPeak();
 
-            $timer = $this->app->make(Timer::class);
-            $timer->finish('response');
-            $timer->finishLaravel();
+        $this->app['events']->fire(Tracking::class);
+
+        return $dataTracker;
+    }
+
+    /**
+     * @param DataTracker $dataTracker
+     * @return void
+     */
+    protected function listenForTerminating(DataTracker $dataTracker): void
+    {
+        $this->app->terminating(function () use ($dataTracker) {
+            $this->app['events']->fire(Terminating::class);
 
             $dataTracker->terminate();
             $this->app->make(DataProcessor::class)->process($dataTracker);

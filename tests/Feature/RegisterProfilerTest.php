@@ -155,7 +155,6 @@ class RegisterProfilerTest extends TestCase
 
         $this->assertInstanceOf(LaravelProfiler::class, $this->app->make(Profiler::class));
         $this->assertSame($timer, $this->app->make(Timer::class));
-        $timer->shouldHaveReceived('finishLaravel');
         $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
         $dataTracker->shouldHaveReceived('track');
         $dataTracker->shouldHaveReceived('terminate');
@@ -184,7 +183,6 @@ class RegisterProfilerTest extends TestCase
 
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
         $this->assertSame($timer, $this->app->make(Timer::class));
-        $timer->shouldNotHaveReceived('finishLaravel');
         $this->assertSame($dataTracker, $this->app->make(DataTracker::class));
         $dataTracker->shouldNotHaveReceived('track');
         $dataTracker->shouldNotHaveReceived('terminate');
