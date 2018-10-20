@@ -49,13 +49,7 @@ class LaravelDataTracker implements DataTracker
         $this->app = $app;
         $this->configService = $configService;
 
-        $this->trackers = new Collection([
-            $app->make(ApplicationTracker::class),
-            $app->make(RequestTracker::class),
-            $app->make(ResponseTracker::class),
-            $app->make(PerformanceTracker::class),
-        ]);
-
+        $this->trackers = new Collection();
         $this->meta = new Collection();
         $this->data = new Collection();
     }
@@ -65,6 +59,11 @@ class LaravelDataTracker implements DataTracker
      */
     public function track(): void
     {
+        $this->trackers->push($this->app->make(ApplicationTracker::class));
+        $this->trackers->push($this->app->make(PerformanceTracker::class));
+        $this->trackers->push($this->app->make(RequestTracker::class));
+        $this->trackers->push($this->app->make(ResponseTracker::class));
+
         $this->configService->trackers()->each(function (string $tracker) {
             $this->trackers->push($this->app->make($tracker));
         });
