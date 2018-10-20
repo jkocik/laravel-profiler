@@ -7,10 +7,5 @@ interface Profiler
     /**
      * @return void
      */
-    public function register(): void;
-
-    /**
-     * @return void
-     */
-    public function boot(): void;
+    public function listenForBoot(): void;
 }

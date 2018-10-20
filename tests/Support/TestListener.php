@@ -31,7 +31,7 @@ class TestListener implements BaseTestListener
      */
     protected function printVersion(Test $test): void
     {
-        fwrite(STDERR, "APP: {$test->appWithoutProfiler()->version()}\n");
+        fwrite(STDERR, "APP: {$test->appBeforeBootstrap()->version()}\n");
 
         $this->versionPrinted = true;
     }

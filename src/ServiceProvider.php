@@ -18,7 +18,7 @@ class ServiceProvider extends BaseServiceProvider
             return $app->make(ProfilerResolver::class)->resolve();
         });
 
-        $this->app->make(Profiler::class)->register();
+        $this->app->make(Profiler::class)->listenForBoot();
     }
 
     /**
@@ -27,8 +27,6 @@ class ServiceProvider extends BaseServiceProvider
     public function boot(): void
     {
         $this->allowConfigFileToBePublished();
-
-        $this->app->make(Profiler::class)->boot();
     }
 
     /**

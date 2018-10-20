@@ -10,6 +10,7 @@ use JKocik\Laravel\Profiler\ServiceProvider;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
 use JKocik\Laravel\Profiler\Tests\Support\Framework;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithSession;
@@ -51,13 +52,9 @@ class TestCase extends BaseTestCase
     /**
      * @return Application
      */
-    public function appWithoutProfiler(): Application
+    public function appBeforeBootstrap(): Application
     {
-        $app = require __DIR__ . '/../frameworks/' . static::$framework->dir() . '/bootstrap/app.php';
-
-        $app->make(Kernel::class)->bootstrap();
-
-        return $app;
+        return require __DIR__ . '/../frameworks/' . static::$framework->dir() . '/bootstrap/app.php';
     }
 
     /**
@@ -83,9 +80,13 @@ class TestCase extends BaseTestCase
      */
     protected function app(): Application
     {
-        $app = $this->appWithoutProfiler();
+        $app = $this->appBeforeBootstrap();
 
-        $app->register(ServiceProvider::class);
+        $app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use ($app) {
+            $app->register(ServiceProvider::class);
+        });
+
+        $app->make(Kernel::class)->bootstrap();
 
         return $app;
     }
@@ -96,11 +97,14 @@ class TestCase extends BaseTestCase
      */
     protected function appWith(Closure $beforeServiceProvider): Application
     {
-        $app = $this->appWithoutProfiler();
+        $app = $this->appBeforeBootstrap();
 
-        $beforeServiceProvider($app);
+        $app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use ($app, $beforeServiceProvider) {
+            $beforeServiceProvider($app);
+            $app->register(ServiceProvider::class);
+        });
 
-        $app->register(ServiceProvider::class);
+        $app->make(Kernel::class)->bootstrap();
 
         return $app;
     }

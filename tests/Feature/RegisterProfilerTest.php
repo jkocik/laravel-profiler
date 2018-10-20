@@ -4,14 +4,19 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Mockery;
 use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\ServiceProvider;
 use JKocik\Laravel\Profiler\LaravelProfiler;
 use JKocik\Laravel\Profiler\DisabledProfiler;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
+use Illuminate\Foundation\Bootstrap\RegisterProviders;
+use JKocik\Laravel\Profiler\Services\Performance\TimerService;
+use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
 use JKocik\Laravel\Profiler\LaravelListeners\HttpRequestHandledListener;
 use JKocik\Laravel\Profiler\LaravelListeners\ConsoleCommandFinishedListener;
 
@@ -22,15 +27,15 @@ class RegisterProfilerTest extends TestCase
      * @param Timer $timer
      * @param DataTracker $dataTracker
      * @param DataProcessor $dataProcessor
-     * @return ServiceProvider
+     * @return void
      */
-    protected function serviceProvider(
+    protected function registerServiceProviderWith(
         Application $app,
         Timer $timer,
         DataTracker $dataTracker,
         DataProcessor $dataProcessor
-    ): ServiceProvider {
-        return new class($app, $timer, $dataTracker, $dataProcessor) extends ServiceProvider {
+    ): void {
+        $provider = new class($app, $timer, $dataTracker, $dataProcessor) extends ServiceProvider {
             public function __construct(
                 Application $app,
                 Timer $timer,
@@ -43,18 +48,26 @@ class RegisterProfilerTest extends TestCase
                 $this->dataProcessor = $dataProcessor;
             }
             public function register(): void {
+                $this->app['events']->listen(ProfilerBound::class, function () {
+                    $this->app->singleton(Timer::class, function () {
+                        return $this->timer;
+                    });
+                    $this->app->singleton(DataTracker::class, function () {
+                        return $this->dataTracker;
+                    });
+                    $this->app->singleton(DataProcessor::class, function () {
+                        return $this->dataProcessor;
+                    });
+                });
                 parent::register();
-                $this->app->singleton(Timer::class, function () {
-                    return $this->timer;
-                });
-                $this->app->singleton(DataTracker::class, function () {
-                    return $this->dataTracker;
-                });
-                $this->app->singleton(DataProcessor::class, function () {
-                    return $this->dataProcessor;
-                });
             }
         };
+
+        $app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use ($app, $provider) {
+            $app->register($provider);
+        });
+
+        $app->make(Kernel::class)->bootstrap();
     }
 
     /** @test */
@@ -133,11 +146,10 @@ class RegisterProfilerTest extends TestCase
         $httpRequestHandledListener = Mockery::spy(HttpRequestHandledListener::class);
         $consoleCommandFinishedListener = Mockery::spy(ConsoleCommandFinishedListener::class);
 
-        $this->app = $this->appWithoutProfiler();
+        $this->app = $this->appBeforeBootstrap();
         $this->app->instance(HttpRequestHandledListener::class, $httpRequestHandledListener);
         $this->app->instance(ConsoleCommandFinishedListener::class, $consoleCommandFinishedListener);
-        $serviceProvider = $this->serviceProvider($this->app, $timer, $dataTracker, $dataProcessor);
-        $this->app->register($serviceProvider);
+        $this->registerServiceProviderWith($this->app, $timer, $dataTracker, $dataProcessor);
 
         $this->app->terminate();
 
@@ -163,11 +175,10 @@ class RegisterProfilerTest extends TestCase
         $httpRequestHandledListener = Mockery::spy(HttpRequestHandledListener::class);
         $consoleCommandFinishedListener = Mockery::spy(ConsoleCommandFinishedListener::class);
 
-        $this->app = $this->appWithoutProfiler();
+        $this->app = $this->appBeforeBootstrap();
         $this->app->instance(HttpRequestHandledListener::class, $httpRequestHandledListener);
         $this->app->instance(ConsoleCommandFinishedListener::class, $consoleCommandFinishedListener);
-        $serviceProvider = $this->serviceProvider($this->app, $timer, $dataTracker, $dataProcessor);
-        $this->app->register($serviceProvider);
+        $this->registerServiceProviderWith($this->app, $timer, $dataTracker, $dataProcessor);
 
         $this->app->terminate();
 
@@ -181,6 +192,51 @@ class RegisterProfilerTest extends TestCase
         $dataProcessor->shouldNotHaveReceived('process');
         $httpRequestHandledListener->shouldNotHaveReceived('listen');
         $consoleCommandFinishedListener->shouldNotHaveReceived('listen');
+    }
+
+    /** @test */
+    function enabled_profiler_is_booted_before_all_service_providers_are_booted()
+    {
+        $eventsExecuted = 0;
+        $this->app = $this->appBeforeBootstrap();
+
+        $this->app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use (&$eventsExecuted) {
+            $this->app->register(ServiceProvider::class);
+            $this->assertFalse($this->app->resolved(Timer::class));
+            $eventsExecuted++;
+        });
+
+        $this->app->booting(function () use (&$eventsExecuted) {
+            $this->assertInstanceOf(TimerService::class, $this->app->make(Timer::class));
+            $eventsExecuted++;
+        });
+
+        $this->app->make(Kernel::class)->bootstrap();
+
+        $this->assertEquals(2, $eventsExecuted);
+    }
+
+    /** @test */
+    function disabled_profiler_is_booted_before_all_service_providers_are_booted()
+    {
+        putenv('PROFILER_ENABLED=false');
+        $eventsExecuted = 0;
+        $this->app = $this->appBeforeBootstrap();
+
+        $this->app['events']->listen('bootstrapped: ' . RegisterProviders::class, function () use (&$eventsExecuted) {
+            $this->app->register(ServiceProvider::class);
+            $this->assertFalse($this->app->resolved(Timer::class));
+            $eventsExecuted++;
+        });
+
+        $this->app->booting(function () use (&$eventsExecuted) {
+            $this->assertInstanceOf(NullTimerService::class, $this->app->make(Timer::class));
+            $eventsExecuted++;
+        });
+
+        $this->app->make(Kernel::class)->bootstrap();
+
+        $this->assertEquals(2, $eventsExecuted);
     }
 
     /**

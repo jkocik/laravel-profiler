@@ -6,7 +6,6 @@ use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
-use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\PerformanceProcessor;
 
 class PerformanceTrackerTest extends TestCase
@@ -41,22 +40,19 @@ class PerformanceTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_bootstrap_time()
+    function has_booting_time()
     {
-        event('bootstrapping: ' . BootProviders::class, [$this]);
-        event('bootstrapped: ' . BootProviders::class, [$this]);
         $this->app->terminate();
         $timer = $this->app->make(Timer::class);
         $processor = $this->app->make(PerformanceProcessor::class);
 
-        $this->assertGreaterThan(0, $timer->milliseconds('bootstrap'));
-        $this->assertEquals($timer->milliseconds('bootstrap'), $processor->performance->get('timer')['bootstrap']);
+        $this->assertGreaterThan(0, $timer->milliseconds('boot'));
+        $this->assertEquals($timer->milliseconds('boot'), $processor->performance->get('timer')['boot']);
     }
 
     /** @test */
     function has_middleware_time()
     {
-        event('bootstrapped: ' . BootProviders::class, [$this]);
         $this->get('/');
         $timer = $this->app->make(Timer::class);
         $processor = $this->app->make(PerformanceProcessor::class);

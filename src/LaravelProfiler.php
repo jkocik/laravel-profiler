@@ -4,12 +4,11 @@ namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
-use Illuminate\Foundation\Bootstrap\BootProviders;
+use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
-use JKocik\Laravel\Profiler\Contracts\RequestHandledListener;
 use JKocik\Laravel\Profiler\Services\Performance\TimerService;
 use JKocik\Laravel\Profiler\Services\Performance\MemoryService;
 use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
@@ -19,7 +18,17 @@ class LaravelProfiler extends BaseProfiler
     /**
      * @return void
      */
-    public function register(): void
+    protected function boot(): void
+    {
+        $this->bind();
+
+        $this->initTracking();
+    }
+
+    /**
+     * @return void
+     */
+    protected function bind(): void
     {
         $this->app->bind(DataTracker::class, LaravelDataTracker::class);
 
@@ -39,52 +48,28 @@ class LaravelProfiler extends BaseProfiler
             return $app->make(MemoryService::class);
         });
 
-        $this->initPerformance();
+        $this->app['events']->fire(ProfilerBound::class);
     }
 
     /**
      * @return void
      */
-    public function boot(): void
+    protected function initTracking(): void
     {
+        $this->app->make(Timer::class)->startLaravel();
         $this->app->make(ExecutionWatcher::class)->watch();
 
         $dataTracker = $this->app->make(DataTracker::class);
         $dataTracker->track();
-
         $this->app->terminating(function () use ($dataTracker) {
-            $this->finishPerformance();
+            $this->app->make(Memory::class)->recordPeak();
+
+            $timer = $this->app->make(Timer::class);
+            $timer->finish('response');
+            $timer->finishLaravel();
+
             $dataTracker->terminate();
             $this->app->make(DataProcessor::class)->process($dataTracker);
         });
-    }
-
-    /**
-     * @return void
-     */
-    protected function initPerformance(): void
-    {
-        $timer = $this->app->make(Timer::class);
-        $timer->startLaravel();
-
-        $this->app->beforeBootstrapping(BootProviders::class, function () use ($timer) {
-            $timer->start('bootstrap');
-        });
-        $this->app->afterBootstrapping(BootProviders::class, function () use ($timer) {
-            $timer->finish('bootstrap');
-            $timer->start('middleware');
-        });
-    }
-
-    /**
-     * @return void
-     */
-    protected function finishPerformance(): void
-    {
-        $this->app->make(Memory::class)->recordPeak();
-
-        $timer = $this->app->make(Timer::class);
-        $timer->finish('response');
-        $timer->finishLaravel();
     }
 }

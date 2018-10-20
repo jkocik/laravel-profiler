@@ -3,6 +3,7 @@
 namespace JKocik\Laravel\Profiler;
 
 use JKocik\Laravel\Profiler\Contracts\Timer;
+use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
 
 class DisabledProfiler extends BaseProfiler
@@ -10,18 +11,20 @@ class DisabledProfiler extends BaseProfiler
     /**
      * @return void
      */
-    public function register(): void
+    protected function boot(): void
     {
-        $this->app->singleton(Timer::class, function ($app) {
-            return $app->make(NullTimerService::class);
-        });
+        $this->bind();
     }
 
     /**
      * @return void
      */
-    public function boot(): void
+    protected function bind(): void
     {
+        $this->app->singleton(Timer::class, function ($app) {
+            return $app->make(NullTimerService::class);
+        });
 
+        $this->app['events']->fire(ProfilerBound::class);
     }
 }
