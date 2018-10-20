@@ -53,7 +53,7 @@ class EventsListener implements LaravelListener
         $this->dispatcher->listen('*', function ($event, $payload = null) {
             $name = $this->resolveName($event, $payload);
 
-            if ($this->isLaravelProfilerInternalEvent($name)) {
+            if ($this->shouldSkip($name)) {
                 return;
             }
 
@@ -131,12 +131,16 @@ class EventsListener implements LaravelListener
      * @param string $name
      * @return bool
      */
-    protected function isLaravelProfilerInternalEvent(string $name): bool
+    protected function shouldSkip(string $name): bool
     {
-        $laravelProfilerInternalEvents = Collection::make([
+        $shouldSkip = Collection::make([
+            'bootstrapped: ' . \Illuminate\Foundation\Bootstrap\BootProviders::class,
             \JKocik\Laravel\Profiler\Events\ExceptionHandling::class,
+            \JKocik\Laravel\Profiler\Events\ProfilerBound::class,
+            \JKocik\Laravel\Profiler\Events\Terminating::class,
+            \JKocik\Laravel\Profiler\Events\Tracking::class,
         ]);
 
-        return $laravelProfilerInternalEvents->contains($name);
+        return $shouldSkip->contains($name);
     }
 }

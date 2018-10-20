@@ -6,6 +6,9 @@ use App\User;
 use Exception;
 use Illuminate\Events\Dispatcher;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Events\Tracking;
+use JKocik\Laravel\Profiler\Events\Terminating;
+use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Trackers\EventsTracker;
 use JKocik\Laravel\Profiler\Events\ExceptionHandling;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassA;
@@ -173,6 +176,21 @@ class EventsTrackerTest extends TestCase
         $tracker = $this->app->make(EventsTracker::class);
 
         event(new ExceptionHandling(new Exception()));
+        event(new ProfilerBound());
+        event(new Terminating());
+        event(new Tracking());
+
+        $tracker->terminate();
+
+        $this->assertEquals(0, $tracker->meta()->get('events_count'));
+    }
+
+    /** @test */
+    function does_not_track_laravel_framework_events()
+    {
+        $tracker = $this->app->make(EventsTracker::class);
+
+        event('bootstrapped: ' . \Illuminate\Foundation\Bootstrap\BootProviders::class, [new \stdClass()]);
 
         $tracker->terminate();
 
