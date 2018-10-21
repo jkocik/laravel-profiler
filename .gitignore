@@ -1,5 +1,6 @@
 /.vagrant
 /client
+/frameworks
 /vendor
 Homestead.yaml
 composer.lock
