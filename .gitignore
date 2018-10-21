@@ -1,5 +1,6 @@
 /.vagrant
 /client
+/coverage
 /frameworks
 /vendor
 Homestead.yaml
