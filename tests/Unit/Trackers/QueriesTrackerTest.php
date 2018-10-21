@@ -35,7 +35,10 @@ class QueriesTrackerTest extends TestCase
     function has_executed_queries()
     {
         $tracker = $this->app->make(QueriesTracker::class);
-        $user = factory(User::class)->create();
+        factory(User::class)->create([
+            'name' => 'Joe',
+            'email' => 'joe@example.com',
+        ]);
 
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
@@ -43,12 +46,12 @@ class QueriesTrackerTest extends TestCase
         $this->assertNotNull($queries);
         $this->assertContains('query', $queries->first()['type']);
         $this->assertContains('insert into `users` (`name`, `email`, `password`', $queries->first()['sql']);
-        $this->assertContains($user->email, $queries->first()['bindings']);
+        $this->assertContains('joe@example.com', $queries->first()['bindings']);
         $this->assertArrayHasKey('time', $queries->first());
         $this->assertEquals(':memory:', $queries->first()['database']);
         $this->assertEquals('sqlite', $queries->first()['name']);
         $this->assertContains('insert into `users` (`name`, `email`, `password`', $queries->first()['query']);
-        $this->assertContains("values ('{$user->name}', '{$user->email}", $queries->first()['query']);
+        $this->assertContains("values ('Joe', 'joe@example.com'", $queries->first()['query']);
     }
 
     /** @test */
