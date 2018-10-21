@@ -40,7 +40,13 @@ Data tracked, collected and delivered to Profiler Client are:
 - database queries
 - request (web) / input (console)
 - response (web) / output (console)
-- application (Laravel status, config, loaded service providers, framework paths)
+- application (Laravel status, config, loaded service providers, container bindings, framework paths)
+
+Trackers start framework tracking on service providers booting and finish on application terminating.
+
+Laravel Profiler and its trackers do their work after request / artisan command is finished.
+That keeps your framework execution time and peak of memory usage as close to real values (without Profiler impact)
+as possible.
 
 ## Installation and configuration
 
@@ -120,7 +126,7 @@ You are ready to use Laravel Profiler. Enjoy!
 
 #### Laravel Profiler for testing
 
-When testing Profiler will deliver the same data as for regular request. However application should be
+When testing Profiler will deliver the same data as for regular request / artisan command. However application should be
 terminated. Lets see two default tests Laravel is shipped with:
 
 ```
@@ -153,11 +159,11 @@ public function testBasicTest()
 }
 ```
 
-Important notice: It is not possible to separate peak of memory usage for each test.
+Important notice: Peak of memory usage can not be tracked for each test separately.
 Anyway peak of memory usage is still visible (gray light font color).
 
 #### Using together with Laravel Debugbar
 
-It is not recommended using Laravel Profiler and Laravel Debugbar together. Profiler will always finish
-it's work after Debugbar and Profiler execution time, peak of memory usage and tracked events will
+It is not recommended using Laravel Profiler and Laravel Debugbar together. Profiler will finish
+its work after Debugbar and Profiler report of framework execution time and peak of memory usage will
 be increased by Debugbar activity. Use Profiler or Debugbar one at a time.
