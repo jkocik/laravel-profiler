@@ -12,6 +12,7 @@ use JKocik\Laravel\Profiler\ServiceProvider;
 use JKocik\Laravel\Profiler\LaravelProfiler;
 use JKocik\Laravel\Profiler\DisabledProfiler;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Events\Terminating;
 use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
@@ -236,6 +237,37 @@ class RegisterProfilerTest extends TestCase
         $this->app->make(Kernel::class)->bootstrap();
 
         $this->assertEquals(2, $eventsExecuted);
+    }
+
+    /** @test */
+    function enabled_profiler_register_terminating_callback_after_all_service_providers_are_booted()
+    {
+        $executedBefore = false;
+        $this->app = $this->appBeforeBootstrap();
+
+        $this->app->afterBootstrapping(RegisterProviders::class, function () use (&$order) {
+            $this->app->register(ServiceProvider::class);
+            $this->app->register(new class($this->app) extends \Illuminate\Support\ServiceProvider {
+                public function register() {}
+                public function boot() {
+                    $this->app->terminating(function () {
+                        event('another-executed-before', [new \stdClass()]);
+                    });
+                }
+            });
+        });
+
+        $this->app->make(Kernel::class)->bootstrap();
+
+        Event::listen('another-executed-before', function () use (&$executedBefore) {
+            $executedBefore = true;
+        });
+
+        Event::listen(Terminating::class, function () use (&$executedBefore) {
+            $this->assertTrue($executedBefore);
+        });
+
+        $this->app->terminate();
     }
 
     /**

@@ -7,6 +7,7 @@ use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
 use JKocik\Laravel\Profiler\Events\Terminating;
 use JKocik\Laravel\Profiler\Events\ProfilerBound;
+use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
@@ -75,6 +76,13 @@ class LaravelProfiler extends BaseProfiler
      * @return void
      */
     protected function listenForTerminating(DataTracker $dataTracker): void
+    {
+        $this->app->afterBootstrapping(BootProviders::class, function () use ($dataTracker) {
+            $this->registerTerminating($dataTracker);
+        });
+    }
+
+    protected function registerTerminating(DataTracker $dataTracker): void
     {
         $this->app->terminating(function () use ($dataTracker) {
             event(new Terminating());
