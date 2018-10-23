@@ -120,7 +120,7 @@ class RegisterProfilerTest extends TestCase
         putenv('APP_ENV=test-profiler');
         putenv('PROFILER_ENABLED=true');
         $this->app = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.force_disable_on', ['test-profiler' => true]);
+            $app->make('config')->set('profiler.override_enabled_on', ['test-profiler' => false]);
         });
 
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
@@ -135,7 +135,7 @@ class RegisterProfilerTest extends TestCase
 
         $config = $this->app->make('config');
 
-        $this->assertContains('production', $config->get('profiler.force_disable_on'));
+        $this->assertArrayHasKey('production', $config->get('profiler.override_enabled_on'));
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
     }
 

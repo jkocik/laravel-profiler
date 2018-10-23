@@ -24,10 +24,10 @@ return [
     |
     */
 
-    'force_disable_on' => [
-        'production' => true,
-//        'testing' => true,
-//        'local' => true,
+    'override_enabled_on' => [
+        'production' => false,
+//        'testing' => false,
+//        'local' => false,
     ],
 
     /*
