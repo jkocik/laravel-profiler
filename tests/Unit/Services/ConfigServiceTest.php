@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\Tests\Unit\Services;
 
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Services\LogService;
 use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
@@ -53,17 +54,12 @@ class ConfigServiceTest extends TestCase
     }
 
     /** @test */
-    function returns_laravel_profiler_broadcasting_log_errors_enabled()
+    function returns_handle_profiler_exceptions()
     {
-        $appA = $this->app;
-        $appB = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.broadcasting.log_errors_enabled', false);
-        });
+        $handleDefault = $this->app->make(ConfigService::class)->handleProfilerExceptions(
+            LogService::HANDLE_EXCEPTIONS_LOG
+        );
 
-        $logErrorsA = $appA->make(ConfigService::class)->broadcastingLogErrorsEnabled();
-        $logErrorsB = $appB->make(ConfigService::class)->broadcastingLogErrorsEnabled();
-
-        $this->assertTrue($logErrorsA);
-        $this->assertFalse($logErrorsB);
+        $this->assertTrue($handleDefault);
     }
 }

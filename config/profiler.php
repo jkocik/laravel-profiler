@@ -83,7 +83,6 @@ return [
     'broadcasting' => [
         'address' => 'http://localhost',
         'port' => '8099',
-        'log_errors_enabled' => true,
     ],
 
     /*
@@ -114,5 +113,21 @@ return [
     'group' => [
         'events' => true,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Handle Profiler exceptions
+    |--------------------------------------------------------------------------
+    |
+    | Profiler Package (this Laravel package) can throw exceptions when
+    | for example BroadcastingProcessor can not connect to Profiler Server.
+    | Handle exceptions settings are [int]:
+    | 0 - catch exceptions and do not report them
+    | 1 - catch exceptions and report them in logs
+    | 666 - do not catch exceptions, let them be thrown
+    |
+    */
+
+    'handle_profiler_exceptions' => 1,
 
 ];

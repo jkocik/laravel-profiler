@@ -258,6 +258,7 @@ class RegisterProfilerTest extends TestCase
         });
 
         $this->app->make(Kernel::class)->bootstrap();
+        $this->turnOffProcessors();
 
         Event::listen('another-executed-before', function () use (&$executedBefore) {
             $executedBefore = true;

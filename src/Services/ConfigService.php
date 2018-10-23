@@ -76,14 +76,6 @@ class ConfigService
     /**
      * @return bool
      */
-    public function broadcastingLogErrorsEnabled(): bool
-    {
-        return $this->config->get('profiler.broadcasting.log_errors_enabled');
-    }
-
-    /**
-     * @return bool
-     */
     public function isViewsDataEnabled(): bool
     {
         return $this->config->get('profiler.data.views');
@@ -103,5 +95,14 @@ class ConfigService
     public function isEventsGroupEnabled(): bool
     {
         return $this->config->get('profiler.group.events');
+    }
+
+    /**
+     * @param int $level
+     * @return bool
+     */
+    public function handleProfilerExceptions(int $level): bool
+    {
+        return $this->config->get('profiler.handle_profiler_exceptions') === $level;
     }
 }

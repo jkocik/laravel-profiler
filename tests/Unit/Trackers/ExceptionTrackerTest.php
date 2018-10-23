@@ -19,6 +19,16 @@ class ExceptionTrackerTest extends TestCase
      */
     protected $exception;
 
+    /**
+     * @return void
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->turnOffProcessors();
+    }
+
     /** @test */
     function has_exception()
     {

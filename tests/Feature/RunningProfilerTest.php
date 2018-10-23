@@ -11,6 +11,7 @@ use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\TrackerB;
+use JKocik\Laravel\Profiler\Processors\BroadcastingProcessor;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorB;
 
@@ -72,10 +73,72 @@ class RunningProfilerTest extends TestCase
     }
 
     /** @test */
-    function broadcasting_exception_is_caught_and_not_processed_if_is_disabled_in_config()
+    function processors_exceptions_are_caught_and_logged_if_configured()
     {
-        $this->app = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.broadcasting.log_errors_enabled', false);
+        $processor = Mockery::mock(ProcessorA::class);
+        $processor->shouldReceive('process')->once();
+
+        $this->app = $this->appWith(function (Application $app) use ($processor) {
+            $app->make('config')->set('profiler.handle_profiler_exceptions', 1);
+            $app->make('config')->set('profiler.processors', [
+                BroadcastingProcessor::class,
+                BroadcastingProcessor::class,
+                ProcessorA::class,
+            ]);
+            $app->singleton(ProcessorA::class, function () use ($processor) {
+                return $processor;
+            });
+        });
+
+        Log::shouldReceive('error')
+            ->times(2)
+            ->with(Exception::class);
+
+        $this->app->terminate();
+    }
+
+    /** @test */
+    function processors_exceptions_are_thrown_if_configured()
+    {
+        $processor = Mockery::spy(ProcessorA::class);
+
+        $this->app = $this->appWith(function (Application $app) use ($processor) {
+            $app->make('config')->set('profiler.handle_profiler_exceptions', 666);
+            $app->make('config')->set('profiler.processors', [
+                BroadcastingProcessor::class,
+                ProcessorA::class,
+            ]);
+            $app->singleton(ProcessorA::class, function () use ($processor) {
+                return $processor;
+            });
+        });
+
+        try {
+            $this->app->terminate();
+        } catch (Exception $e) {
+            $processor->shouldNotHaveReceived('process');
+            return;
+        }
+
+        $this->fail('Exception should be thrown');
+    }
+
+    /** @test */
+    function processors_exceptions_are_caught_and_not_logged_if_configured()
+    {
+        $processor = Mockery::mock(ProcessorA::class);
+        $processor->shouldReceive('process')->once();
+
+        $this->app = $this->appWith(function (Application $app) use ($processor) {
+            $app->make('config')->set('profiler.handle_profiler_exceptions', 0);
+            $app->make('config')->set('profiler.processors', [
+                BroadcastingProcessor::class,
+                BroadcastingProcessor::class,
+                ProcessorA::class,
+            ]);
+            $app->singleton(ProcessorA::class, function () use ($processor) {
+                return $processor;
+            });
         });
 
         Log::shouldReceive('error')
@@ -85,11 +148,25 @@ class RunningProfilerTest extends TestCase
     }
 
     /** @test */
-    function broadcasting_exception_is_caught_and_processed_if_is_enabled_in_config()
+    function processors_exceptions_are_caught_and_not_logged_if_configured_incorrectly()
     {
+        $processor = Mockery::mock(ProcessorA::class);
+        $processor->shouldReceive('process')->once();
+
+        $this->app = $this->appWith(function (Application $app) use ($processor) {
+            $app->make('config')->set('profiler.handle_profiler_exceptions', -1);
+            $app->make('config')->set('profiler.processors', [
+                BroadcastingProcessor::class,
+                BroadcastingProcessor::class,
+                ProcessorA::class,
+            ]);
+            $app->singleton(ProcessorA::class, function () use ($processor) {
+                return $processor;
+            });
+        });
+
         Log::shouldReceive('error')
-            ->once()
-            ->with(Exception::class);
+            ->times(0);
 
         $this->app->terminate();
     }

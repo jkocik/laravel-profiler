@@ -2,7 +2,9 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use Exception;
 use Illuminate\Foundation\Application;
+use JKocik\Laravel\Profiler\Services\LogService;
 use JKocik\Laravel\Profiler\Contracts\Processor;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Services\ConfigService;
@@ -16,6 +18,11 @@ class LaravelDataProcessor implements DataProcessor
     protected $app;
 
     /**
+     * @var LogService
+     */
+    protected $logService;
+
+    /**
      * @var ConfigService
      */
     protected $configService;
@@ -23,11 +30,16 @@ class LaravelDataProcessor implements DataProcessor
     /**
      * LaravelDataProcessor constructor.
      * @param Application $app
+     * @param LogService $logService
      * @param ConfigService $configService
      */
-    public function __construct(Application $app, ConfigService $configService)
-    {
+    public function __construct(
+        Application $app,
+        LogService $logService,
+        ConfigService $configService
+    ) {
         $this->app = $app;
+        $this->logService = $logService;
         $this->configService = $configService;
     }
 
@@ -38,7 +50,11 @@ class LaravelDataProcessor implements DataProcessor
     public function process(DataTracker $dataTracker): void
     {
         $this->configService->processors()->each(function (string $processor) use ($dataTracker) {
-            $this->makeProcessor($processor)->process($dataTracker);
+            try {
+                $this->make($processor)->process($dataTracker);
+            } catch (Exception $e) {
+                $this->logService->error($e);
+            }
         });
     }
 
@@ -46,7 +62,7 @@ class LaravelDataProcessor implements DataProcessor
      * @param string $processor
      * @return Processor
      */
-    protected function makeProcessor(string $processor): Processor
+    protected function make(string $processor): Processor
     {
         return $this->app->make($processor);
     }

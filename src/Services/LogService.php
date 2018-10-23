@@ -7,17 +7,36 @@ use Illuminate\Support\Facades\Log;
 
 class LogService
 {
+    const HANDLE_EXCEPTIONS_LOG = 1;
+    const HANDLE_EXCEPTIONS_THROW = 666;
+
+    /**
+     * @var ConfigService
+     */
+    protected $configService;
+
+    /**
+     * LogService constructor.
+     * @param ConfigService $configService
+     */
+    public function __construct(ConfigService $configService)
+    {
+        $this->configService = $configService;
+    }
+
     /**
      * @param Exception $e
-     * @param bool $shouldBeLogged
+     * @throws Exception
      * @return void
      */
-    public function error(Exception $e, bool $shouldBeLogged = true): void
+    public function error(Exception $e): void
     {
-        if (! $shouldBeLogged) {
-            return;
+        if ($this->configService->handleProfilerExceptions(self::HANDLE_EXCEPTIONS_THROW)) {
+            throw $e;
         }
 
-        Log::error($e);
+        if ($this->configService->handleProfilerExceptions(self::HANDLE_EXCEPTIONS_LOG)) {
+            Log::error($e);
+        }
     }
 }
