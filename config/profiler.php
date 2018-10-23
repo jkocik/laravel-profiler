@@ -116,11 +116,13 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Handle Profiler exceptions
+    | Handle exceptions
     |--------------------------------------------------------------------------
     |
-    | Profiler Package (this Laravel package) can throw exceptions when
-    | for example BroadcastingProcessor can not connect to Profiler Server.
+    | Profiler processors and helper functions can throw exceptions.
+    | They are logged by default to let you know about current issues
+    | like problems with connection to Profiler Server.
+    |
     | Handle exceptions settings are [int]:
     | 0 - catch exceptions and do not report them
     | 1 - catch exceptions and report them in logs
@@ -128,6 +130,6 @@ return [
     |
     */
 
-    'handle_profiler_exceptions' => 1,
+    'handle_exceptions' => 1,
 
 ];

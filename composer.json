@@ -25,7 +25,10 @@
     "autoload": {
         "psr-4": {
             "JKocik\\Laravel\\Profiler\\": "src/"
-        }
+        },
+        "files": [
+            "src/Services/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

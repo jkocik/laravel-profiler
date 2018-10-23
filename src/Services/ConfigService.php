@@ -101,8 +101,8 @@ class ConfigService
      * @param int $level
      * @return bool
      */
-    public function handleProfilerExceptions(int $level): bool
+    public function handleExceptions(int $level): bool
     {
-        return $this->config->get('profiler.handle_profiler_exceptions') === $level;
+        return $this->config->get('profiler.handle_exceptions') === $level;
     }
 }

@@ -46,7 +46,7 @@ class ConfigServiceTest extends TestCase
     }
 
     /** @test */
-    function returns_laravel_profiler_broadcasting_url()
+    function returns_broadcasting_url()
     {
         $url = $this->app->make(ConfigService::class)->broadcastingUrl();
 
@@ -54,9 +54,9 @@ class ConfigServiceTest extends TestCase
     }
 
     /** @test */
-    function returns_handle_profiler_exceptions()
+    function returns_handle_exceptions()
     {
-        $handleDefault = $this->app->make(ConfigService::class)->handleProfilerExceptions(
+        $handleDefault = $this->app->make(ConfigService::class)->handleExceptions(
             LogService::HANDLE_EXCEPTIONS_LOG
         );
 

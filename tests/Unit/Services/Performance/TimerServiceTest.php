@@ -3,8 +3,10 @@
 namespace JKocik\Laravel\Profiler\Tests\Unit\Services\Performance;
 
 use Mockery;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
+use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Services\Performance\TimerService;
 use JKocik\Laravel\Profiler\Services\Performance\TimerException;
 use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
@@ -163,5 +165,92 @@ class TimerServiceTest extends TestCase
         }
 
         $this->fail('TimerException should be thrown');
+    }
+
+    /** @test */
+    function custom_timer_is_used_by_helper_functions()
+    {
+        profiler_start('testA');
+        profiler_finish('testA');
+
+        $timer = $this->app->make(Timer::class);
+
+        $this->assertGreaterThan(0, $timer->millisecondsCustom('testA'));
+    }
+
+    /** @test */
+    function custom_timer_functions_exceptions_are_caught_and_logged_if_configured()
+    {
+        $this->app = $this->appWith(function (Application $app) {
+            $app->make('config')->set('profiler.handle_exceptions', 1);
+        });
+
+        Log::shouldReceive('error')
+            ->times(2)
+            ->with(TimerException::class);
+
+        profiler_start('testA');
+        profiler_start('testA');
+        profiler_finish('testB');
+    }
+
+    /** @test */
+    function custom_timer_functions_exceptions_are_thrown_if_configured()
+    {
+        $this->app = $this->appWith(function (Application $app) {
+            $app->make('config')->set('profiler.handle_exceptions', 666);
+        });
+
+        Log::shouldReceive('error')
+            ->times(0)
+            ->with(TimerException::class);
+
+        try {
+            profiler_start('testA');
+            profiler_start('testA');
+        } catch (TimerException $e) {
+            $this->assertTrue(true);
+            return;
+        }
+
+        $this->fail('TimerException should be thrown');
+    }
+
+    /** @test */
+    function custom_timer_functions_exceptions_are_caught_and_not_logged_if_configured()
+    {
+        $this->app = $this->appWith(function (Application $app) {
+            $app->make('config')->set('profiler.handle_exceptions', 0);
+        });
+
+        Log::shouldReceive('error')
+            ->times(0);
+
+        profiler_start('testA');
+        profiler_start('testA');
+        profiler_finish('testB');
+    }
+
+    /** @test */
+    function custom_timer_functions_exceptions_are_caught_and_not_logged_if_configured_incorrectly()
+    {
+        $this->app = $this->appWith(function (Application $app) {
+            $app->make('config')->set('profiler.handle_exceptions', -1);
+        });
+
+        Log::shouldReceive('error')
+            ->times(0);
+
+        profiler_start('testA');
+        profiler_start('testA');
+        profiler_finish('testB');
+    }
+
+    /** @test */
+    function custom_timer_helpers_functions_can_not_brake_application_by_second_definition_in_global_namespace()
+    {
+        require __DIR__ . '/../../../../src/Services/helpers.php';
+
+        $this->assertTrue(true);
     }
 }

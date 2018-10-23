@@ -79,7 +79,7 @@ class RunningProfilerTest extends TestCase
         $processor->shouldReceive('process')->once();
 
         $this->app = $this->appWith(function (Application $app) use ($processor) {
-            $app->make('config')->set('profiler.handle_profiler_exceptions', 1);
+            $app->make('config')->set('profiler.handle_exceptions', 1);
             $app->make('config')->set('profiler.processors', [
                 BroadcastingProcessor::class,
                 BroadcastingProcessor::class,
@@ -103,7 +103,7 @@ class RunningProfilerTest extends TestCase
         $processor = Mockery::spy(ProcessorA::class);
 
         $this->app = $this->appWith(function (Application $app) use ($processor) {
-            $app->make('config')->set('profiler.handle_profiler_exceptions', 666);
+            $app->make('config')->set('profiler.handle_exceptions', 666);
             $app->make('config')->set('profiler.processors', [
                 BroadcastingProcessor::class,
                 ProcessorA::class,
@@ -130,7 +130,7 @@ class RunningProfilerTest extends TestCase
         $processor->shouldReceive('process')->once();
 
         $this->app = $this->appWith(function (Application $app) use ($processor) {
-            $app->make('config')->set('profiler.handle_profiler_exceptions', 0);
+            $app->make('config')->set('profiler.handle_exceptions', 0);
             $app->make('config')->set('profiler.processors', [
                 BroadcastingProcessor::class,
                 BroadcastingProcessor::class,
@@ -154,7 +154,7 @@ class RunningProfilerTest extends TestCase
         $processor->shouldReceive('process')->once();
 
         $this->app = $this->appWith(function (Application $app) use ($processor) {
-            $app->make('config')->set('profiler.handle_profiler_exceptions', -1);
+            $app->make('config')->set('profiler.handle_exceptions', -1);
             $app->make('config')->set('profiler.processors', [
                 BroadcastingProcessor::class,
                 BroadcastingProcessor::class,

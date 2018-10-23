@@ -31,11 +31,11 @@ class LogService
      */
     public function error(Exception $e): void
     {
-        if ($this->configService->handleProfilerExceptions(self::HANDLE_EXCEPTIONS_THROW)) {
+        if ($this->configService->handleExceptions(self::HANDLE_EXCEPTIONS_THROW)) {
             throw $e;
         }
 
-        if ($this->configService->handleProfilerExceptions(self::HANDLE_EXCEPTIONS_LOG)) {
+        if ($this->configService->handleExceptions(self::HANDLE_EXCEPTIONS_LOG)) {
             Log::error($e);
         }
     }
