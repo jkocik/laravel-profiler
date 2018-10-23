@@ -34,8 +34,8 @@ class ConfigService
      */
     public function isProfilerEnabled(): bool
     {
-        $overrideEnabledOn = Collection::make($this->config->get('profiler.override_enabled_on'));
-        $envToDisable = $overrideEnabledOn->filter(function ($enabled) {
+        $enabledOverrides = Collection::make($this->config->get('profiler.enabled_overrides'));
+        $envToDisable = $enabledOverrides->filter(function ($enabled) {
             return ! $enabled;
         })->keys();
 

@@ -16,7 +16,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Override enabled Profiler by env
+    | Override general Laravel Profiler enable / disable setting per env
     |--------------------------------------------------------------------------
     |
     | Can disable Profiler on particular env. Profiler is disabled by default
@@ -24,7 +24,7 @@ return [
     |
     */
 
-    'override_enabled_on' => [
+    'enabled_overrides' => [
         'production' => false,
 //        'testing' => false,
 //        'local' => false,
