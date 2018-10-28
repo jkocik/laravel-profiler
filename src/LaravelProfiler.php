@@ -2,6 +2,8 @@
 
 namespace JKocik\Laravel\Profiler;
 
+use Illuminate\Support\Facades\Event;
+use Illuminate\Routing\Events\RouteMatched;
 use JKocik\Laravel\Profiler\Events\Tracking;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
@@ -12,6 +14,7 @@ use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use JKocik\Laravel\Profiler\Contracts\ExecutionData;
 use JKocik\Laravel\Profiler\Contracts\ExecutionWatcher;
+use JKocik\Laravel\Profiler\Middleware\FinishMiddleware;
 use JKocik\Laravel\Profiler\Services\Performance\TimerService;
 use JKocik\Laravel\Profiler\Services\Performance\MemoryService;
 use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
@@ -26,6 +29,8 @@ class LaravelProfiler extends BaseProfiler
         $this->bind();
 
         $dataTracker = $this->track();
+
+        $this->listenForRegisteringMiddleware();
 
         $this->listenForTerminating($dataTracker);
     }
@@ -69,6 +74,16 @@ class LaravelProfiler extends BaseProfiler
         event(new Tracking());
 
         return $dataTracker;
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenForRegisteringMiddleware(): void
+    {
+        Event::listen(RouteMatched::class, function (RouteMatched $routeMatched) {
+            $routeMatched->route->middleware(FinishMiddleware::class);
+        });
     }
 
     /**

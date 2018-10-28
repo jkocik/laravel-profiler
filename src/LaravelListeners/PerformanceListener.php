@@ -10,6 +10,7 @@ use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
 use JKocik\Laravel\Profiler\Events\Terminating;
 use Illuminate\Foundation\Http\Events\RequestHandled;
+use JKocik\Laravel\Profiler\Events\MiddlewareFinished;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
 class PerformanceListener implements LaravelListener
@@ -60,11 +61,13 @@ class PerformanceListener implements LaravelListener
 
         $this->app->booted(function () {
             $this->timer->finish('boot');
-            $this->timer->start('total-request');
-            $this->timer->start('middleware');
         });
 
         Event::listen(RouteMatched::class, function () {
+            $this->timer->start('middleware');
+        });
+
+        Event::listen(MiddlewareFinished::class, function () {
             $this->timer->finish('middleware');
             $this->timer->start('request');
         });
@@ -72,14 +75,12 @@ class PerformanceListener implements LaravelListener
         /** @codeCoverageIgnoreStart */
         Event::listen('kernel.handled', function () {
             $this->timer->finish('request');
-            $this->timer->finish('total-request');
             $this->timer->start('response');
         });
         /** @codeCoverageIgnoreEnd */
 
         Event::listen(RequestHandled::class, function () {
             $this->timer->finish('request');
-            $this->timer->finish('total-request');
             $this->timer->start('response');
         });
 

@@ -84,17 +84,6 @@ class PerformanceTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_total_handle_request_time()
-    {
-        $this->get('/i-can-not-find-that-page');
-        $timer = $this->app->make(Timer::class);
-        $processor = $this->app->make(PerformanceProcessor::class);
-
-        $this->assertGreaterThan(0, $timer->milliseconds('total-request'));
-        $this->assertEquals($timer->milliseconds('total-request'), $processor->performance->get('timer')['total-request']);
-    }
-
-    /** @test */
     function has_memory_peak()
     {
         $this->app->terminate();
