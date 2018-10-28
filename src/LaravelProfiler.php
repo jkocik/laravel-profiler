@@ -82,6 +82,10 @@ class LaravelProfiler extends BaseProfiler
         });
     }
 
+    /**
+     * @param DataTracker $dataTracker
+     * @return void
+     */
     protected function registerTerminating(DataTracker $dataTracker): void
     {
         $this->app->terminating(function () use ($dataTracker) {
