@@ -49,7 +49,6 @@ class HttpRoute implements ExecutionRoute
             'middleware' => $this->middleware(),
             'parameters' => $this->route->parameters(),
             'prefix' => $this->route->getPrefix(),
-            'regex' => $this->route->getCompiled()->getRegex(),
             'uses' => $this->uses(),
         ]);
     }

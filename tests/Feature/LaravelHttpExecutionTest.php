@@ -347,20 +347,6 @@ class LaravelHttpExecutionTest extends TestCase
     }
 
     /** @test */
-    function has_route_regex()
-    {
-        Route::get('route-a/{id}', function ($id) {
-            return $id;
-        })->where('id', '[0-9]+');
-
-        $this->get('/route-a/123');
-        $route = $this->executionData->route();
-
-        $this->assertContains('/route\-a', $route->data()->get('regex'));
-        $this->assertContains('<id>[0-9]+', $route->data()->get('regex'));
-    }
-
-    /** @test */
     function has_route_closure_action()
     {
         $uses = function (DummyFormRequest $request) {
