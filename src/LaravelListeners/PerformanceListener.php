@@ -8,6 +8,7 @@ use Illuminate\Routing\Events\RouteMatched;
 use JKocik\Laravel\Profiler\Events\Tracking;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
+use Illuminate\Console\Events\ArtisanStarting;
 use JKocik\Laravel\Profiler\Events\Terminating;
 use Illuminate\Foundation\Http\Events\RequestHandled;
 use JKocik\Laravel\Profiler\Events\MiddlewareFinished;
@@ -51,6 +52,15 @@ class PerformanceListener implements LaravelListener
      */
     public function listen(): void
     {
+        $this->listenHttp();
+        $this->listenConsole();
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenHttp(): void
+    {
         Event::listen(Tracking::class, function () {
             $this->timer->startLaravel();
         });
@@ -90,6 +100,20 @@ class PerformanceListener implements LaravelListener
             $this->memory->recordPeak();
             $this->timer->finish('response');
             $this->timer->finishLaravel();
+        });
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenConsole(): void
+    {
+        Event::listen(ArtisanStarting::class, function () {
+            $this->timer->start('command');
+        });
+
+        Event::listen(Terminating::class, function () {
+            $this->timer->finish('command');
         });
     }
 

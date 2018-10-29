@@ -3,9 +3,12 @@
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Contracts\Console\Kernel;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Tests\Support\PHPMock;
+use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyCommand;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\PerformanceProcessor;
 
 class PerformanceTrackerTest extends TestCase
@@ -115,6 +118,19 @@ class PerformanceTrackerTest extends TestCase
 
         $this->assertGreaterThan(0, $timer->milliseconds('response'));
         $this->assertEquals($timer->milliseconds('response'), $processor->performance->get('timer')['response']);
+    }
+
+    /** @test */
+    function has_console_time()
+    {
+        $this->app->make(Kernel::class)->registerCommand(new DummyCommand(0));
+        Artisan::call('dummy-command');
+        $this->app->terminate();
+        $timer = $this->app->make(Timer::class);
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertGreaterThan(0, $timer->milliseconds('command'));
+        $this->assertEquals($timer->milliseconds('command'), $processor->performance->get('timer')['command']);
     }
 
     /** @test */
