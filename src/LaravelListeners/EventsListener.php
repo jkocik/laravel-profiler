@@ -135,6 +135,7 @@ class EventsListener implements LaravelListener
     {
         $shouldSkip = Collection::make([
             'bootstrapped: ' . \Illuminate\Foundation\Bootstrap\BootProviders::class,
+            \JKocik\Laravel\Profiler\Events\MiddlewareFinished::class,
             \JKocik\Laravel\Profiler\Events\ExceptionHandling::class,
             \JKocik\Laravel\Profiler\Events\ProfilerBound::class,
             \JKocik\Laravel\Profiler\Events\Terminating::class,

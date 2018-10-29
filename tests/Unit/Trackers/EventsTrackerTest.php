@@ -11,6 +11,7 @@ use JKocik\Laravel\Profiler\Events\Terminating;
 use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Trackers\EventsTracker;
 use JKocik\Laravel\Profiler\Events\ExceptionHandling;
+use JKocik\Laravel\Profiler\Events\MiddlewareFinished;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassB;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyEventA;
@@ -176,6 +177,7 @@ class EventsTrackerTest extends TestCase
         $tracker = $this->app->make(EventsTracker::class);
 
         event(new ExceptionHandling(new Exception()));
+        event(new MiddlewareFinished());
         event(new ProfilerBound());
         event(new Terminating());
         event(new Tracking());
