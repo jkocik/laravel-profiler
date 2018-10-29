@@ -17,6 +17,14 @@ class PerformanceTrackerTest extends TestCase
     {
         parent::setUp();
 
+        $this->addFixturePerformanceProcessor();
+    }
+
+    /**
+     * @return void
+     */
+    protected function addFixturePerformanceProcessor(): void
+    {
         $this->app = $this->appWith(function (Application $app) {
             $app->make('config')->set('profiler.processors', [
                 PerformanceProcessor::class,
@@ -48,6 +56,32 @@ class PerformanceTrackerTest extends TestCase
 
         $this->assertGreaterThan(0, $timer->milliseconds('boot'));
         $this->assertEquals($timer->milliseconds('boot'), $processor->performance->get('timer')['boot']);
+    }
+
+    /** @test */
+    function has_route_time()
+    {
+        $this->get('/');
+        $timer = $this->app->make(Timer::class);
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertGreaterThan(0, $timer->milliseconds('route'));
+        $this->assertEquals($timer->milliseconds('route'), $processor->performance->get('timer')['route']);
+    }
+
+    /** @test */
+    function has_setup_time_instead_of_route_when_testing()
+    {
+        putenv('APP_ENV=testing');
+        $this->app = $this->app();
+        $this->addFixturePerformanceProcessor();
+
+        $this->get('/');
+        $timer = $this->app->make(Timer::class);
+        $processor = $this->app->make(PerformanceProcessor::class);
+
+        $this->assertGreaterThan(0, $timer->milliseconds('setup'));
+        $this->assertEquals($timer->milliseconds('setup'), $processor->performance->get('timer')['setup']);
     }
 
     /** @test */
@@ -90,5 +124,15 @@ class PerformanceTrackerTest extends TestCase
         $processor = $this->app->make(PerformanceProcessor::class);
 
         $this->assertEquals(PHPMock::MEMORY_USAGE, $processor->performance->get('memory')['peak']);
+    }
+
+    /**
+     * @return void
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        putenv('APP_ENV=local');
     }
 }

@@ -61,9 +61,11 @@ class PerformanceListener implements LaravelListener
 
         $this->app->booted(function () {
             $this->timer->finish('boot');
+            $this->timer->start($this->resolveRouteName());
         });
 
         Event::listen(RouteMatched::class, function () {
+            $this->timer->finish($this->resolveRouteName());
             $this->timer->start('middleware');
         });
 
@@ -89,5 +91,17 @@ class PerformanceListener implements LaravelListener
             $this->timer->finish('response');
             $this->timer->finishLaravel();
         });
+    }
+
+    /**
+     * @return string
+     */
+    protected function resolveRouteName(): string
+    {
+        if ($this->app->runningUnitTests()) {
+            return 'setup';
+        }
+
+        return 'route';
     }
 }
