@@ -194,7 +194,7 @@ class TimerService implements Timer
     protected function guardTimerAlreadyStarted(string $name): void
     {
         if ($this->time->has($name)) {
-            throw new TimerException("Timer for {$name} already exists and can not be started twice");
+            throw new TimerException("Laravel Profiler custom time tracker for {$name} already exists and can not be started twice");
         }
     }
 
@@ -206,7 +206,7 @@ class TimerService implements Timer
     protected function guardTimerAlreadyFinished(string $name): void
     {
         if ($this->isCompleted($this->getByName($name))) {
-            throw new TimerException("Timer for {$name} already exists and can not be finished twice");
+            throw new TimerException("Laravel Profiler custom time tracker for {$name} already exists and can not be finished twice");
         }
     }
 
@@ -218,7 +218,7 @@ class TimerService implements Timer
     protected function guardTimerNotStartedYet(string $name): void
     {
         if (! $this->time->has($name)) {
-            throw new TimerException("Timer for {$name} is not started yet");
+            throw new TimerException("Laravel Profiler custom time tracker for {$name} is not started yet");
         }
     }
 }
