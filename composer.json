@@ -34,5 +34,12 @@
         "psr-4": {
             "JKocik\\Laravel\\Profiler\\Tests\\": "tests/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JKocik\\Laravel\\Profiler\\ServiceProvider"
+            ]
+        }
     }
 }
