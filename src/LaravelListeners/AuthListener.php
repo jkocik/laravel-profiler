@@ -2,10 +2,10 @@
 
 namespace JKocik\Laravel\Profiler\LaravelListeners;
 
-use App\User;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Database\Eloquent\Model;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
 class AuthListener implements LaravelListener
@@ -28,7 +28,7 @@ class AuthListener implements LaravelListener
     /**
      * @return User|null
      */
-    public function user(): ?User
+    public function user(): ?Model
     {
         return $this->user ?? Auth::user();
     }
