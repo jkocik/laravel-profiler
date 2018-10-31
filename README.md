@@ -38,6 +38,7 @@ Data tracked, collected and delivered to Profiler Client are:
 - exceptions
 - server status
 - database queries
+- performance metrics
 - request (web) / input (console)
 - response (web) / output (console)
 - application (Laravel status, config, loaded service providers, container bindings, framework paths)
@@ -59,26 +60,34 @@ It is recommended to install Profiler Package only for development
 ```
 composer require jkocik/laravel-profiler --dev
 ```
+For Laravel 5.5+ you are fine and you can go to Step 2 of this installation process.
 
-... then add Service Provider to your providers array in config/app.php
+For Laravel 5.4 or lower add service provider to your application.
+Do not use config/app.php because that will add Laravel Profiler
+for every environment. Instead of that open AppServiceProvider class
+and add Laravel Profiler service provider in register method:
 
 ```
-'providers' => [
-    ...    
-    JKocik\Laravel\Profiler\ServiceProvider::class,
-];
+// app/Providers/AppServiceProvider.php
+
+public function register()
+{
+    if (! $this->app->environment('production')) {
+        $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
+    }
+}
 ``` 
+### Step 2: Publish configuration file
 
-... and publish profiler.php config file to your config directory
-
+Run command
 ```
 php artisan vendor:publish --provider="JKocik\Laravel\Profiler\ServiceProvider"
 ```
 
-Check profiler.php config file for Laravel Profiler settings.
+... and check config/profiler.php file for Laravel Profiler settings.
 Uncomment trackers you would like to use.
 
-### Step 2: Profiler Client and Profiler Server installation
+### Step 3: Profiler Client and Profiler Server installation
 
 It is recommended to install Profiler Client and Profiler Server only for development
 
@@ -112,7 +121,7 @@ npm run pc
 
 Open new tab in you browser according to Profiler Client instructions given in console.
 
-### Step 3: Configuration
+### Step 4: Configuration
 
 You should be able to use Laravel Profiler without any other configuration. If you need to change
 ports for HTTP and WebSockets protocols you can do it in profiler.php file, in your npm scripts
@@ -124,7 +133,25 @@ You are ready to use Laravel Profiler. Enjoy!
 
 ### Usage
 
-#### Laravel Profiler for testing
+#### Performance metrics
+
+Profiler delivers basic performance metrics including peak of memory usage and Laravel execution time.
+You can extend metrics by using Profiler helper functions:
+
+```
+profiler_start('my time metric name');
+
+// my code to track execution time
+
+profiler_finish('my time metric name');
+``` 
+
+Then check results in Profiler Client (Performance > Custom tab). 
+
+Important notice: Remove Profiler helper functions usage from your code
+before moving your code to production or any environment without Laravel Profiler installed.
+
+#### Laravel Profiler for testing environment
 
 When testing Profiler will deliver the same data as for regular request / artisan command. However application should be
 terminated. Lets see two default tests Laravel is shipped with:
@@ -159,8 +186,8 @@ public function testBasicTest()
 }
 ```
 
-Important notice: Peak of memory usage can not be tracked for each test separately.
-Anyway peak of memory usage is still visible (gray light font color).
+Important notice related to testing environment: Peak of memory usage can not be tracked for each test separately
+so is not shown in Profiler Client.
 
 #### Using together with Laravel Debugbar
 
