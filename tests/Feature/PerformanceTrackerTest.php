@@ -88,17 +88,6 @@ class PerformanceTrackerTest extends TestCase
     }
 
     /** @test */
-    function has_middleware_time()
-    {
-        $this->get('/');
-        $timer = $this->app->make(Timer::class);
-        $processor = $this->app->make(PerformanceProcessor::class);
-
-        $this->assertGreaterThan(0, $timer->milliseconds('middleware'));
-        $this->assertEquals($timer->milliseconds('middleware'), $processor->performance->get('timer')['middleware']);
-    }
-
-    /** @test */
     function has_handle_request_time()
     {
         $this->get('/');

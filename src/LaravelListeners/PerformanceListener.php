@@ -11,7 +11,6 @@ use JKocik\Laravel\Profiler\Contracts\Memory;
 use Illuminate\Console\Events\ArtisanStarting;
 use JKocik\Laravel\Profiler\Events\Terminating;
 use Illuminate\Foundation\Http\Events\RequestHandled;
-use JKocik\Laravel\Profiler\Events\MiddlewareFinished;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
 class PerformanceListener implements LaravelListener
@@ -76,11 +75,6 @@ class PerformanceListener implements LaravelListener
 
         Event::listen(RouteMatched::class, function () {
             $this->timer->finish($this->resolveRouteName());
-            $this->timer->start('middleware');
-        });
-
-        Event::listen(MiddlewareFinished::class, function () {
-            $this->timer->finish('middleware');
             $this->timer->start('request');
         });
 
