@@ -19,6 +19,7 @@ class PHPMock
     {
         $phpMock = new MockEnvironment();
         $phpMock->addMock(self::timeMock()->build());
+        $phpMock->addMock(self::passthruMock()->build());
         $phpMock->addMock(self::phpVersionMock()->build());
         $phpMock->addMock(self::memoryUsageMock()->build());
 
@@ -34,6 +35,17 @@ class PHPMock
             ->setNamespace('JKocik\Laravel\Profiler\Trackers')
             ->setName('time')
             ->setFunctionProvider(new FixedValueFunction(self::TIME));
+    }
+
+    /**
+     * @return MockBuilder
+     */
+    protected static function passthruMock(): MockBuilder
+    {
+        return (new MockBuilder())
+            ->setNamespace('JKocik\Laravel\Profiler\Console')
+            ->setName('passthru')
+            ->setFunctionProvider(new FixedValueFunction(''));
     }
 
     /**

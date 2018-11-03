@@ -65,12 +65,28 @@ class ConfigService
     /**
      * @return string
      */
-    public function broadcastingUrl(): string
+    public function serverHttpConnectionUrl(): string
     {
-        $address = $this->config->get('profiler.broadcasting.address');
-        $port = $this->config->get('profiler.broadcasting.port');
+        $address = $this->config->get('profiler.server_http.address');
+        $port = $this->config->get('profiler.server_http.port');
 
         return  $address . ':' . $port;
+    }
+
+    /**
+     * @return string
+     */
+    public function serverHttpPort(): string
+    {
+        return $this->config->get('profiler.server_http.port');
+    }
+
+    /**
+     * @return string
+     */
+    public function serverSocketsPort(): string
+    {
+        return $this->config->get('profiler.server_sockets.port');
     }
 
     /**

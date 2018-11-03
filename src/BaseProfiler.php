@@ -6,8 +6,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use Illuminate\Console\Events\ArtisanStarting;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
-use JKocik\Laravel\Profiler\Console\StatusCommand;
 use Illuminate\Foundation\Bootstrap\BootProviders;
+use JKocik\Laravel\Profiler\Console\StatusCommand;
+use JKocik\Laravel\Profiler\Console\ServerCommand;
 
 abstract class BaseProfiler implements Profiler
 {
@@ -44,6 +45,7 @@ abstract class BaseProfiler implements Profiler
         Event::listen(ArtisanStarting::class, function (ArtisanStarting $event) {
             $event->artisan->resolveCommands([
                 StatusCommand::class,
+                ServerCommand::class,
             ]);
         });
     }

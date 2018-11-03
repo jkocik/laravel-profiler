@@ -36,7 +36,7 @@ class BroadcastingProcessor implements Processor
      */
     public function process(DataTracker $dataTracker): void
     {
-        $this->client->request('POST', $this->configService->broadcastingUrl(), [
+        $this->client->request('POST', $this->configService->serverHttpConnectionUrl(), [
             'json' => [
                 'meta' => $dataTracker->meta()->toArray(),
                 'data' => $dataTracker->data()->toArray(),

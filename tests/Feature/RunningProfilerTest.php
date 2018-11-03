@@ -60,7 +60,7 @@ class RunningProfilerTest extends TestCase
         $client = Mockery::mock(Client::class);
         $client->shouldReceive('request')->withArgs(function ($arg1, $arg2, $arg3) use ($config) {
             return $arg1 === 'POST'
-                && $arg2 === $config->broadcastingUrl()
+                && $arg2 === $config->serverHttpConnectionUrl()
                 && is_array($arg3['json']['meta'])
                 && is_array($arg3['json']['data']);
         })->once();

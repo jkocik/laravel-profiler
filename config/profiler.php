@@ -16,11 +16,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Override general Laravel Profiler enable / disable setting per env
+    | Override general Laravel Profiler enable / disable setting
     |--------------------------------------------------------------------------
     |
     | Can disable Profiler on particular env. Profiler is disabled by default
-    | on production. Take effect only if above (enabled) is set to true.
+    | on production (be aware that installation on production is not recommended).
+    | Setting takes effect only if above (enabled) is set to true.
     |
     */
 
@@ -58,6 +59,27 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Profiler Server and Profiler Client connections
+    |--------------------------------------------------------------------------
+    |
+    | These settings let you set up connections between Profiler Package
+    | (this Laravel package) and Profiler Server using HTTP protocol
+    | and finally pass data from Profiler Server to Profiler Client
+    | (Single Page Application accessible via browser) using WebSockets.
+    |
+    */
+
+    'server_http' => [
+        'address' => 'http://localhost',
+        'port' => '8099',
+    ],
+
+    'server_sockets' => [
+        'port' => '1901',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Profiler processors
     |--------------------------------------------------------------------------
     |
@@ -68,21 +90,6 @@ return [
 
     'processors' => [
         \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | BroadcastingProcessor settings
-    |--------------------------------------------------------------------------
-    |
-    | These settings let you set up connection between Profiler Package
-    | (this Laravel package) and Profiler Server using HTTP protocol.
-    |
-    */
-
-    'broadcasting' => [
-        'address' => 'http://localhost',
-        'port' => '8099',
     ],
 
     /*

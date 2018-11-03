@@ -46,11 +46,27 @@ class ConfigServiceTest extends TestCase
     }
 
     /** @test */
-    function returns_broadcasting_url()
+    function returns_server_http_connection_url()
     {
-        $url = $this->app->make(ConfigService::class)->broadcastingUrl();
+        $url = $this->app->make(ConfigService::class)->serverHttpConnectionUrl();
 
         $this->assertEquals('http://localhost:8099', $url);
+    }
+
+    /** @test */
+    function returns_server_http_port()
+    {
+        $port = $this->app->make(ConfigService::class)->serverHttpPort();
+
+        $this->assertEquals('8099', $port);
+    }
+
+    /** @test */
+    function returns_server_sockets_port()
+    {
+        $port = $this->app->make(ConfigService::class)->serverSocketsPort();
+
+        $this->assertEquals('1901', $port);
     }
 
     /** @test */
