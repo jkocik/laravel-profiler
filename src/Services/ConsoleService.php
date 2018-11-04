@@ -28,4 +28,15 @@ class ConsoleService
 
         return "node node_modules/laravel-profiler-client/server/server.js http={$http} ws={$ws}";
     }
+
+    /**
+     * @param bool $manual
+     * @return string
+     */
+    public function profilerClientCmd(bool $manual): string
+    {
+        $options = $manual ? '' : ' -o -s';
+
+        return "node_modules/.bin/http-server node_modules/laravel-profiler-client/dist/{$options}";
+    }
 }

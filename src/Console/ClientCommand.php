@@ -5,17 +5,17 @@ namespace JKocik\Laravel\Profiler\Console;
 use Illuminate\Console\Command;
 use JKocik\Laravel\Profiler\Services\ConsoleService;
 
-class ServerCommand extends Command
+class ClientCommand extends Command
 {
     /**
      * @var string
      */
-    protected $signature = 'profiler:server';
+    protected $signature = 'profiler:client {--m|manual}';
 
     /**
      * @var string
      */
-    protected $description = 'Start Profiler Server';
+    protected $description = 'Start Profiler Client';
 
     /**
      * @var ConsoleService
@@ -23,7 +23,7 @@ class ServerCommand extends Command
     protected $consoleService;
 
     /**
-     * ServerCommand constructor.
+     * ClientCommand constructor.
      * @param ConsoleService $consoleService
      */
     public function __construct(ConsoleService $consoleService)
@@ -38,8 +38,8 @@ class ServerCommand extends Command
      */
     public function handle(): void
     {
-        $this->line('Starting Profiler Server ...');
+        $this->line('Starting Profiler Client ...');
 
-        passthru($this->consoleService->profilerServerCmd());
+        passthru($this->consoleService->profilerClientCmd($this->option('manual')));
     }
 }

@@ -9,6 +9,7 @@ use JKocik\Laravel\Profiler\Contracts\Profiler;
 use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Console\StatusCommand;
 use JKocik\Laravel\Profiler\Console\ServerCommand;
+use JKocik\Laravel\Profiler\Console\ClientCommand;
 
 abstract class BaseProfiler implements Profiler
 {
@@ -46,6 +47,7 @@ abstract class BaseProfiler implements Profiler
             $event->artisan->resolveCommands([
                 StatusCommand::class,
                 ServerCommand::class,
+                ClientCommand::class,
             ]);
         });
     }
