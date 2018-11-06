@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\Tests\Feature;
 use Mockery;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -63,7 +64,7 @@ class RunningProfilerTest extends TestCase
                 && $arg2 === $config->serverHttpConnectionUrl()
                 && is_array($arg3['json']['meta'])
                 && is_array($arg3['json']['data']);
-        })->once();
+        })->once()->andReturn(new Response());
 
         $this->app->instance(Client::class, $client);
 

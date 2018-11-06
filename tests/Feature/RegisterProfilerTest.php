@@ -276,6 +276,8 @@ class RegisterProfilerTest extends TestCase
     /** @test */
     function enabled_profiler_has_registered_profiler_middleware()
     {
+        $this->turnOffProcessors();
+
         $this->get('/');
 
         $middleware = collect($this->app->make(Route::class)->middleware());

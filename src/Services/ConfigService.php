@@ -63,6 +63,14 @@ class ConfigService
     }
 
     /**
+     * @param array $processors
+     */
+    public function overrideProcessors(array $processors): void
+    {
+        $this->config->set('profiler.processors', $processors);
+    }
+
+    /**
      * @return string
      */
     public function serverHttpConnectionUrl(): string

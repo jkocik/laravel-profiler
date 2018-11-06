@@ -15,6 +15,7 @@ class PerformanceProcessor implements Processor
 
     /**
      * @param DataTracker $dataTracker
+     * @return void
      */
     public function process(DataTracker $dataTracker): void
     {
