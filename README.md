@@ -6,6 +6,8 @@
 The aim of this project is to track console and web Laravel framework execution and give developers
 better understanding what is going on under the hood. Laravel Profiler is designed for Laravel 5.2+.
 
+![Laravel Profiler](https://drive.google.com/uc?export=view&id=12TSAEW1butnLfmFxO3Pw4GhF96B8PUSk)
+
 ### How does it work?
 
 Profiler delivers data about Laravel framework execution:
