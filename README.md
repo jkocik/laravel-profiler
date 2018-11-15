@@ -11,11 +11,13 @@ better understanding what is going on under the hood. Laravel Profiler is design
 ### How does it work?
 
 Profiler delivers data about Laravel framework execution:
-- when Laravel is executed via console (artisan)
-- when Laravel is executed via browser request
-- when Laravel is executed via web request not expecting HTML response (API)
-- when tests are run (PHPUnit, Laravel Dusk)
+- when **tests are run** (PHPUnit, Laravel Dusk)
+- when Laravel is executed via **console** (artisan)
+- when Laravel is executed via **browser request**
+- when Laravel is executed via web request not expecting HTML response (**API**)
 - on any other action that terminates Laravel framework.
+
+Profiler **does not add any routes** to your application and **does not modify the content of the response**.
 
 Profiler is divided into 3 parts:
 - Profiler Package - PHP package for Laravel (this repository)
@@ -102,19 +104,30 @@ npm install laravel-profiler-client --save-dev
 _Windows users: If you have any issue with running Profiler Server or Profiler Client
 check Installation options / issues section below._
 
-Run commands
+Run command
 
 ```shell
 php artisan profiler:server
 ```
+and
 
-and 
+a) for your local machine
 
 ```shell
 php artisan profiler:client
 ```
 
 After that your browser should have new tab opened with Profiler Client connected to Profiler Server.
+
+b) for Vagrant or any other machine different than local
+
+```shell
+php artisan profiler:client -m
+```
+
+... and open new browser tab according to instructions in console. Remember that you need
+to connect Profiler Client to Profiler Server yourself because by default Profiler Client uses localhost.
+You can do that in Profiler Client interface.
 
 ### Step 5: Verify installation
 
