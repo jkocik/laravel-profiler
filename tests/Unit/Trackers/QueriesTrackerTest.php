@@ -45,12 +45,12 @@ class QueriesTrackerTest extends TestCase
 
         $this->assertNotNull($queries);
         $this->assertContains('query', $queries->first()['type']);
-        $this->assertContains('insert into `users` (`name`, `email`, `password`', $queries->first()['sql']);
+        $this->assertContains('insert into `users` (`name`, `email`', $queries->first()['sql']);
         $this->assertContains('joe@example.com', $queries->first()['bindings']);
         $this->assertArrayHasKey('time', $queries->first());
         $this->assertEquals(':memory:', $queries->first()['database']);
         $this->assertEquals('sqlite', $queries->first()['name']);
-        $this->assertContains('insert into `users` (`name`, `email`, `password`', $queries->first()['query']);
+        $this->assertContains('insert into `users` (`name`, `email`', $queries->first()['query']);
         $this->assertContains("values ('Joe', 'joe@example.com'", $queries->first()['query']);
     }
 
