@@ -74,6 +74,28 @@ class RunningProfilerTest extends TestCase
     }
 
     /** @test */
+    function collected_data_are_not_processed_for_debugbar()
+    {
+        $client = Mockery::mock(Client::class);
+        $client->shouldNotReceive('request');
+
+        $this->app->instance(Client::class, $client);
+
+        $this->get('_debugbar/assets/javascript');
+    }
+
+    /** @test */
+    function collected_data_are_not_processed_for_telescope()
+    {
+        $client = Mockery::mock(Client::class);
+        $client->shouldNotReceive('request');
+
+        $this->app->instance(Client::class, $client);
+
+        $this->get('telescope/telescope-api/models');
+    }
+
+    /** @test */
     function processors_exceptions_are_caught_and_logged_if_configured()
     {
         $processor = Mockery::mock(ProcessorA::class);

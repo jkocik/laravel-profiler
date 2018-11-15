@@ -92,6 +92,11 @@ return [
         \JKocik\Laravel\Profiler\Processors\BroadcastingProcessor::class,
     ],
 
+    'turn_off_processors_for_paths' => [
+        'telescope',
+        '_debugbar',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Data passed to tracked items

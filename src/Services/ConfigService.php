@@ -71,6 +71,14 @@ class ConfigService
     }
 
     /**
+     * @return Collection
+     */
+    public function pathsToTurnOffProcessors(): Collection
+    {
+        return Collection::make($this->config->get('profiler.turn_off_processors_for_paths'));
+    }
+
+    /**
      * @return string
      */
     public function serverHttpConnectionUrl(): string

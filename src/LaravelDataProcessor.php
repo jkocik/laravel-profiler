@@ -49,6 +49,10 @@ class LaravelDataProcessor implements DataProcessor
      */
     public function process(DataTracker $dataTracker): void
     {
+        if ($this->shouldNotProcess($dataTracker)) {
+            return;
+        }
+
         $this->configService->processors()->each(function (string $processor) use ($dataTracker) {
             try {
                 $this->make($processor)->process($dataTracker);
@@ -65,5 +69,20 @@ class LaravelDataProcessor implements DataProcessor
     protected function make(string $processor): Processor
     {
         return $this->app->make($processor);
+    }
+
+    /**
+     * @param DataTracker $dataTracker
+     * @return bool
+     */
+    protected function shouldNotProcess(DataTracker $dataTracker): bool
+    {
+        if (! $dataTracker->meta()->has('path')) {
+            return false;
+        }
+
+        return $this->configService->pathsToTurnOffProcessors()->map(function ($path) use ($dataTracker) {
+            return stripos($dataTracker->meta()->get('path'), $path) !== false;
+        })->contains(true);
     }
 }
