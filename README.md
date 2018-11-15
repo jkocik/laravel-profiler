@@ -15,9 +15,9 @@ Profiler delivers data about Laravel framework execution:
 - when Laravel is executed via **console** (artisan)
 - when Laravel is executed via **browser request**
 - when Laravel is executed via web request not expecting HTML response (**API**)
-- on any other action that terminates Laravel framework.
+- on any other **action that terminates** Laravel framework.
 
-Profiler **does not add any routes** to your application and **does not modify the content of the response**.
+Profiler does not add any routes to your application and does not modify the content of the response.
 
 Profiler is divided into 3 parts:
 - Profiler Package - PHP package for Laravel (this repository)
