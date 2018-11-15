@@ -1,6 +1,6 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\Tests\Unit;
+namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
 use Illuminate\Support\ServiceProvider;
 use JKocik\Laravel\Profiler\Tests\TestCase;

@@ -18,7 +18,6 @@ use JKocik\Laravel\Profiler\Events\ProfilerBound;
 use JKocik\Laravel\Profiler\Contracts\DataTracker;
 use JKocik\Laravel\Profiler\Contracts\DataProcessor;
 use Illuminate\Foundation\Bootstrap\RegisterProviders;
-use JKocik\Laravel\Profiler\Middleware\FinishMiddleware;
 use JKocik\Laravel\Profiler\Services\Performance\TimerService;
 use JKocik\Laravel\Profiler\Services\Performance\NullTimerService;
 use JKocik\Laravel\Profiler\LaravelListeners\HttpRequestHandledListener;
@@ -271,18 +270,6 @@ class RegisterProfilerTest extends TestCase
         });
 
         $this->app->terminate();
-    }
-
-    /** @test */
-    function enabled_profiler_has_registered_profiler_middleware()
-    {
-        $this->turnOffProcessors();
-
-        $this->get('/');
-
-        $middleware = collect($this->app->make(Route::class)->middleware());
-
-        $this->assertEquals(FinishMiddleware::class, $middleware->last());
     }
 
     /**

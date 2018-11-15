@@ -11,7 +11,6 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Http\FormRequest;
 use JKocik\Laravel\Profiler\Contracts\ExecutionRoute;
-use JKocik\Laravel\Profiler\Middleware\FinishMiddleware;
 
 class HttpRoute implements ExecutionRoute
 {
@@ -46,23 +45,11 @@ class HttpRoute implements ExecutionRoute
             'methods' => $this->route->methods(),
             'uri' => $this->route->uri(),
             'name' => $this->route->getName(),
-            'middleware' => $this->middleware(),
+            'middleware' => $this->route->middleware(),
             'parameters' => $this->route->parameters(),
             'prefix' => $this->route->getPrefix(),
             'uses' => $this->uses(),
         ]);
-    }
-
-    /**
-     * @return array
-     */
-    protected function middleware(): array
-    {
-        return Collection::make($this->route->middleware())->filter(function ($middleware) {
-            return ! in_array($middleware, [
-                FinishMiddleware::class,
-            ]);
-        })->toArray();
     }
 
     /**

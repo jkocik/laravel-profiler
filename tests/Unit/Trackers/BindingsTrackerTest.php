@@ -1,6 +1,6 @@
 <?php
 
-namespace JKocik\Laravel\Profiler\Tests\Unit;
+namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\BindingsTracker;
