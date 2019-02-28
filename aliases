@@ -14,9 +14,10 @@ alias la54='vendor/bin/phpunit -c phpunit-laravel-54.xml'
 alias la55='vendor/bin/phpunit -c phpunit-laravel-55.xml'
 alias la56='vendor/bin/phpunit -c phpunit-laravel-56.xml'
 alias la57='vendor/bin/phpunit -c phpunit-laravel-57.xml'
+alias la58='vendor/bin/phpunit -c phpunit-laravel-58.xml'
 
-alias phpunit-all='la57 && la56 && la55 && la54 && la53 && la52'
-alias phpunit-c='la57 --coverage-html coverage'
+alias phpunit-all='la58 && la57 && la56 && la55 && la54 && la53 && la52'
+alias phpunit-c='la58 --coverage-html coverage'
 
 alias serve=serve-laravel
 

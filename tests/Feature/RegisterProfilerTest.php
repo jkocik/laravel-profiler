@@ -3,7 +3,6 @@
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
 use Mockery;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use Illuminate\Contracts\Console\Kernel;
@@ -94,6 +93,7 @@ class RegisterProfilerTest extends TestCase
     function profiler_is_enabled_by_default()
     {
         putenv('APP_ENV=test-profiler');
+        $_ENV['APP_ENV'] = 'test-profiler';
         $this->app = $this->app();
 
         $config = $this->app->make('config');
@@ -107,6 +107,8 @@ class RegisterProfilerTest extends TestCase
     {
         putenv('APP_ENV=test-profiler');
         putenv('PROFILER_ENABLED=false');
+        $_ENV['APP_ENV'] = 'test-profiler';
+        $_ENV['PROFILER_ENABLED'] = false;
         $this->app = $this->app();
 
         $config = $this->app->make('config');
@@ -120,6 +122,8 @@ class RegisterProfilerTest extends TestCase
     {
         putenv('APP_ENV=test-profiler');
         putenv('PROFILER_ENABLED=true');
+        $_ENV['APP_ENV'] = 'test-profiler';
+        $_ENV['PROFILER_ENABLED'] = true;
         $this->app = $this->appWith(function (Application $app) {
             $app->make('config')->set('profiler.enabled_overrides', ['test-profiler' => false]);
         });
@@ -132,6 +136,8 @@ class RegisterProfilerTest extends TestCase
     {
         putenv('APP_ENV=production');
         putenv('PROFILER_ENABLED=true');
+        $_ENV['APP_ENV'] = 'production';
+        $_ENV['PROFILER_ENABLED'] = true;
         $this->app = $this->app();
 
         $config = $this->app->make('config');
@@ -171,6 +177,7 @@ class RegisterProfilerTest extends TestCase
     function disabled_profiler_does_not_track_laravel()
     {
         putenv('PROFILER_ENABLED=false');
+        $_ENV['PROFILER_ENABLED'] = false;
         $timer = Mockery::spy(Timer::class);
         $dataTracker = Mockery::spy(DataTracker::class);
         $dataProcessor = Mockery::spy(DataProcessor::class);
@@ -221,6 +228,7 @@ class RegisterProfilerTest extends TestCase
     function disabled_profiler_is_booted_before_all_service_providers_are_booted()
     {
         putenv('PROFILER_ENABLED=false');
+        $_ENV['PROFILER_ENABLED'] = false;
         $eventsExecuted = 0;
         $this->app = $this->appBeforeBootstrap();
 
@@ -281,5 +289,7 @@ class RegisterProfilerTest extends TestCase
 
         putenv('APP_ENV=local');
         putenv('PROFILER_ENABLED');
+        unset($_ENV['APP_ENV']);
+        unset($_ENV['PROFILER_ENABLED']);
     }
 }

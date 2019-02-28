@@ -76,6 +76,7 @@ class PerformanceTrackerTest extends TestCase
     function has_setup_time_instead_of_route_when_testing()
     {
         putenv('APP_ENV=testing');
+        $_ENV['APP_ENV'] = 'testing';
         $this->app = $this->app();
         $this->addFixturePerformanceProcessor();
 
@@ -139,5 +140,6 @@ class PerformanceTrackerTest extends TestCase
         parent::tearDown();
 
         putenv('APP_ENV=local');
+        unset($_ENV['APP_ENV']);
     }
 }

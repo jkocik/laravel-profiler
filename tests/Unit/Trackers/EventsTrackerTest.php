@@ -25,7 +25,12 @@ class EventsTrackerTest extends TestCase
         $tracker = $this->app->make(EventsTracker::class);
         $dispatcher = $this->app->make(Dispatcher::class);
 
-        $dispatcher->fire('testing: tracker', [new \stdClass()]);
+        $this->tapLaravelVersionTill(5.3, function () use ($dispatcher) {
+            $dispatcher->fire('testing: tracker', [new \stdClass()]);
+        });
+        $this->tapLaravelVersionFrom(5.4, function () use ($dispatcher) {
+            $dispatcher->dispatch('testing: tracker', [new \stdClass()]);
+        });
         event(new DummyEventA());
 
         $tracker->terminate();
@@ -103,14 +108,26 @@ class EventsTrackerTest extends TestCase
         $tracker = $this->app->make(EventsTracker::class);
         $dispatcher = $this->app->make(Dispatcher::class);
 
-        $dispatcher->fire('testing: eventA', [new \stdClass()]);
-        $dispatcher->fire('testing: eventB', [new \stdClass()]);
-        $dispatcher->fire('testing: eventB', [new \stdClass()]);
-        $dispatcher->fire('testing: eventC', [new \stdClass()]);
-        $dispatcher->fire('testing: eventC', [new \stdClass()]);
-        $dispatcher->fire('testing: eventC', [new \stdClass()]);
-        $dispatcher->fire('testing: eventC', [new \stdClass()]);
-        $dispatcher->fire('testing: eventD', [new \stdClass()]);
+        $this->tapLaravelVersionTill(5.3, function () use ($dispatcher) {
+            $dispatcher->fire('testing: eventA', [new \stdClass()]);
+            $dispatcher->fire('testing: eventB', [new \stdClass()]);
+            $dispatcher->fire('testing: eventB', [new \stdClass()]);
+            $dispatcher->fire('testing: eventC', [new \stdClass()]);
+            $dispatcher->fire('testing: eventC', [new \stdClass()]);
+            $dispatcher->fire('testing: eventC', [new \stdClass()]);
+            $dispatcher->fire('testing: eventC', [new \stdClass()]);
+            $dispatcher->fire('testing: eventD', [new \stdClass()]);
+        });
+        $this->tapLaravelVersionFrom(5.4, function () use ($dispatcher) {
+            $dispatcher->dispatch('testing: eventA', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventB', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventB', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventC', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventC', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventC', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventC', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventD', [new \stdClass()]);
+        });
 
         $tracker->terminate();
         $events = $tracker->data()->get('events');
@@ -145,9 +162,16 @@ class EventsTrackerTest extends TestCase
         $tracker = $this->app->make(EventsTracker::class);
         $dispatcher = $this->app->make(Dispatcher::class);
 
-        $dispatcher->fire('testing: eventA', [new \stdClass()]);
-        $dispatcher->fire('testing: eventB', [new \stdClass()]);
-        $dispatcher->fire('testing: eventB', [new \stdClass()]);
+        $this->tapLaravelVersionTill(5.3, function () use ($dispatcher) {
+            $dispatcher->fire('testing: eventA', [new \stdClass()]);
+            $dispatcher->fire('testing: eventB', [new \stdClass()]);
+            $dispatcher->fire('testing: eventB', [new \stdClass()]);
+        });
+        $this->tapLaravelVersionFrom(5.4, function () use ($dispatcher) {
+            $dispatcher->dispatch('testing: eventA', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventB', [new \stdClass()]);
+            $dispatcher->dispatch('testing: eventB', [new \stdClass()]);
+        });
 
         $tracker->terminate();
         $events = $tracker->data()->get('events');

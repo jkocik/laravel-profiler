@@ -24,6 +24,7 @@ class PerformanceTest extends TestCase
     function disabled_profiler_has_singleton_null_timer()
     {
         putenv('PROFILER_ENABLED=false');
+        $_ENV['PROFILER_ENABLED'] = false;
         $this->app = $this->app();
         $timerA = $this->app->make(Timer::class);
         $timerB = $this->app->make(Timer::class);
@@ -50,5 +51,6 @@ class PerformanceTest extends TestCase
         parent::tearDown();
 
         putenv('PROFILER_ENABLED');
+        unset($_ENV['PROFILER_ENABLED']);
     }
 }
