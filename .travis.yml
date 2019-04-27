@@ -5,6 +5,9 @@ php:
     - 7.2
     - 7.3
 
+services:
+    - redis-server
+
 before_script:
     - composer install --no-interaction
 

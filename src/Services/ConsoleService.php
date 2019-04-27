@@ -58,7 +58,7 @@ class ConsoleService
      */
     public function trackersCommentLine1(): string
     {
-        return 'There are 13 trackers available out of the box';
+        return 'There are 14 trackers available out of the box';
     }
 
     /**
