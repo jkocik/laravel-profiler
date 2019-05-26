@@ -95,6 +95,7 @@ return [
     'turn_off_processors_for_paths' => [
         'telescope',
         '_debugbar',
+        'package:discover',
     ],
 
     /*
