@@ -29,7 +29,7 @@ class HttpResponse implements ExecutionResponse
     {
         return Collection::make([
             'status' => $this->response->getStatusCode(),
-            'status_text' => $this->response::$statusTexts[$this->response->getStatusCode()],
+            'status_text' => $this->getStatusText(),
         ]);
     }
 
@@ -41,5 +41,13 @@ class HttpResponse implements ExecutionResponse
         return Collection::make([
             'headers' => $this->response->headers->all(),
         ]);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getStatusText(): string
+    {
+        return $this->response::$statusTexts[$this->response->getStatusCode()] ?? 'unknown status';
     }
 }

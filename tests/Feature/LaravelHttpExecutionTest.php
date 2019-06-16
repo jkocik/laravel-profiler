@@ -473,6 +473,20 @@ class LaravelHttpExecutionTest extends TestCase
     }
 
     /** @test */
+    function can_have_response_unknown_status()
+    {
+        Route::get('unknown', function () {
+            abort(419);
+        });
+
+        $this->get('/unknown');
+        $response = $this->executionData->response();
+
+        $this->assertEquals(419, $response->meta()->get('status'));
+        $this->assertEquals('unknown status', $response->meta()->get('status_text'));
+    }
+
+    /** @test */
     function has_response_headers()
     {
         $this->get('/');
