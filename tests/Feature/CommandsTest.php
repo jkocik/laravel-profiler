@@ -127,7 +127,7 @@ class CommandsTest extends TestCase
             Event::fake();
 
             $client = Mockery::mock(Client::class);
-            $client->shouldReceive('request')->once()->andThrows(new ConnectException('', new Request('', '')));
+            $client->shouldReceive('request')->once()->andThrows(new ConnectException('', new Request('method', '')));
 
             try {
                 $processor = new StatusCommandProcessor($client, $this->app->make(ConfigService::class));
