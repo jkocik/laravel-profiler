@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
-use Illuminate\Support\Facades\Redis;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\RedisTracker;
 
@@ -12,7 +11,7 @@ class RedisTrackerTest extends TestCase
     function has_executed_commands()
     {
         $tracker = $this->app->make(RedisTracker::class);
-        Redis::set('name', 'Laravel Profiler');
+        $this->app->make('redis')->set('name', 'Laravel Profiler');
 
         $tracker->terminate();
         $redis = $tracker->data()->get('redis');
@@ -34,8 +33,8 @@ class RedisTrackerTest extends TestCase
     function can_count_commands()
     {
         $tracker = $this->app->make(RedisTracker::class);
-        Redis::set('name', 'Laravel Profiler');
-        Redis::set('action', 'testing');
+        $this->app->make('redis')->set('name', 'Laravel Profiler');
+        $this->app->make('redis')->set('action', 'testing');
 
         $tracker->terminate();
 
