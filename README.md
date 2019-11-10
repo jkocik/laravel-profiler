@@ -43,6 +43,7 @@ Data tracked, collected and delivered to Profiler Client are:
 - server status
 - database queries
 - performance metrics
+- redis (from Laravel 5.7)
 - request (web) / input (console)
 - response (web) / output (console)
 - application (Laravel status, config, loaded service providers, container bindings, framework paths)
