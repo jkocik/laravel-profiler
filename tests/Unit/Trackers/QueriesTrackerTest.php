@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
 use App\User;
 use Exception;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Artisan;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -172,9 +173,17 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where 1 = 1 and 0 = 0", $queries->first()['query']);
-        $this->assertSame(true, $queries->first()['bindings']['first']);
-        $this->assertSame(false, $queries->first()['bindings']['second']);
+        $this->tapLaravelVersionFrom(5.5, function () use ($queries) {
+            $this->assertContains("where 1 = 1 and 0 = 0", $queries->first()['query']);
+            $this->assertSame(1, $queries->first()['bindings']['first']);
+            $this->assertSame(0, $queries->first()['bindings']['second']);
+        });
+
+        $this->tapLaravelVersionTill(5.4, function () use ($queries) {
+            $this->assertContains("where 1 = '1' and 0 = 0", $queries->first()['query']);
+            $this->assertSame(true, $queries->first()['bindings']['first']);
+            $this->assertSame(0, $queries->first()['bindings']['second']);
+        });
     }
 
     /** @test */
@@ -192,13 +201,15 @@ class QueriesTrackerTest extends TestCase
     /** @test */
     function has_query_bindings_objects()
     {
+        $dateTime = Carbon::now();
+
         $tracker = $this->app->make(QueriesTracker::class);
-        DB::select('select * from users where email = :email', ['email' => new \DateTime()]);
+        DB::select('select * from users where email = :email', ['email' => $dateTime]);
 
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where email = {object}", $queries->first()['query']);
+        $this->assertContains("where email = '{$dateTime->toDateTimeString()}'", $queries->first()['query']);
     }
 
     /** @test */

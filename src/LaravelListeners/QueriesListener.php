@@ -105,7 +105,9 @@ class QueriesListener implements LaravelListener
      */
     protected function formatBindings(QueryExecuted $event): array
     {
-        foreach ($event->bindings as $key => $binding) {
+        $preparedBindings = $event->connection->prepareBindings($event->bindings);
+
+        foreach ($preparedBindings as $key => $binding) {
             $bindings[$key] = $this->truncate($binding);
             $bindingsQuoted[$key] = $this->quote($event, $bindings[$key]);
         }
@@ -136,16 +138,8 @@ class QueriesListener implements LaravelListener
      */
     protected function quote(QueryExecuted $event, $binding)
     {
-        if (is_int($binding) || is_float($binding)) {
+        if (is_int($binding) || is_float($binding) || is_object($binding)) {
             return $binding;
-        }
-
-        if (is_bool($binding)) {
-            return (int) $binding;
-        }
-
-        if (is_object($binding)) {
-            return '{object}';
         }
 
         return $event->connection->getPdo()->quote($binding);
