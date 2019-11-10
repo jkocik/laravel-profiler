@@ -227,10 +227,10 @@ class TrackersTest extends TestCase
     }
 
     /** @test */
-    function redis_tracker_is_enabled_by_default()
+    function redis_tracker_is_disabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertContains(RedisTracker::class, $defaultTrackers);
+        $this->assertNotContains(RedisTracker::class, $defaultTrackers);
     }
 }
