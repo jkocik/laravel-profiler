@@ -123,35 +123,35 @@ class TrackersTest extends TestCase
     }
 
     /** @test */
-    function paths_tracker_is_disabled_by_default()
+    function paths_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertNotContains(PathsTracker::class, $defaultTrackers);
+        $this->assertContains(PathsTracker::class, $defaultTrackers);
     }
 
     /** @test */
-    function service_providers_tracker_is_disabled_by_default()
+    function service_providers_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertNotContains(ServiceProvidersTracker::class, $defaultTrackers);
+        $this->assertContains(ServiceProvidersTracker::class, $defaultTrackers);
     }
 
     /** @test */
-    function bindings_tracker_is_disabled_by_default()
+    function bindings_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertNotContains(BindingsTracker::class, $defaultTrackers);
+        $this->assertContains(BindingsTracker::class, $defaultTrackers);
     }
 
     /** @test */
-    function config_tracker_is_disabled_by_default()
+    function config_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertNotContains(ConfigTracker::class, $defaultTrackers);
+        $this->assertContains(ConfigTracker::class, $defaultTrackers);
     }
 
     /** @test */
@@ -195,19 +195,19 @@ class TrackersTest extends TestCase
     }
 
     /** @test */
-    function server_tracker_is_disabled_by_default()
+    function server_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertNotContains(ServerTracker::class, $defaultTrackers);
+        $this->assertContains(ServerTracker::class, $defaultTrackers);
     }
 
     /** @test */
-    function content_tracker_is_disabled_by_default()
+    function content_tracker_is_enabled_by_default()
     {
         $defaultTrackers = $this->app->make('config')->get('profiler.trackers');
 
-        $this->assertNotContains(ContentTracker::class, $defaultTrackers);
+        $this->assertContains(ContentTracker::class, $defaultTrackers);
     }
 
     /** @test */
