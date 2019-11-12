@@ -41,6 +41,16 @@ abstract class BaseProfiler implements Profiler
     /**
      * @return void
      */
+    abstract public function resetTrackers(): void;
+
+    /**
+     * @return void
+     */
+    abstract protected function boot(): void;
+
+    /**
+     * @return void
+     */
     private function commands(): void
     {
         Event::listen(ArtisanStarting::class, function (ArtisanStarting $event) {
@@ -51,9 +61,4 @@ abstract class BaseProfiler implements Profiler
             ]);
         });
     }
-
-    /**
-     * @return void
-     */
-    abstract protected function boot(): void;
 }

@@ -11,6 +11,14 @@ class DisabledProfiler extends BaseProfiler
     /**
      * @return void
      */
+    public function resetTrackers(): void
+    {
+        //
+    }
+
+    /**
+     * @return void
+     */
     protected function boot(): void
     {
         $this->bind();

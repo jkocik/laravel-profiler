@@ -1,6 +1,7 @@
 <?php
 
 use JKocik\Laravel\Profiler\Contracts\Timer;
+use JKocik\Laravel\Profiler\Contracts\Profiler;
 use JKocik\Laravel\Profiler\Services\LogService;
 use JKocik\Laravel\Profiler\Services\Performance\TimerException;
 
@@ -23,5 +24,12 @@ if (! function_exists('profiler_finish')) {
         } catch (TimerException $e) {
             app()->make(LogService::class)->error($e);
         }
+    }
+}
+
+if (! function_exists('profiler_reset')) {
+    function profiler_reset(): void
+    {
+        app()->make(Profiler::class)->resetTrackers();
     }
 }

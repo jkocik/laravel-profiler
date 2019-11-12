@@ -59,14 +59,22 @@ class LaravelDataTracker implements DataTracker
      */
     public function track(): void
     {
-        $this->trackers->push($this->app->make(ApplicationTracker::class));
-        $this->trackers->push($this->app->make(PerformanceTracker::class));
-        $this->trackers->push($this->app->make(RequestTracker::class));
-        $this->trackers->push($this->app->make(ResponseTracker::class));
+        $this->bootTrackers(Collection::make([
+            ApplicationTracker::class,
+            PerformanceTracker::class,
+            RequestTracker::class,
+            ResponseTracker::class,
+        ]));
 
-        $this->configService->trackers()->each(function (string $tracker) {
-            $this->trackers->push($this->app->make($tracker));
-        });
+        $this->bootTrackers($this->configService->trackers());
+    }
+
+    /**
+     * @return void
+     */
+    public function resetTrackers(): void
+    {
+        $this->bootTrackers($this->configService->trackers());
     }
 
     /**
@@ -95,5 +103,16 @@ class LaravelDataTracker implements DataTracker
     public function data(): Collection
     {
         return $this->data;
+    }
+
+    /**
+     * @param Collection $trackers
+     * @return void
+     */
+    protected function bootTrackers(Collection $trackers): void
+    {
+        $trackers->each(function (string $tracker) {
+            $this->trackers->put($tracker, $this->app->make($tracker));
+        });
     }
 }

@@ -245,12 +245,4 @@ class TimerServiceTest extends TestCase
         profiler_start('testA');
         profiler_finish('testB');
     }
-
-    /** @test */
-    function custom_timer_helpers_functions_can_not_brake_application_by_second_definition_in_global_namespace()
-    {
-        require __DIR__ . '/../../../../src/Services/helpers.php';
-
-        $this->assertTrue(true);
-    }
 }

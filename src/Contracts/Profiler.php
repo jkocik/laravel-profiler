@@ -8,4 +8,9 @@ interface Profiler
      * @return void
      */
     public function listenForBoot(): void;
+
+    /**
+     * @return void
+     */
+    public function resetTrackers(): void;
 }

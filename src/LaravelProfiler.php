@@ -2,8 +2,6 @@
 
 namespace JKocik\Laravel\Profiler;
 
-use Illuminate\Support\Facades\Event;
-use Illuminate\Routing\Events\RouteMatched;
 use JKocik\Laravel\Profiler\Events\Tracking;
 use JKocik\Laravel\Profiler\Contracts\Timer;
 use JKocik\Laravel\Profiler\Contracts\Memory;
@@ -21,15 +19,28 @@ use JKocik\Laravel\Profiler\LaravelExecution\LaravelExecutionData;
 class LaravelProfiler extends BaseProfiler
 {
     /**
+     * @var DataTracker
+     */
+    protected $dataTracker;
+
+    /**
+     * @return void
+     */
+    public function resetTrackers(): void
+    {
+        $this->dataTracker->resetTrackers();
+    }
+
+    /**
      * @return void
      */
     protected function boot(): void
     {
         $this->bind();
 
-        $dataTracker = $this->track();
+        $this->track();
 
-        $this->listenForTerminating($dataTracker);
+        $this->listenForTerminating();
     }
 
     /**
@@ -59,42 +70,38 @@ class LaravelProfiler extends BaseProfiler
     }
 
     /**
-     * @return DataTracker
+     * @return void
      */
-    protected function track(): DataTracker
+    protected function track(): void
     {
         $this->app->make(ExecutionWatcher::class)->watch();
 
-        $dataTracker = $this->app->make(DataTracker::class);
-        $dataTracker->track();
+        $this->dataTracker = $this->app->make(DataTracker::class);
+        $this->dataTracker->track();
 
         event(new Tracking());
-
-        return $dataTracker;
     }
 
     /**
-     * @param DataTracker $dataTracker
      * @return void
      */
-    protected function listenForTerminating(DataTracker $dataTracker): void
+    protected function listenForTerminating(): void
     {
-        $this->app->afterBootstrapping(BootProviders::class, function () use ($dataTracker) {
-            $this->registerTerminating($dataTracker);
+        $this->app->afterBootstrapping(BootProviders::class, function () {
+            $this->registerTerminating();
         });
     }
 
     /**
-     * @param DataTracker $dataTracker
      * @return void
      */
-    protected function registerTerminating(DataTracker $dataTracker): void
+    protected function registerTerminating(): void
     {
-        $this->app->terminating(function () use ($dataTracker) {
+        $this->app->terminating(function () {
             event(new Terminating());
 
-            $dataTracker->terminate();
-            $this->app->make(DataProcessor::class)->process($dataTracker);
+            $this->dataTracker->terminate();
+            $this->app->make(DataProcessor::class)->process($this->dataTracker);
         });
     }
 }

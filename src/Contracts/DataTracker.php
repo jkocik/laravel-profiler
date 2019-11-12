@@ -14,6 +14,11 @@ interface DataTracker
     /**
      * @return void
      */
+    public function resetTrackers(): void;
+
+    /**
+     * @return void
+     */
     public function terminate(): void;
 
     /**
