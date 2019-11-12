@@ -18,7 +18,7 @@ script:
     - vendor/bin/phpunit -c phpunit-laravel-55.xml
     - vendor/bin/phpunit -c phpunit-laravel-56.xml
     - vendor/bin/phpunit -c phpunit-laravel-57.xml
-    - vendor/bin/phpunit -c phpunit-laravel-58.xml --coverage-clover build/logs/clover.xml
+    - vendor/bin/phpunit -c phpunit-laravel-58.xml
     - if [[ ${TRAVIS_PHP_VERSION:0:3} != "7.1" ]]; then vendor/bin/phpunit -c phpunit-laravel-6.xml --coverage-clover build/logs/clover.xml; fi
 
 after_success:
