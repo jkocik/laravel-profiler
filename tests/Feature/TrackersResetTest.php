@@ -2,40 +2,27 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Feature;
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use JKocik\Laravel\Profiler\Tests\TestCase;
-use JKocik\Laravel\Profiler\Trackers\ViewsTracker;
-use JKocik\Laravel\Profiler\Tests\Support\Fixtures\ProcessorA;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 
 class TrackersResetTest extends TestCase
 {
     /** @test */
     function trackers_can_be_reset()
     {
-        $this->app = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.trackers', [
-                ViewsTracker::class,
-            ]);
-            $app->make('config')->set('profiler.processors', [
-                ProcessorA::class,
-            ]);
-            $app->singleton(ProcessorA::class, function () {
-                return new ProcessorA();
-            });
-            $app['view']->addNamespace('tests', __DIR__ . '/../Support/Fixtures');
+        $fired = false;
+
+        Event::listen(ResetTrackers::class, function () use (&$fired) {
+            $fired = true;
         });
 
-        view('tests::dummy-view-a')->render();
+        $this->assertFalse($fired);
 
         profiler_reset();
 
-        view('tests::dummy-view-b')->render();
-
-        $this->app->terminate();
-        $processorA = $this->app->make(ProcessorA::class);
-
-        $this->assertCount(1, $processorA->data->get('views'));
-        $this->assertEquals('tests::dummy-view-b', $processorA->data->get('views')->first()['name']);
+        $this->assertTrue($fired);
     }
 
     /** @test */
@@ -45,8 +32,16 @@ class TrackersResetTest extends TestCase
             $app->make('config')->set('profiler.enabled', false);
         });
 
+        $fired = false;
+
+        Event::listen(ResetTrackers::class, function () use (&$fired) {
+            $fired = true;
+        });
+
+        $this->assertFalse($fired);
+
         profiler_reset();
 
-        $this->assertTrue(true);
+        $this->assertTrue($fired);
     }
 }

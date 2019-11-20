@@ -7,10 +7,10 @@ interface Profiler
     /**
      * @return void
      */
-    public function listenForBoot(): void;
+    public function resetTrackers(): void;
 
     /**
      * @return void
      */
-    public function resetTrackers(): void;
+    public function listenForBoot(): void;
 }

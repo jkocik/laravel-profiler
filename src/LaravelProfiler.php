@@ -26,14 +26,6 @@ class LaravelProfiler extends BaseProfiler
     /**
      * @return void
      */
-    public function resetTrackers(): void
-    {
-        $this->dataTracker->resetTrackers();
-    }
-
-    /**
-     * @return void
-     */
     protected function boot(): void
     {
         $this->bind();

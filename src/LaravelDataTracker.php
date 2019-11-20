@@ -72,14 +72,6 @@ class LaravelDataTracker implements DataTracker
     /**
      * @return void
      */
-    public function resetTrackers(): void
-    {
-        $this->bootTrackers($this->configService->trackers());
-    }
-
-    /**
-     * @return void
-     */
     public function terminate(): void
     {
         $this->trackers->each(function (Tracker $tracker) {
@@ -112,7 +104,7 @@ class LaravelDataTracker implements DataTracker
     protected function bootTrackers(Collection $trackers): void
     {
         $trackers->each(function (string $tracker) {
-            $this->trackers->put($tracker, $this->app->make($tracker));
+            $this->trackers->push($this->app->make($tracker));
         });
     }
 }

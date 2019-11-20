@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Application;
 use Illuminate\Console\Events\ArtisanStarting;
 use JKocik\Laravel\Profiler\Contracts\Profiler;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 use Illuminate\Foundation\Bootstrap\BootProviders;
 use JKocik\Laravel\Profiler\Console\StatusCommand;
 use JKocik\Laravel\Profiler\Console\ServerCommand;
@@ -30,6 +31,14 @@ abstract class BaseProfiler implements Profiler
     /**
      * @return void
      */
+    public function resetTrackers(): void
+    {
+        event(new ResetTrackers());
+    }
+
+    /**
+     * @return void
+     */
     public function listenForBoot(): void
     {
         $this->app->beforeBootstrapping(BootProviders::class, function () {
@@ -37,11 +46,6 @@ abstract class BaseProfiler implements Profiler
             $this->boot();
         });
     }
-
-    /**
-     * @return void
-     */
-    abstract public function resetTrackers(): void;
 
     /**
      * @return void
