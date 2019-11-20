@@ -9,6 +9,7 @@ use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Events\Tracking;
 use JKocik\Laravel\Profiler\Events\Terminating;
 use JKocik\Laravel\Profiler\Events\ProfilerBound;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 use JKocik\Laravel\Profiler\Trackers\EventsTracker;
 use JKocik\Laravel\Profiler\Events\ExceptionHandling;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassA;
@@ -201,6 +202,7 @@ class EventsTrackerTest extends TestCase
 
         event(new ExceptionHandling(new Exception()));
         event(new ProfilerBound());
+        event(new ResetTrackers());
         event(new Terminating());
         event(new Tracking());
 

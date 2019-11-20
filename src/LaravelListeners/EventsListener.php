@@ -137,6 +137,7 @@ class EventsListener implements LaravelListener
             'bootstrapped: ' . \Illuminate\Foundation\Bootstrap\BootProviders::class,
             \JKocik\Laravel\Profiler\Events\ExceptionHandling::class,
             \JKocik\Laravel\Profiler\Events\ProfilerBound::class,
+            \JKocik\Laravel\Profiler\Events\ResetTrackers::class,
             \JKocik\Laravel\Profiler\Events\Terminating::class,
             \JKocik\Laravel\Profiler\Events\Tracking::class,
         ]);
