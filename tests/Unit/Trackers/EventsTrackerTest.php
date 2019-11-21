@@ -222,4 +222,22 @@ class EventsTrackerTest extends TestCase
 
         $this->assertEquals(0, $tracker->meta()->get('events_count'));
     }
+
+    /** @test */
+    function can_reset_events()
+    {
+        $tracker = $this->app->make(EventsTracker::class);
+        event(new DummyEventA());
+        event(new DummyEventA());
+        event(new DummyEventA());
+
+        profiler_reset();
+
+        event(new DummyEventA());
+
+        $tracker->terminate();
+
+        $this->assertEquals(1, $tracker->meta()->get('events_count'));
+        $this->assertCount(1, $tracker->data()->get('events'));
+    }
 }

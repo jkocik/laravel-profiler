@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\LaravelListeners;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Collection;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 use JKocik\Laravel\Profiler\Services\ConfigService;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
@@ -66,6 +67,20 @@ class EventsListener implements LaravelListener
             $this->previousEventName = $name;
 
             array_push($this->events, $this->resolveEvent($name, $event, $payload));
+        });
+
+        $this->listenResetTrackers();
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenResetTrackers(): void
+    {
+        $this->dispatcher->listen(ResetTrackers::class, function (ResetTrackers $event) {
+            $this->events = [];
+            $this->previousEventName = '';
+            $this->count = 0;
         });
     }
 
