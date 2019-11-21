@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\LaravelListeners;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Events\QueryExecuted;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 use Illuminate\Database\Events\TransactionBeginning;
 use Illuminate\Database\Events\TransactionCommitted;
 use Illuminate\Database\Events\TransactionRolledBack;
@@ -29,6 +30,7 @@ class QueriesListener implements LaravelListener
     {
         $this->listenQueries();
         $this->listenTransactions();
+        $this->listenResetTrackers();
     }
 
     /**
@@ -96,6 +98,17 @@ class QueriesListener implements LaravelListener
                 $event->connection->getDatabaseName(),
                 $event->connectionName,
             ]);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenResetTrackers(): void
+    {
+        Event::listen(ResetTrackers::class, function (ResetTrackers $event) {
+            $this->queries = [];
+            $this->count = 0;
         });
     }
 

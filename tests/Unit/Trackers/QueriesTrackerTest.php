@@ -227,4 +227,22 @@ class QueriesTrackerTest extends TestCase
         $this->assertContains("where email = '". str_repeat('a', 255) ."...{truncated}'", $queries->last()['query']);
         $this->assertContains(str_repeat('a', 255) . '...{truncated}', $queries->last()['bindings']);
     }
+
+    /** @test */
+    function can_reset_queries()
+    {
+        $tracker = $this->app->make(QueriesTracker::class);
+        DB::select('select * from users');
+        DB::select('select * from users');
+        DB::select('select * from users');
+
+        profiler_reset();
+
+        DB::select('select * from users');
+
+        $tracker->terminate();
+
+        $this->assertEquals(1, $tracker->meta()->get('queries_count'));
+        $this->assertCount(1, $tracker->data()->get('queries'));
+    }
 }
