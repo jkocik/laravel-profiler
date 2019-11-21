@@ -51,6 +51,31 @@ class EventsListener implements LaravelListener
      */
     public function listen(): void
     {
+        $this->listenEvents();
+        $this->listenResetTrackers();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function events(): Collection
+    {
+        return Collection::make($this->events);
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->count;
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenEvents(): void
+    {
         $this->dispatcher->listen('*', function ($event, $payload = null) {
             $name = $this->resolveName($event, $payload);
 
@@ -68,8 +93,6 @@ class EventsListener implements LaravelListener
 
             array_push($this->events, $this->resolveEvent($name, $event, $payload));
         });
-
-        $this->listenResetTrackers();
     }
 
     /**
@@ -82,22 +105,6 @@ class EventsListener implements LaravelListener
             $this->previousEventName = '';
             $this->count = 0;
         });
-    }
-
-    /**
-     * @return Collection
-     */
-    public function events(): Collection
-    {
-        return Collection::make($this->events);
-    }
-
-    /**
-     * @return int
-     */
-    public function count(): int
-    {
-        return $this->count;
     }
 
     /**
