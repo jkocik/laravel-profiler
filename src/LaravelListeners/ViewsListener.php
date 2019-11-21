@@ -47,7 +47,7 @@ class ViewsListener implements LaravelListener
      */
     protected function listenResetTrackers(): void
     {
-        Event::listen(ResetTrackers::class, function (ResetTrackers $event) {
+        Event::listen(ResetTrackers::class, function () {
             $this->views = [];
         });
     }

@@ -100,7 +100,7 @@ class EventsListener implements LaravelListener
      */
     protected function listenResetTrackers(): void
     {
-        $this->dispatcher->listen(ResetTrackers::class, function (ResetTrackers $event) {
+        $this->dispatcher->listen(ResetTrackers::class, function () {
             $this->events = [];
             $this->previousEventName = '';
             $this->count = 0;

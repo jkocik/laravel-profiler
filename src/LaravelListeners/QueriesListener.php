@@ -106,7 +106,7 @@ class QueriesListener implements LaravelListener
      */
     protected function listenResetTrackers(): void
     {
-        Event::listen(ResetTrackers::class, function (ResetTrackers $event) {
+        Event::listen(ResetTrackers::class, function () {
             $this->queries = [];
             $this->count = 0;
         });
