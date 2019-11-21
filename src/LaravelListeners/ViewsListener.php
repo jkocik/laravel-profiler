@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\LaravelListeners;
 use Illuminate\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
 class ViewsListener implements LaravelListener
@@ -19,9 +20,8 @@ class ViewsListener implements LaravelListener
      */
     public function listen(): void
     {
-        Event::listen('composing:*', function (...$view) {
-            array_push($this->views, $this->resolveView($view));
-        });
+        $this->listenViews();
+        $this->listenResetTrackers();
     }
 
     /**
@@ -30,6 +30,26 @@ class ViewsListener implements LaravelListener
     public function views(): Collection
     {
         return Collection::make($this->views);
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenViews(): void
+    {
+        Event::listen('composing:*', function (...$view) {
+            array_push($this->views, $this->resolveView($view));
+        });
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenResetTrackers(): void
+    {
+        Event::listen(ResetTrackers::class, function (ResetTrackers $event) {
+            $this->views = [];
+        });
     }
 
     /**

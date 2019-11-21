@@ -132,4 +132,21 @@ class ViewsTrackerTest extends TestCase
             'comments' => 'array: 0 item(s)',
         ], $views->first()['params']);
     }
+
+    /** @test */
+    function can_reset_views()
+    {
+        $tracker = $this->app->make(ViewsTracker::class);
+        view('tests::dummy-view-a')->render();
+        view('tests::dummy-view-a')->render();
+        view('tests::dummy-view-a')->render();
+
+        profiler_reset();
+
+        view('tests::dummy-view-a')->render();
+
+        $tracker->terminate();
+
+        $this->assertCount(1, $tracker->data()->get('views'));
+    }
 }
