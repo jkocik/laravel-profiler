@@ -5,6 +5,7 @@ namespace JKocik\Laravel\Profiler\LaravelListeners;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Redis\Events\CommandExecuted;
+use JKocik\Laravel\Profiler\Events\ResetTrackers;
 use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 
 class RedisListener implements LaravelListener
@@ -25,6 +26,7 @@ class RedisListener implements LaravelListener
     public function listen(): void
     {
         $this->listenCommands();
+        $this->listenResetTrackers();
     }
 
     /**
@@ -57,6 +59,17 @@ class RedisListener implements LaravelListener
                 $event->connectionName,
                 $event->parameters,
             ]);
+        });
+    }
+
+    /**
+     * @return void
+     */
+    protected function listenResetTrackers(): void
+    {
+        Event::listen(ResetTrackers::class, function (ResetTrackers $event) {
+            $this->commands = [];
+            $this->count = 0;
         });
     }
 }

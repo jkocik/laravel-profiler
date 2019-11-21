@@ -60,4 +60,27 @@ class RedisTrackerTest extends TestCase
             $this->assertTrue($tracker->meta()->get('redis_can_be_tracked'));
         });
     }
+
+    /** @test */
+    function can_reset_commands()
+    {
+        $tracker = $this->app->make(RedisTracker::class);
+        $this->app->make('redis')->set('name', 'Laravel Profiler');
+        $this->app->make('redis')->set('name', 'Laravel Profiler');
+        $this->app->make('redis')->set('name', 'Laravel Profiler');
+
+        profiler_reset();
+
+        $this->app->make('redis')->set('name', 'Laravel Profiler');
+
+        $tracker->terminate();
+
+        $this->tapLaravelVersionTill(5.6, function () {
+            $this->assertTrue(true);
+        });
+        $this->tapLaravelVersionFrom(5.7, function () use ($tracker) {
+            $this->assertEquals(1, $tracker->meta()->get('redis_count'));
+            $this->assertCount(1, $tracker->data()->get('redis'));
+        });
+    }
 }
