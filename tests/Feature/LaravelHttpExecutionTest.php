@@ -115,11 +115,15 @@ class LaravelHttpExecutionTest extends TestCase
     /** @test */
     function has_request_query()
     {
-        $this->get('/');
-        $this->assertEquals([], $this->executionData->request()->data()->get('query'));
-
         $this->get('/abc?ab=xy');
         $this->assertEquals(['ab' => 'xy'], $this->executionData->request()->data()->get('query'));
+    }
+
+    /** @test */
+    function can_have_empty_request_query()
+    {
+        $this->get('/');
+        $this->assertEquals([], $this->executionData->request()->data()->get('query'));
     }
 
     /** @test */
