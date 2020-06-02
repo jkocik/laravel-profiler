@@ -5,8 +5,9 @@ namespace JKocik\Laravel\Profiler\Trackers;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Application;
-use JKocik\Laravel\Profiler\LaravelExecution\ExceptionHandler;
 use JKocik\Laravel\Profiler\LaravelListeners\ExceptionListener;
+use JKocik\Laravel\Profiler\LaravelExecution\ExceptionHandlerTillVersion6;
+use JKocik\Laravel\Profiler\LaravelExecution\ExceptionHandlerFromVersion7;
 
 class ExceptionTracker extends BaseTracker
 {
@@ -27,7 +28,22 @@ class ExceptionTracker extends BaseTracker
         $this->exceptionListener = $exceptionListener;
         $this->exceptionListener->listen();
 
-        $app->singleton(\App\Exceptions\Handler::class, ExceptionHandler::class);
+        $this->bindExceptionHandler($app);
+    }
+
+    /**
+     * @param Application $app
+     * @return void
+     */
+    protected function bindExceptionHandler(Application $app): void
+    {
+        $version = (int) $app->version();
+
+        $handler = $version < 7
+            ? ExceptionHandlerTillVersion6::class
+            : ExceptionHandlerFromVersion7::class;
+
+        $app->singleton(\App\Exceptions\Handler::class, $handler);
     }
 
     /**
