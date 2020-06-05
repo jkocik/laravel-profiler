@@ -170,7 +170,7 @@ class LaravelHttpExecutionTest extends TestCase
             $this->assertTrue(true);
         });
 
-        $this->tapLaravelVersionFrom(5.4, function () {
+        $this->tapLaravelVersionBetween(5.4, 6, function () {
             $fileA = UploadedFile::fake()->image('file-val-a.jpg');
             $fileB = UploadedFile::fake()->image('file-val-b.jpg');
             $typeA = get_class($fileA);
@@ -195,6 +195,35 @@ class LaravelHttpExecutionTest extends TestCase
                 'client original extension' => $fileB->getClientOriginalExtension(),
                 'client mime type' => $fileB->getClientMimeType(),
                 'client size' => $fileB->getClientSize(),
+                'path' => $fileB->path(),
+            ], $request->data()->get('files')['file-key-b'][$typeB]);
+        });
+
+        $this->tapLaravelVersionFrom(7, function () {
+            $fileA = UploadedFile::fake()->image('file-val-a.jpg');
+            $fileB = UploadedFile::fake()->image('file-val-b.jpg');
+            $typeA = get_class($fileA);
+            $typeB = get_class($fileB);
+
+            $this->post('/', [
+                'file-key-a' => $fileA,
+                'file-key-b' => $fileB,
+            ]);
+
+            $request = $this->executionData->request();
+
+            $this->assertEquals([
+                'client original name' => $fileA->getClientOriginalName(),
+                'client original extension' => $fileA->getClientOriginalExtension(),
+                'client mime type' => $fileA->getClientMimeType(),
+                'client size' => $fileA->getSize(),
+                'path' => $fileA->path(),
+            ], $request->data()->get('files')['file-key-a'][$typeA]);
+            $this->assertEquals([
+                'client original name' => $fileB->getClientOriginalName(),
+                'client original extension' => $fileB->getClientOriginalExtension(),
+                'client mime type' => $fileB->getClientMimeType(),
+                'client size' => $fileB->getSize(),
                 'path' => $fileB->path(),
             ], $request->data()->get('files')['file-key-b'][$typeB]);
         });

@@ -90,8 +90,19 @@ class HttpRequest implements ExecutionRequest
             'client original name' => $file->getClientOriginalName(),
             'client original extension' => $file->getClientOriginalExtension(),
             'client mime type' => $file->getClientMimeType(),
-            'client size' => $file->getClientSize(),
+            'client size' => $this->clientSize($file),
             'path' => $file->path(),
         ];
+    }
+
+    /**
+     * @param UploadedFile $file
+     * @return int
+     */
+    protected function clientSize(UploadedFile $file): int
+    {
+        return method_exists($file, 'getClientSize')
+            ? $file->getClientSize()
+            : $file->getSize();
     }
 }

@@ -75,17 +75,23 @@ class PerformanceTrackerTest extends TestCase
     /** @test */
     function has_setup_time_instead_of_route_when_testing()
     {
-        putenv('APP_ENV=testing');
-        $_ENV['APP_ENV'] = 'testing';
-        $this->app = $this->app();
-        $this->addFixturePerformanceProcessor();
+        $this->tapLaravelVersionTill(6, function () {
+            putenv('APP_ENV=testing');
+            $_ENV['APP_ENV'] = 'testing';
+            $this->app = $this->app();
+            $this->addFixturePerformanceProcessor();
 
-        $this->get('/');
-        $timer = $this->app->make(Timer::class);
-        $processor = $this->app->make(PerformanceProcessor::class);
+            $this->get('/');
+            $timer = $this->app->make(Timer::class);
+            $processor = $this->app->make(PerformanceProcessor::class);
 
-        $this->assertGreaterThan(0, $timer->milliseconds('setup'));
-        $this->assertEquals($timer->milliseconds('setup'), $processor->performance->get('timer')['setup']);
+            $this->assertGreaterThan(0, $timer->milliseconds('setup'));
+            $this->assertEquals($timer->milliseconds('setup'), $processor->performance->get('timer')['setup']);
+        });
+
+        $this->tapLaravelVersionFrom(7, function () {
+            $this->assertTrue(true);
+        });
     }
 
     /** @test */

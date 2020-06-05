@@ -41,7 +41,7 @@ class ExceptionTracker extends BaseTracker
 
         $handler = $version < 7
             ? ExceptionHandlerTillVersion6::class
-            : ExceptionHandlerFromVersion7::class;
+            : ExceptionHandlerFromVersion7::class; // @codeCoverageIgnore
 
         $app->singleton(\App\Exceptions\Handler::class, $handler);
     }

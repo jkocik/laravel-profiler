@@ -120,29 +120,14 @@ class RegisterProfilerTest extends TestCase
     /** @test */
     function profiler_can_be_disabled_in_config_file_for_specific_environment()
     {
-        putenv('APP_ENV=test-profiler');
+        putenv('APP_ENV=local');
         putenv('PROFILER_ENABLED=true');
-        $_ENV['APP_ENV'] = 'test-profiler';
+        $_ENV['APP_ENV'] = 'local';
         $_ENV['PROFILER_ENABLED'] = true;
         $this->app = $this->appWith(function (Application $app) {
-            $app->make('config')->set('profiler.enabled_overrides', ['test-profiler' => false]);
+            $app->make('config')->set('profiler.enabled_overrides', ['local' => false]);
         });
 
-        $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
-    }
-
-    /** @test */
-    function profiler_is_forced_by_default_to_be_disabled_on_production()
-    {
-        putenv('APP_ENV=production');
-        putenv('PROFILER_ENABLED=true');
-        $_ENV['APP_ENV'] = 'production';
-        $_ENV['PROFILER_ENABLED'] = true;
-        $this->app = $this->app();
-
-        $config = $this->app->make('config');
-
-        $this->assertArrayHasKey('production', $config->get('profiler.enabled_overrides'));
         $this->assertInstanceOf(DisabledProfiler::class, $this->app->make(Profiler::class));
     }
 

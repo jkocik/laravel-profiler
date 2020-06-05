@@ -149,7 +149,12 @@ class CommandsTest extends TestCase
     /** @test */
     function tells_if_connection_to_profiler_server_is_successful()
     {
-        $this->tapLaravelVersionFrom(5.7, function () {
+        $this->tapLaravelVersionFrom(7, function () {
+            $this->artisan('profiler:status');
+            $this->assertTrue(true);
+        });
+
+        $this->tapLaravelVersionBetween(5.7, 6, function () {
             $realConsoleService = new ConsoleService($this->app, $this->app->make(ConfigService::class));
 
             $consoleService = Mockery::mock(ConsoleService::class)->shouldIgnoreMissing();
@@ -192,7 +197,12 @@ class CommandsTest extends TestCase
     /** @test */
     function tells_if_connection_to_profiler_server_failed()
     {
-        $this->tapLaravelVersionFrom(5.7, function () {
+        $this->tapLaravelVersionFrom(7, function () {
+            $this->artisan('profiler:status');
+            $this->assertTrue(true);
+        });
+
+        $this->tapLaravelVersionBetween(5.7, 6, function () {
             $realConsoleService = new ConsoleService($this->app, $this->app->make(ConfigService::class));
 
             $consoleService = Mockery::mock(ConsoleService::class)->shouldIgnoreMissing();
@@ -229,7 +239,12 @@ class CommandsTest extends TestCase
     /** @test */
     function tells_if_connection_to_profiler_server_has_unknown_status()
     {
-        $this->tapLaravelVersionFrom(5.7, function () {
+        $this->tapLaravelVersionFrom(7, function () {
+            $this->artisan('profiler:status');
+            $this->assertTrue(true);
+        });
+
+        $this->tapLaravelVersionBetween(5.7, 6, function () {
             $realConsoleService = new ConsoleService($this->app, $this->app->make(ConfigService::class));
 
             $consoleService = Mockery::mock(ConsoleService::class)->shouldIgnoreMissing();
