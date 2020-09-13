@@ -7,6 +7,13 @@ use JKocik\Laravel\Profiler\Trackers\RedisTracker;
 
 class RedisTrackerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config()->set('database.redis.default.host', 'profiler_redis');
+    }
+
     /** @test */
     function has_executed_commands()
     {

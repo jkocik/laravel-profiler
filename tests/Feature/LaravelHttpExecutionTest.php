@@ -175,8 +175,8 @@ class LaravelHttpExecutionTest extends TestCase
         });
 
         $this->tapLaravelVersionBetween(5.4, 6, function () {
-            $fileA = UploadedFile::fake()->image('file-val-a.jpg');
-            $fileB = UploadedFile::fake()->image('file-val-b.jpg');
+            $fileA = UploadedFile::fake()->image('file-val-a.png');
+            $fileB = UploadedFile::fake()->image('file-val-b.png');
             $typeA = get_class($fileA);
             $typeB = get_class($fileB);
 
@@ -204,8 +204,8 @@ class LaravelHttpExecutionTest extends TestCase
         });
 
         $this->tapLaravelVersionFrom(7, function () {
-            $fileA = UploadedFile::fake()->image('file-val-a.jpg');
-            $fileB = UploadedFile::fake()->image('file-val-b.jpg');
+            $fileA = UploadedFile::fake()->image('file-val-a.png');
+            $fileB = UploadedFile::fake()->image('file-val-b.png');
             $typeA = get_class($fileA);
             $typeB = get_class($fileB);
 
@@ -241,10 +241,10 @@ class LaravelHttpExecutionTest extends TestCase
         });
 
         $this->tapLaravelVersionFrom(5.4, function () {
-            $fileA = UploadedFile::fake()->image('file-val-a.jpg');
-            $fileB = UploadedFile::fake()->image('file-val-b.jpg');
-            $fileX = UploadedFile::fake()->image('file-val-x.jpg');
-            $fileY = UploadedFile::fake()->image('file-val-y.jpg');
+            $fileA = UploadedFile::fake()->image('file-val-a.png');
+            $fileB = UploadedFile::fake()->image('file-val-b.png');
+            $fileX = UploadedFile::fake()->image('file-val-x.png');
+            $fileY = UploadedFile::fake()->image('file-val-y.png');
             $typeA = get_class($fileA);
             $typeB = get_class($fileB);
             $typeX = get_class($fileX);

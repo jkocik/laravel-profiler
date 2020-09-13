@@ -1,0 +1,19 @@
+version: '3.5'
+
+services:
+    profiler_v1:
+        build:
+            dockerfile: Dockerfile-v1
+            context: ./.docker/images/php
+        container_name: profiler_v1
+        hostname: profiler_v1
+        entrypoint: sh /bin/entrypoint.sh php-fpm
+        volumes:
+            - ./.docker/etc/php/entrypoint.sh:/bin/entrypoint.sh:ro
+            - ./.docker/etc/php/php-v1.ini:/usr/local/etc/php/php.ini
+            - .:/var/www/html
+
+    profiler_redis:
+        image: redis:latest
+        container_name: profiler_redis
+        hostname: profiler_redis
