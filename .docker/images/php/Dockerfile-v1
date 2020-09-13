@@ -9,7 +9,8 @@ RUN apt-get update > /dev/null && apt-get install -y \
     zlib1g-dev \
     libpng-dev \
     libjpeg-dev \
-    nodejs
+    nodejs \
+    redis-server
 
 RUN docker-php-ext-install zip pdo_mysql bcmath gd > /dev/null
 

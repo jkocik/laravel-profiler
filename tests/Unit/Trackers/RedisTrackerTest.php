@@ -10,8 +10,6 @@ class RedisTrackerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        config()->set('database.redis.default.host', 'profiler_redis');
     }
 
     /** @test */
