@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
-use App\User;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Trackers\ViewsTracker;
 
@@ -100,7 +99,7 @@ class ViewsTrackerTest extends TestCase
         $price = 5.89;
         $active = true;
         $address = null;
-        $related = new User(['email' => 'a@example.com']);
+        $related = $this->user(['email' => 'a@example.com']);
         $roles = collect(['publisher', 'viewer']);
         $tags = ['a'];
         $comments = [];
@@ -126,7 +125,7 @@ class ViewsTrackerTest extends TestCase
             'price' => 'double',
             'active' => 'boolean',
             'address' => 'NULL',
-            'related' => 'App\User',
+            'related' => $this->userClass(),
             'roles' => 'Illuminate\Support\Collection: 2 item(s)',
             'tags' => 'array: 1 item(s)',
             'comments' => 'array: 0 item(s)',

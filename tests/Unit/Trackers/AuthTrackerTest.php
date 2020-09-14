@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
-use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -35,7 +34,7 @@ class AuthTrackerTest extends TestCase
     {
         $tracker = $this->app->make(AuthTracker::class);
 
-        $user = factory(User::class)->create(['email' => 'user@example.com']);
+        $user = $this->factoryUser()->create(['email' => 'user@example.com']);
         Auth::login($user);
 
         $tracker->terminate();
@@ -49,7 +48,7 @@ class AuthTrackerTest extends TestCase
     {
         $tracker = $this->app->make(AuthTracker::class);
 
-        $user = factory(User::class)->create([
+        $user = $this->factoryUser()->create([
             'email' => 'login.me@example.com',
         ]);
         Auth::login($user);

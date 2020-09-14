@@ -1,0 +1,22 @@
+FROM php:7.4.10-fpm
+
+COPY ./.bashrc-v2 /root/.bashrc
+
+RUN apt-get update > /dev/null && apt-get install -y \
+    acl \
+    unzip \
+    libzip-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libjpeg-dev \
+    nodejs \
+    redis-server
+
+RUN docker-php-ext-install zip pdo_mysql bcmath gd > /dev/null
+
+RUN pecl install xdebug > /dev/null \
+    && docker-php-ext-enable xdebug > /dev/null
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer > /dev/null
+
+RUN rm -rf /var/lib/apt/lists/*

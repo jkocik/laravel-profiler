@@ -4,6 +4,7 @@ namespace JKocik\Laravel\Profiler\Tests;
 
 use Closure;
 use Illuminate\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Console\Kernel;
 use phpmock\environment\MockEnvironment;
 use JKocik\Laravel\Profiler\ServiceProvider;
@@ -107,6 +108,37 @@ class TestCase extends BaseTestCase
         $app->make(Kernel::class)->bootstrap();
 
         return $app;
+    }
+
+    /**
+     * @return string
+     */
+    protected function userClass(): string
+    {
+        return $this->app->make('config')->get('auth.providers.users.model');
+    }
+
+    /**
+     * @return object
+     */
+    protected function factoryUser(): object
+    {
+        if (function_exists('factory')) {
+            return factory($this->userClass());
+        }
+
+        return $this->userClass()::factory();
+    }
+
+    /**
+     * @param array $attributes
+     * @return Model
+     */
+    protected function user(array $attributes = []): Model
+    {
+        $userClass = $this->app->make('config')->get('auth.providers.users.model');
+
+        return new $userClass($attributes);
     }
 
     /**

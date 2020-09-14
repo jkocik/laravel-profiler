@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/jkocik/laravel-profiler/badge.svg?branch=master)](https://coveralls.io/github/jkocik/laravel-profiler?branch=master)
 
 The aim of this project is to track console and web Laravel framework execution and give developers
-better understanding what is going on under the hood. Laravel Profiler is designed for Laravel 5.2+.
+better understanding what is going on under the hood. Laravel Profiler is designed for Laravel Framework.
 
 ![Laravel Profiler](https://drive.google.com/uc?export=view&id=12TSAEW1butnLfmFxO3Pw4GhF96B8PUSk)
 
@@ -42,6 +42,7 @@ Profiler Server passes data to Profiler Client using WebSockets.
 
 Data tracked, collected and delivered to Profiler Client are:
 - auth
+- redis
 - route
 - views
 - events
@@ -50,7 +51,6 @@ Data tracked, collected and delivered to Profiler Client are:
 - server status
 - database queries
 - performance metrics
-- redis (from Laravel 5.7)
 - request (web) / input (console)
 - response (web) / output (console)
 - application (Laravel status, config, loaded service providers, container bindings, framework paths)
@@ -63,31 +63,13 @@ as possible.
 
 ### Step 1: Install Profiler Package
 
-Requirements: PHP 7.1+ and Laravel 5.2+
+Requirements: PHP 7.2+
 
 It is recommended to install Profiler Package only for development
 
 ```shell
-composer require jkocik/laravel-profiler:1.* --dev
+composer require jkocik/laravel-profiler --dev
 ```
-
-For Laravel 5.5+ you are fine and you can go to Step 2 of this installation process.
-
-For Laravel 5.4 or lower add Service Provider to your application.
-Do not add it in config/app.php because that will add Profiler
-for all your environments. Instead of that open AppServiceProvider class
-and add Profiler Service Provider in register method:
-
-```php
-// app/Providers/AppServiceProvider.php
-
-public function register()
-{
-    if (! $this->app->environment('production')) {
-        $this->app->register(\JKocik\Laravel\Profiler\ServiceProvider::class);
-    }
-}
-``` 
 
 ### Step 2: Publish configuration file
 
@@ -127,7 +109,7 @@ php artisan profiler:client
 
 After that your browser should have new tab opened with Profiler Client connected to Profiler Server.
 
-b) for Vagrant or any other machine different than local
+b) for Docker, Vagrant or any other machine different from local
 
 ```shell
 php artisan profiler:client -m

@@ -12,3 +12,15 @@ services:
             - ./.docker/etc/php/entrypoint.sh:/bin/entrypoint.sh:ro
             - ./.docker/etc/php/php-v1.ini:/usr/local/etc/php/php.ini
             - .:/var/www/html
+
+    profiler_v2:
+        build:
+            dockerfile: Dockerfile-v2
+            context: ./.docker/images/php
+        container_name: profiler_v2
+        hostname: profiler_v2
+        entrypoint: sh /bin/entrypoint.sh php-fpm
+        volumes:
+            - ./.docker/etc/php/entrypoint.sh:/bin/entrypoint.sh:ro
+            - ./.docker/etc/php/php-v2.ini:/usr/local/etc/php/php.ini
+            - .:/var/www/html

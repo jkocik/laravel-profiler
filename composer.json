@@ -1,6 +1,6 @@
 {
     "name": "jkocik/laravel-profiler",
-    "description": "Profiler for Laravel framework 5.2+",
+    "description": "Profiler for Laravel Framework",
     "keywords": ["laravel", "profiler", "debugbar"],
     "homepage": "https://github.com/jkocik/laravel-profiler",
     "license": "MIT",
@@ -11,11 +11,10 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
-        "guzzlehttp/guzzle": "^5.0 || ^6.0"
+        "php": ">=7.2",
+        "guzzlehttp/guzzle": "^5.0 || ^6.0 || ^7.0"
     },
     "require-dev": {
-        "laravel/homestead": "^7.3",
         "phpunit/phpunit": "^6.5",
         "mockery/mockery": "^1.0",
         "php-mock/php-mock": "^2.0",

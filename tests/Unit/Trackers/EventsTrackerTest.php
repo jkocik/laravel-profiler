@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
-use App\User;
 use Exception;
 use Illuminate\Events\Dispatcher;
 use JKocik\Laravel\Profiler\Tests\TestCase;
@@ -51,9 +50,9 @@ class EventsTrackerTest extends TestCase
 
         $tracker = $this->app->make(EventsTracker::class);
 
-        $user = new User(['email' => 'a@example.com']);
-        $usersA = collect([new User(['email' => 'b@example.com']), new User(['email' => 'c@example.com'])]);
-        $usersB = [new User(['email' => 'd@example.com']), new User(['email' => collect(['email' => 'e@example.com'])])];
+        $user = $this->user(['email' => 'a@example.com']);
+        $usersA = collect([$this->user(['email' => 'b@example.com']), $this->user(['email' => 'c@example.com'])]);
+        $usersB = [$this->user(['email' => 'd@example.com']), $this->user(['email' => collect(['email' => 'e@example.com'])])];
         $dummyClasses = [new DummyClassA(), new DummyClassB()];
         $dataA = ['a' => 1, 'c' => 2];
         $dataB = 'c';
@@ -85,9 +84,9 @@ class EventsTrackerTest extends TestCase
 
         $tracker = $this->app->make(EventsTracker::class);
 
-        $user = new User(['email' => 'a@example.com']);
-        $usersA = collect([new User(['email' => 'b@example.com']), new User(['email' => 'c@example.com'])]);
-        $usersB = [new User(['email' => 'd@example.com']), new User(['email' => 'e@example.com'])];
+        $user = $this->user(['email' => 'a@example.com']);
+        $usersA = collect([$this->user(['email' => 'b@example.com']), $this->user(['email' => 'c@example.com'])]);
+        $usersB = [$this->user(['email' => 'd@example.com']), $this->user(['email' => 'e@example.com'])];
         $dummyClasses = [new DummyClassA(), new DummyClassB()];
         $dataA = ['a' => 1, 'c' => 2];
         $dataB = 'c';

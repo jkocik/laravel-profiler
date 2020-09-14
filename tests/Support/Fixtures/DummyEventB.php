@@ -2,16 +2,16 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Support\Fixtures;
 
-use App\User;
 use Illuminate\Support\Collection;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Database\Eloquent\Model;
 
 class DummyEventB
 {
     use SerializesModels;
 
     /**
-     * @var User
+     * @var Model
      */
     public $user;
 
@@ -42,7 +42,7 @@ class DummyEventB
 
     /**
      * DummyEventB constructor.
-     * @param User $user
+     * @param Model $user
      * @param Collection $usersA
      * @param array $usersB
      * @param array $dummyClasses
@@ -50,7 +50,7 @@ class DummyEventB
      * @param string $dataB
      */
     public function __construct(
-        User $user,
+        Model $user,
         Collection $usersA,
         array $usersB,
         array $dummyClasses,

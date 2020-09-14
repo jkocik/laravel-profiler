@@ -44,7 +44,7 @@ class LaravelNullExecutionTest extends TestCase
     {
         $request = $this->executionData->request();
 
-        $this->assertArrayHasKey('type', $request->meta());
+        $this->assertTrue($request->meta()->has('type'));
         $this->assertNull($request->meta()->get('type'));
         $this->assertCount(1, $request->meta());
         $this->assertCount(0, $request->data());

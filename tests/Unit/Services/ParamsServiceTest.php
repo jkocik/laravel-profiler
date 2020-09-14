@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Services;
 
-use App\User;
 use JKocik\Laravel\Profiler\Tests\TestCase;
 use JKocik\Laravel\Profiler\Services\ParamsService;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassA;
@@ -26,7 +25,7 @@ class ParamsServiceTest extends TestCase
     function returns_array_of_object_param_if_is_available()
     {
         $paramsService = $this->app->make(ParamsService::class);
-        $user = new User(['email' => 'a@example.com']);
+        $user = $this->user(['email' => 'a@example.com']);
 
         $this->assertEquals($user->toArray(), $paramsService->resolve($user));
     }

@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Tests\Unit\Trackers;
 
-use App\User;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +35,7 @@ class QueriesTrackerTest extends TestCase
     function has_executed_queries()
     {
         $tracker = $this->app->make(QueriesTracker::class);
-        factory(User::class)->create([
+        $this->factoryUser()->create([
             'name' => 'Joe',
             'email' => 'joe@example.com',
         ]);
@@ -60,7 +59,7 @@ class QueriesTrackerTest extends TestCase
     {
         $tracker = $this->app->make(QueriesTracker::class);
         DB::transaction(function () {
-            factory(User::class)->create();
+            $this->factoryUser()->create();
         });
 
         $tracker->terminate();
@@ -98,7 +97,7 @@ class QueriesTrackerTest extends TestCase
     {
         $tracker = $this->app->make(QueriesTracker::class);
         DB::select('select * from users');
-        factory(User::class)->create();
+        $this->factoryUser()->create();
 
         $tracker->terminate();
 
@@ -111,7 +110,7 @@ class QueriesTrackerTest extends TestCase
         $tracker = $this->app->make(QueriesTracker::class);
         DB::transaction(function () {
             DB::select('select * from users');
-            factory(User::class)->create();
+            $this->factoryUser()->create();
         });
 
         $tracker->terminate();
@@ -136,10 +135,10 @@ class QueriesTrackerTest extends TestCase
     function has_query_bindings_for_int_and_float_values()
     {
         $tracker = $this->app->make(QueriesTracker::class);
-        User::whereEmail(1)->first();
-        User::whereEmail(1.1)->first();
-        User::whereEmail('1')->first();
-        User::whereEmail('1.1')->first();
+        $this->userClass()::whereEmail(1)->first();
+        $this->userClass()::whereEmail(1.1)->first();
+        $this->userClass()::whereEmail('1')->first();
+        $this->userClass()::whereEmail('1.1')->first();
 
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
@@ -154,8 +153,8 @@ class QueriesTrackerTest extends TestCase
     function has_query_bindings_for_null_values()
     {
         $tracker = $this->app->make(QueriesTracker::class);
-        User::whereNull('email')->first();
-        User::whereNotNull('email')->first();
+        $this->userClass()::whereNull('email')->first();
+        $this->userClass()::whereNotNull('email')->first();
 
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');

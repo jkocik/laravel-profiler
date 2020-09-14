@@ -1,0 +1,6 @@
+alias la6='vendor/bin/phpunit --stop-on-failure -c phpunit-laravel-6.xml'
+alias la7='vendor/bin/phpunit --stop-on-failure -c phpunit-laravel-7.xml'
+alias la8='vendor/bin/phpunit --stop-on-failure -c phpunit-laravel-8.xml'
+
+alias la-all='la8 && la7 && la6'
+alias la-c='la8 --coverage-html coverage'
