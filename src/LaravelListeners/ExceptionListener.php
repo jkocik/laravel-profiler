@@ -10,7 +10,7 @@ use JKocik\Laravel\Profiler\Contracts\LaravelListener;
 class ExceptionListener implements LaravelListener
 {
     /**
-     * @var Exception
+     * @var mixed
      */
     protected $exception;
 
@@ -25,9 +25,9 @@ class ExceptionListener implements LaravelListener
     }
 
     /**
-     * @return Exception|null
+     * @return mixed
      */
-    public function exception(): ?Exception
+    public function exception()
     {
         return $this->exception;
     }
