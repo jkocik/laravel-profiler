@@ -8,6 +8,13 @@ better understanding what is going on under the hood. Laravel Profiler is design
 
 ![Laravel Profiler](https://drive.google.com/uc?export=view&id=12TSAEW1butnLfmFxO3Pw4GhF96B8PUSk)
 
+### Supported versions
+
+| Laravel Framework version you have | Laravel Profiler version you should use |
+| ---------------------------------- | --------------------------------------- |
+| 5.2.x - 5.8.x | 1.x |
+| 6.x - 8.x | 2.x |
+
 ### How does it work?
 
 Profiler delivers data about Laravel framework execution:
@@ -61,7 +68,7 @@ Requirements: PHP 7.1+ and Laravel 5.2+
 It is recommended to install Profiler Package only for development
 
 ```shell
-composer require jkocik/laravel-profiler --dev
+composer require jkocik/laravel-profiler:1.* --dev
 ```
 
 For Laravel 5.5+ you are fine and you can go to Step 2 of this installation process.
