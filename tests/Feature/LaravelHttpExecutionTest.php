@@ -275,10 +275,33 @@ class LaravelHttpExecutionTest extends TestCase
     /** @test */
     function has_request_cookie()
     {
-        $this->call('GET', '/', [], ['cookie-key-a' => Crypt::encrypt('cookie-val-a')]);
-        $request = $this->executionData->request();
+        $this->tapLaravelVersionTill('5.4', function () {
+            $this->call('GET', '/', [], ['cookie-key-a' => Crypt::encrypt('cookie-val-a')]);
+            $request = $this->executionData->request();
 
-        $this->assertContains('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
+            $this->assertContains('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
+        });
+
+        $this->tapLaravelVersionBetween('5.5', '5.5', function () {
+            $this->call('GET', '/', [], ['cookie-key-a' => [Crypt::encrypt('cookie-val-a')]]);
+            $request = $this->executionData->request();
+
+            $this->assertContains('cookie-val-a', Crypt::decrypt($request->data()->get('cookie')['cookie-key-a'][0]));
+        });
+
+        $this->tapLaravelVersionBetween('5.6', '5.8', function () {
+            $this->call('GET', '/', [], ['cookie-key-a' => Crypt::encrypt('cookie-val-a')]);
+            $request = $this->executionData->request();
+
+            $this->assertContains('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
+        });
+
+        $this->tapLaravelVersionFrom('6', function () {
+            $this->call('GET', '/', [], ['cookie-key-a' => [Crypt::encrypt('cookie-val-a')]]);
+            $request = $this->executionData->request();
+
+            $this->assertContains('cookie-val-a', Crypt::decrypt($request->data()->get('cookie')['cookie-key-a'][0]));
+        });
     }
 
     /** @test */
