@@ -2,18 +2,20 @@
 
 namespace JKocik\Laravel\Profiler\Events;
 
+use Throwable;
+
 class ExceptionHandling
 {
     /**
-     * @var mixed
+     * @var Throwable
      */
     public $exception;
 
     /**
      * ExceptionHandling constructor.
-     * @param $exception
+     * @param Throwable $exception
      */
-    public function __construct($exception)
+    public function __construct(Throwable $exception)
     {
         $this->exception = $exception;
     }
