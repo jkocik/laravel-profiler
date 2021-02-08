@@ -2,7 +2,6 @@
 
 namespace JKocik\Laravel\Profiler\Trackers;
 
-use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Illuminate\Contracts\Container\BindingResolutionException;
 
@@ -16,7 +15,6 @@ class BindingsTracker extends BaseTracker
         $bindings = $this->abstracts()->map(function ($abstract) {
             try {
                 $resolved = $this->resolved($abstract);
-            } catch (InvalidArgumentException $e) {
             } catch (BindingResolutionException $e) {}
 
             return [
@@ -41,12 +39,12 @@ class BindingsTracker extends BaseTracker
     /**
      * @param string $abstract
      * @return string
-     * @throws InvalidArgumentException
+     * @throws BindingResolutionException
      */
     protected function resolved(string $abstract): string
     {
         if (! $this->app->resolved($abstract)) {
-            throw new InvalidArgumentException();
+            throw new BindingResolutionException();
         }
 
         $concrete = $this->app->make($abstract);
