@@ -45,7 +45,7 @@ class TestCase extends BaseTestCase
     /**
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         static::$framework = new Framework();
     }
@@ -61,7 +61,7 @@ class TestCase extends BaseTestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->enablePhpMock();
 
@@ -71,7 +71,7 @@ class TestCase extends BaseTestCase
     /**
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->disablePhpMock();
     }

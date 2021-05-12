@@ -19,7 +19,7 @@ class TestListener implements BaseTestListener
      * @param Test $test
      * @return void
      */
-    public function startTest(Test $test)
+    public function startTest(Test $test): void
     {
         if (! $this->versionPrinted) {
             $this->printVersion($test);

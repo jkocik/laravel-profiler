@@ -2,5 +2,5 @@
 /coverage
 /frameworks
 /vendor
-Homestead.yaml
+.phpunit.result.cache
 composer.lock

@@ -14,7 +14,7 @@ class QueriesTrackerTest extends TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -24,7 +24,7 @@ class QueriesTrackerTest extends TestCase
     /**
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -44,14 +44,14 @@ class QueriesTrackerTest extends TestCase
         $queries = $tracker->data()->get('queries');
 
         $this->assertNotNull($queries);
-        $this->assertContains('query', $queries->first()['type']);
-        $this->assertContains('insert into `users` (`name`, `email`', $queries->first()['sql']);
+        $this->assertStringContainsString('query', $queries->first()['type']);
+        $this->assertStringContainsString('insert into `users` (`name`, `email`', $queries->first()['sql']);
         $this->assertContains('joe@example.com', $queries->first()['bindings']);
         $this->assertArrayHasKey('time', $queries->first());
         $this->assertEquals(':memory:', $queries->first()['database']);
         $this->assertEquals('sqlite', $queries->first()['name']);
-        $this->assertContains('insert into `users` (`name`, `email`', $queries->first()['query']);
-        $this->assertContains("values ('Joe', 'joe@example.com'", $queries->first()['query']);
+        $this->assertStringContainsString('insert into `users` (`name`, `email`', $queries->first()['query']);
+        $this->assertStringContainsString("values ('Joe', 'joe@example.com'", $queries->first()['query']);
     }
 
     /** @test */
@@ -65,11 +65,11 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains('transaction-begin', $queries->first()['type']);
+        $this->assertStringContainsString('transaction-begin', $queries->first()['type']);
         $this->assertEquals(':memory:', $queries->first()['database']);
         $this->assertEquals('sqlite', $queries->first()['name']);
 
-        $this->assertContains('transaction-commit', $queries->last()['type']);
+        $this->assertStringContainsString('transaction-commit', $queries->last()['type']);
         $this->assertEquals(':memory:', $queries->last()['database']);
         $this->assertEquals('sqlite', $queries->last()['name']);
     }
@@ -87,7 +87,7 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains('transaction-rollback', $queries->last()['type']);
+        $this->assertStringContainsString('transaction-rollback', $queries->last()['type']);
         $this->assertEquals(':memory:', $queries->last()['database']);
         $this->assertEquals('sqlite', $queries->last()['name']);
     }
@@ -143,10 +143,10 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where `email` = 1", $queries->shift()['query']);
-        $this->assertContains("where `email` = 1.1", $queries->shift()['query']);
-        $this->assertContains("where `email` = '1'", $queries->shift()['query']);
-        $this->assertContains("where `email` = '1.1'", $queries->shift()['query']);
+        $this->assertStringContainsString("where `email` = 1", $queries->shift()['query']);
+        $this->assertStringContainsString("where `email` = 1.1", $queries->shift()['query']);
+        $this->assertStringContainsString("where `email` = '1'", $queries->shift()['query']);
+        $this->assertStringContainsString("where `email` = '1.1'", $queries->shift()['query']);
     }
 
     /** @test */
@@ -159,8 +159,8 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where `email` is null", $queries->shift()['query']);
-        $this->assertContains("where `email` is not null", $queries->shift()['query']);
+        $this->assertStringContainsString("where `email` is null", $queries->shift()['query']);
+        $this->assertStringContainsString("where `email` is not null", $queries->shift()['query']);
     }
 
     /** @test */
@@ -173,13 +173,13 @@ class QueriesTrackerTest extends TestCase
         $queries = $tracker->data()->get('queries');
 
         $this->tapLaravelVersionFrom(5.5, function () use ($queries) {
-            $this->assertContains("where 1 = 1 and 0 = 0", $queries->first()['query']);
+            $this->assertStringContainsString("where 1 = 1 and 0 = 0", $queries->first()['query']);
             $this->assertSame(1, $queries->first()['bindings']['first']);
             $this->assertSame(0, $queries->first()['bindings']['second']);
         });
 
         $this->tapLaravelVersionTill(5.4, function () use ($queries) {
-            $this->assertContains("where 1 = '1' and 0 = 0", $queries->first()['query']);
+            $this->assertStringContainsString("where 1 = '1' and 0 = 0", $queries->first()['query']);
             $this->assertSame(true, $queries->first()['bindings']['first']);
             $this->assertSame(0, $queries->first()['bindings']['second']);
         });
@@ -194,7 +194,7 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where email = 'abc@example.com' and name = 1", $queries->first()['query']);
+        $this->assertStringContainsString("where email = 'abc@example.com' and name = 1", $queries->first()['query']);
     }
 
     /** @test */
@@ -208,7 +208,7 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where email = '{$dateTime->toDateTimeString()}'", $queries->first()['query']);
+        $this->assertStringContainsString("where email = '{$dateTime->toDateTimeString()}'", $queries->first()['query']);
     }
 
     /** @test */
@@ -221,9 +221,9 @@ class QueriesTrackerTest extends TestCase
         $tracker->terminate();
         $queries = $tracker->data()->get('queries');
 
-        $this->assertContains("where email = '". str_repeat('a', 255) ."'", $queries->first()['query']);
+        $this->assertStringContainsString("where email = '". str_repeat('a', 255) ."'", $queries->first()['query']);
         $this->assertContains(str_repeat('a', 255), $queries->first()['bindings']);
-        $this->assertContains("where email = '". str_repeat('a', 255) ."...{truncated}'", $queries->last()['query']);
+        $this->assertStringContainsString("where email = '". str_repeat('a', 255) ."...{truncated}'", $queries->last()['query']);
         $this->assertContains(str_repeat('a', 255) . '...{truncated}', $queries->last()['bindings']);
     }
 

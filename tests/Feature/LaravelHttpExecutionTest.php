@@ -29,7 +29,7 @@ class LaravelHttpExecutionTest extends TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -280,28 +280,28 @@ class LaravelHttpExecutionTest extends TestCase
             $this->call('GET', '/', [], ['cookie-key-a' => Crypt::encrypt('cookie-val-a')]);
             $request = $this->executionData->request();
 
-            $this->assertContains('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
+            $this->assertStringContainsString('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
         });
 
         $this->tapLaravelVersionBetween('5.5', '5.5', function () {
             $this->call('GET', '/', [], ['cookie-key-a' => [Crypt::encrypt('cookie-val-a')]]);
             $request = $this->executionData->request();
 
-            $this->assertContains('cookie-val-a', Crypt::decrypt($request->data()->get('cookie')['cookie-key-a'][0]));
+            $this->assertStringContainsString('cookie-val-a', Crypt::decrypt($request->data()->get('cookie')['cookie-key-a'][0]));
         });
 
         $this->tapLaravelVersionBetween('5.6', '5.8', function () {
             $this->call('GET', '/', [], ['cookie-key-a' => Crypt::encrypt('cookie-val-a')]);
             $request = $this->executionData->request();
 
-            $this->assertContains('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
+            $this->assertStringContainsString('cookie-val-a', $request->data()->get('cookie')['cookie-key-a']);
         });
 
         $this->tapLaravelVersionFrom('6', function () {
             $this->call('GET', '/', [], ['cookie-key-a' => [Crypt::encrypt('cookie-val-a')]]);
             $request = $this->executionData->request();
 
-            $this->assertContains('cookie-val-a', Crypt::decrypt($request->data()->get('cookie')['cookie-key-a'][0]));
+            $this->assertStringContainsString('cookie-val-a', Crypt::decrypt($request->data()->get('cookie')['cookie-key-a'][0]));
         });
     }
 
@@ -416,7 +416,7 @@ class LaravelHttpExecutionTest extends TestCase
         $this->get('/route-a/123');
         $route = $this->executionData->route();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'LaravelHttpExecutionTest.php:' . $action->getStartLine() . '-' . $action->getEndLine(),
             $route->data()->get('uses')['closure']
         );
@@ -435,7 +435,7 @@ class LaravelHttpExecutionTest extends TestCase
         $this->get('/route-a/123');
         $route = $this->executionData->route();
 
-        $this->assertContains(
+        $this->assertStringContainsString(
             'DummyController@dummyAction:' . $action->getStartLine() . '-' . $action->getEndLine(),
             $route->data()->get('uses')['controller']
         );
@@ -559,8 +559,8 @@ class LaravelHttpExecutionTest extends TestCase
         $content = $this->executionData->content();
 
         $this->assertCount(0, $content->meta());
-        $this->assertNotContains('HTTP/1.1 200 OK', $content->data()->get('content'));
-        $this->assertContains('</body>', $content->data()->get('content'));
-        $this->assertContains('</html>', $content->data()->get('content'));
+        $this->assertStringNotContainsString('HTTP/1.1 200 OK', $content->data()->get('content'));
+        $this->assertStringContainsString('</body>', $content->data()->get('content'));
+        $this->assertStringContainsString('</html>', $content->data()->get('content'));
     }
 }
