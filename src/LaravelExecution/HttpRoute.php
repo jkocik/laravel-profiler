@@ -127,9 +127,9 @@ class HttpRoute implements ExecutionRoute
     protected function formRequest(array $parameters): string
     {
         $formRequest = Collection::make($parameters)->filter(function (ReflectionParameter $parameter) {
-            return $parameter->getClass() && $parameter->getClass()->isSubclassOf(FormRequest::class);
+            return $parameter->getType() && is_subclass_of($parameter->getType()->getName(), FormRequest::class);
         })->first();
 
-        return $formRequest ? $formRequest->getClass()->getName() : '';
+        return $formRequest ? $formRequest->getType()->getName() : '';
     }
 }

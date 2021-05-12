@@ -1,4 +1,4 @@
-FROM php:7.4.10-fpm
+FROM php:8.0.6-fpm
 
 COPY ./.bashrc-v2 /root/.bashrc
 

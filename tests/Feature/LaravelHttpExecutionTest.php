@@ -15,6 +15,7 @@ use JKocik\Laravel\Profiler\LaravelExecution\NullRoute;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpRequest;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpSession;
 use JKocik\Laravel\Profiler\LaravelExecution\HttpResponse;
+use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyClassA;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyController;
 use JKocik\Laravel\Profiler\Tests\Support\Fixtures\DummyFormRequest;
 
@@ -405,7 +406,7 @@ class LaravelHttpExecutionTest extends TestCase
     /** @test */
     function has_route_closure_action()
     {
-        $uses = function (DummyFormRequest $request) {
+        $uses = function (DummyClassA $a, DummyFormRequest $request) {
             return $request->get('id');
         };
         $action = new ReflectionFunction($uses);
