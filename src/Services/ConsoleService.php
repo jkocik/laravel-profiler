@@ -137,7 +137,8 @@ class ConsoleService
     public function profilerClientCmd(bool $manual): string
     {
         $options = $manual ? '' : ' -o -s';
+        $http = $this->configService->clientHttpPort();
 
-        return "node_modules/.bin/http-server node_modules/laravel-profiler-client/dist/{$options}";
+        return "node_modules/.bin/http-server node_modules/laravel-profiler-client/dist/{$options} -p {$http}";
     }
 }

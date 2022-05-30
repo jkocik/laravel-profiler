@@ -100,6 +100,14 @@ class ConfigService
     /**
      * @return string
      */
+    public function clientHttpPort(): string
+    {
+        return $this->config->get('profiler.client_http.port');
+    }
+
+    /**
+     * @return string
+     */
     public function serverSocketsPort(): string
     {
         return $this->config->get('profiler.server_sockets.port');

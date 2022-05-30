@@ -75,6 +75,10 @@ return [
         'port' => '8099',
     ],
 
+    'client_http' => [
+        'port' => '8080',
+    ],
+
     'server_sockets' => [
         'port' => '1901',
     ],
